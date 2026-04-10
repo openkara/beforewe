@@ -1,6 +1,6 @@
 "use client";
 // @ts-nocheck
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 /* ================================================================
    TYPES
@@ -34,10 +34,10 @@ const VALUES_QUESTIONS: ValuesQ[] = [
   {
     id: "moneyMindset",
     sectionLabel: "Money Personality",
-    sectionIntro: "Let\u2019s start with the basics \u2014 how you naturally think about money.",
+    sectionIntro: "Let's start with the basics — how you naturally think about money.",
     question: "When it comes to money, which feels most like you?",
     options: [
-      { value: "guardian", label: "The Protector", desc: "I like knowing there\u2019s a safety net" },
+      { value: "guardian", label: "The Protector", desc: "I like knowing there's a safety net" },
       { value: "builder", label: "The Builder", desc: "I want money to grow and work for us" },
       { value: "enjoyer", label: "The Experiencer", desc: "Money is for creating the life we want" },
       { value: "balancer", label: "The Balancer", desc: "A little of everything, nothing extreme" },
@@ -46,10 +46,10 @@ const VALUES_QUESTIONS: ValuesQ[] = [
   {
     id: "togetherness",
     sectionLabel: "Financial Togetherness",
-    sectionIntro: "Now let\u2019s talk about how you picture sharing finances as a couple.",
+    sectionIntro: "Now let's talk about how you picture sharing finances as a couple.",
     question: "How do you picture handling finances together?",
     options: [
-      { value: "fully-combined", label: "All In", desc: "One pot \u2014 what\u2019s mine is yours" },
+      { value: "fully-combined", label: "All In", desc: "One pot — what's mine is yours" },
       { value: "mostly-combined", label: "Mostly Together", desc: "Shared, but with some personal breathing room" },
       { value: "split-collaborative", label: "Split but Collaborative", desc: "Separate accounts, shared decisions" },
       { value: "largely-independent", label: "Independent", desc: "We each handle our own" },
@@ -58,35 +58,35 @@ const VALUES_QUESTIONS: ValuesQ[] = [
   {
     id: "futureVision",
     sectionLabel: "Looking Ahead",
-    sectionIntro: "Let\u2019s zoom out \u2014 what does the future look like for you?",
+    sectionIntro: "Let's zoom out — what does the future look like for you?",
     question: "When you picture the next 10 years, what excites you most?",
     options: [
       { value: "wealth", label: "Building Wealth", desc: "Growing our financial foundation together" },
       { value: "family", label: "Growing a Family", desc: "Kids, home, the whole picture" },
       { value: "career", label: "Career & Ambition", desc: "Professional growth and new opportunities" },
       { value: "lifestyle", label: "Experiences", desc: "Travel, adventures, and enjoying life" },
-      { value: "security", label: "Stability", desc: "Knowing we\u2019re secure no matter what" },
+      { value: "security", label: "Stability", desc: "Knowing we're secure no matter what" },
     ],
   },
   {
     id: "riskComfort",
     sectionLabel: "Risk Tolerance",
-    sectionIntro: "Here\u2019s a scenario to think about.",
+    sectionIntro: "Here's a scenario to think about.",
     question: "A friend pitches you both on a real estate investment. Your gut reaction?",
     options: [
-      { value: "very-conservative", label: "No Thanks", desc: "I\u2019d rather keep what we have safe" },
+      { value: "very-conservative", label: "No Thanks", desc: "I'd rather keep what we have safe" },
       { value: "somewhat-cautious", label: "Show Me the Numbers", desc: "Maybe, if the math really works" },
-      { value: "moderate-risk", label: "I\u2019m Interested", desc: "Growth takes some risk" },
-      { value: "aggressive", label: "I\u2019m In", desc: "You have to bet big to win big" },
+      { value: "moderate-risk", label: "I'm Interested", desc: "Growth takes some risk" },
+      { value: "aggressive", label: "I'm In", desc: "You have to bet big to win big" },
     ],
   },
   {
     id: "incomeApproach",
     sectionLabel: "The Income Question",
-    sectionIntro: "This one comes up more than you\u2019d think.",
+    sectionIntro: "This one comes up more than you'd think.",
     question: "If one partner earns significantly more, how should that affect things?",
     options: [
-      { value: "equal", label: "Doesn\u2019t Matter", desc: "We split everything 50/50 regardless" },
+      { value: "equal", label: "Doesn't Matter", desc: "We split everything 50/50 regardless" },
       { value: "proportional", label: "Proportional", desc: "We each contribute relative to what we earn" },
       { value: "higher-more", label: "Higher Earner Steps Up", desc: "They naturally take on more" },
       { value: "situational", label: "It Depends", desc: "Context matters here" },
@@ -95,7 +95,7 @@ const VALUES_QUESTIONS: ValuesQ[] = [
   {
     id: "coreValue",
     sectionLabel: "What Matters Most",
-    sectionIntro: "Last one in this section \u2014 and it\u2019s a big one.",
+    sectionIntro: "Last one in this section — and it's a big one.",
     question: "If you could only choose one, what matters most in how you handle money together?",
     options: [
       { value: "trust", label: "Transparency", desc: "Total honesty about everything financial" },
@@ -112,12 +112,12 @@ const VALUES_QUESTIONS: ValuesQ[] = [
 const DEEP_DIVE_POOL: DeepDiveQ[] = [
   {
     id: "separate_property", topic: "Separate Property",
-    question: "Should either of you be able to keep certain assets completely separate \u2014 like savings from before the relationship, a family heirloom, or a side business?",
+    question: "Should either of you be able to keep certain assets completely separate — like savings from before the relationship, a family heirloom, or a side business?",
     options: [
       { value: "yes", label: "Yes, absolutely", desc: "Some things should stay individual" },
       { value: "some", label: "For certain things", desc: "It depends on the asset" },
-      { value: "probably-not", label: "Probably not", desc: "We\u2019re building this together" },
-      { value: "unsure", label: "Haven\u2019t thought about it", desc: "I\u2019d need to think on this" },
+      { value: "probably-not", label: "Probably not", desc: "We're building this together" },
+      { value: "unsure", label: "Haven't thought about it", desc: "I'd need to think on this" },
     ],
     scale: { yes: 0, some: 1, "probably-not": 3, unsure: 1 },
   },
@@ -125,21 +125,21 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
     id: "business_ownership", topic: "Business Ownership",
     question: "If one of you starts a business during the marriage, how should ownership work?",
     options: [
-      { value: "shared", label: "It\u2019s a shared asset", desc: "We\u2019re invested in each other\u2019s success" },
+      { value: "shared", label: "It's a shared asset", desc: "We're invested in each other's success" },
       { value: "depends-funding", label: "Depends who funded it", desc: "The source of investment matters" },
-      { value: "founder-keeps", label: "The founder keeps it", desc: "It\u2019s their creation" },
+      { value: "founder-keeps", label: "The founder keeps it", desc: "It's their creation" },
       { value: "figure-later", label: "Work it out later", desc: "Cross that bridge when we come to it" },
     ],
     scale: { shared: 0, "depends-funding": 1, "founder-keeps": 3, "figure-later": 2 },
   },
   {
     id: "home_ownership", topic: "Home & Property",
-    question: "When it comes to buying a home together\u2026",
+    question: "When it comes to buying a home together…",
     options: [
       { value: "equal", label: "Equal ownership", desc: "No matter who pays more at closing" },
       { value: "reflects-contribution", label: "Reflects contribution", desc: "Ownership should match financial input" },
-      { value: "both-names", label: "Both names regardless", desc: "It\u2019s our home, period" },
-      { value: "rent", label: "We\u2019d rent", desc: "Not interested in buying right now" },
+      { value: "both-names", label: "Both names regardless", desc: "It's our home, period" },
+      { value: "rent", label: "We'd rent", desc: "Not interested in buying right now" },
     ],
     scale: { equal: 0, "reflects-contribution": 2, "both-names": 0, rent: 1 },
   },
@@ -156,7 +156,7 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
   },
   {
     id: "inheritance", topic: "Inheritance",
-    question: "If one of you receives a large inheritance\u2026",
+    question: "If one of you receives a large inheritance…",
     options: [
       { value: "shared", label: "It becomes shared", desc: "Everything is ours" },
       { value: "stays-personal", label: "It stays personal", desc: "It was meant for one person" },
@@ -167,7 +167,7 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
   },
   {
     id: "debt", topic: "Existing Debt",
-    question: "How should debts from before the relationship \u2014 student loans, credit cards \u2014 be handled?",
+    question: "How should debts from before the relationship — student loans, credit cards — be handled?",
     options: [
       { value: "take-on-together", label: "We tackle it together", desc: "Your debt is our debt" },
       { value: "each-handles-own", label: "Each handles their own", desc: "You brought it, you manage it" },
@@ -178,11 +178,11 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
   },
   {
     id: "income_change", topic: "Income Changes",
-    question: "If one partner\u2019s income dramatically changes \u2014 up or down \u2014 what happens?",
+    question: "If one partner's income dramatically changes — up or down — what happens?",
     options: [
       { value: "nothing-changes", label: "Arrangement stays the same", desc: "Stability matters" },
       { value: "renegotiate", label: "We renegotiate", desc: "The plan should reflect reality" },
-      { value: "naturally-adjusts", label: "It naturally adjusts", desc: "We\u2019d adapt without formal changes" },
+      { value: "naturally-adjusts", label: "It naturally adjusts", desc: "We'd adapt without formal changes" },
       { value: "need-rules", label: "We need rules for this", desc: "Better to plan ahead" },
     ],
     scale: { "nothing-changes": 0, renegotiate: 2, "naturally-adjusts": 1, "need-rules": 3 },
@@ -200,18 +200,18 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
   },
   {
     id: "career_sacrifice", topic: "Career Moves",
-    question: "If one partner gets an incredible job offer in another city\u2026",
+    question: "If one partner gets an incredible job offer in another city…",
     options: [
-      { value: "partner-follows", label: "The other follows", desc: "We\u2019re a team \u2014 we go together" },
+      { value: "partner-follows", label: "The other follows", desc: "We're a team — we go together" },
       { value: "weigh-equally", label: "Weigh both careers", desc: "Neither career is more important" },
       { value: "financial-impact", label: "Follow the money", desc: "Financial impact decides" },
-      { value: "serious-negotiation", label: "Needs serious discussion", desc: "This isn\u2019t a simple call" },
+      { value: "serious-negotiation", label: "Needs serious discussion", desc: "This isn't a simple call" },
     ],
     scale: { "partner-follows": 0, "weigh-equally": 1, "financial-impact": 2, "serious-negotiation": 2 },
   },
   {
-    id: "lifestyle_maintenance", topic: "If Things Don\u2019t Work Out",
-    question: "If the relationship ended, should one partner help maintain the other\u2019s lifestyle?",
+    id: "lifestyle_maintenance", topic: "If Things Don't Work Out",
+    question: "If the relationship ended, should one partner help maintain the other's lifestyle?",
     options: [
       { value: "yes-reasonable", label: "Yes, for a transition period", desc: "A bridge makes sense" },
       { value: "if-sacrifice", label: "Only if one sacrificed career", desc: "If they gave up earning potential" },
@@ -244,7 +244,7 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
   },
   {
     id: "children_finances", topic: "Kids & Money",
-    question: "When it comes to kids and financial planning\u2026",
+    question: "When it comes to kids and financial planning…",
     options: [
       { value: "education-fund", label: "Start saving from day one", desc: "Education fund, the works" },
       { value: "figure-out-later", label: "Figure it out as we go", desc: "No need to over-plan" },
@@ -258,9 +258,9 @@ const DEEP_DIVE_POOL: DeepDiveQ[] = [
     question: "Should there be financial consequences for breaking trust in the relationship?",
     options: [
       { value: "yes", label: "Yes, absolutely", desc: "Actions should have consequences" },
-      { value: "extreme-only", label: "Only in extreme situations", desc: "There\u2019s a line, but it\u2019s high" },
-      { value: "no-punitive", label: "No, that feels punitive", desc: "Finances shouldn\u2019t be a weapon" },
-      { value: "unsure", label: "I\u2019m not sure", desc: "This is a hard one" },
+      { value: "extreme-only", label: "Only in extreme situations", desc: "There's a line, but it's high" },
+      { value: "no-punitive", label: "No, that feels punitive", desc: "Finances shouldn't be a weapon" },
+      { value: "unsure", label: "I'm not sure", desc: "This is a hard one" },
     ],
     scale: { yes: 0, "extreme-only": 1, "no-punitive": 3, unsure: 1 },
   },
@@ -323,10 +323,10 @@ function selectDeepDiveQuestions(v: Record<string, string>): string[] {
 }
 
 const MINDSET_LABELS: Record<string, string> = {
-  guardian: "a protector \u2014 you value safety and security with money",
-  builder: "a builder \u2014 you want your money to grow and work for you",
-  enjoyer: "an experiencer \u2014 money is a tool for living your best life",
-  balancer: "a balancer \u2014 you take a measured, moderate approach",
+  guardian: "a protector — you value safety and security with money",
+  builder: "a builder — you want your money to grow and work for you",
+  enjoyer: "an experiencer — money is a tool for living your best life",
+  balancer: "a balancer — you take a measured, moderate approach",
 };
 const TOGETHER_LABELS: Record<string, string> = {
   "fully-combined": "going all in together financially",
@@ -335,10 +335,10 @@ const TOGETHER_LABELS: Record<string, string> = {
   "largely-independent": "maintaining financial independence within the partnership",
 };
 const RISK_LABELS: Record<string, string> = {
-  "very-conservative": "conservative \u2014 you prefer keeping things safe",
-  "somewhat-cautious": "cautious \u2014 open to opportunity but you want to see the math",
+  "very-conservative": "conservative — you prefer keeping things safe",
+  "somewhat-cautious": "cautious — open to opportunity but you want to see the math",
   "moderate-risk": "comfortable with calculated risk for growth",
-  aggressive: "adventurous \u2014 willing to take big swings",
+  aggressive: "adventurous — willing to take big swings",
 };
 const VALUE_LABELS: Record<string, string> = {
   trust: "transparency and honesty", independence: "personal autonomy",
@@ -346,7 +346,7 @@ const VALUE_LABELS: Record<string, string> = {
 };
 
 function generateInsight(v: Record<string, string>): string {
-  return `You\u2019re ${MINDSET_LABELS[v.moneyMindset] || "thoughtful about money"}, and you picture ${TOGETHER_LABELS[v.togetherness] || "sharing finances in your own way"}. When it comes to risk, you\u2019re ${RISK_LABELS[v.riskComfort] || "balanced"}. Above all, you care about ${VALUE_LABELS[v.coreValue] || "doing things right"}.`;
+  return `You're ${MINDSET_LABELS[v.moneyMindset] || "thoughtful about money"}, and you picture ${TOGETHER_LABELS[v.togetherness] || "sharing finances in your own way"}. When it comes to risk, you're ${RISK_LABELS[v.riskComfort] || "balanced"}. Above all, you care about ${VALUE_LABELS[v.coreValue] || "doing things right"}.`;
 }
 
 interface ComparisonItem {
@@ -489,24 +489,64 @@ function ImportanceRating({ value, onChange }: { value: number | null; onChange:
    ================================================================ */
 
 function Landing({ onStart }: { onStart: () => void }) {
+  const phrases = [
+    "assume we agree.",
+    "walk into a lawyer's office.",
+    "let the state decide for us.",
+    "sign anything.",
+  ];
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setPhraseIndex((i) => (i + 1) % phrases.length);
+        setFade(true);
+      }, 400);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-stone-50">
-      <div className="max-w-lg text-center">
-        <h1 className="text-5xl font-serif font-bold text-stone-800 mb-2">before we<span className="text-teal-700">.</span></h1>
-        <div className="mt-10 space-y-3 text-lg text-stone-500 font-light leading-relaxed">
-          <p>Before we assume we agree.</p>
-          <p>Before we walk into a lawyer\u2019s office.</p>
-          <p>Before we let the state decide for us.</p>
-          <p>Before we sign anything \u2014</p>
+      <div className="max-w-2xl w-full text-center">
+        {/* Logo */}
+        <h1 className="text-6xl md:text-7xl font-serif font-bold text-stone-800 tracking-tight">
+          before we<span className="text-teal-700">.</span>
+        </h1>
+
+        {/* Cycling phrase */}
+        <div className="mt-14 mb-14">
+          <p className="text-xl md:text-2xl text-stone-400 font-light">Before we…</p>
+          <p
+            className={`text-2xl md:text-3xl font-serif text-stone-700 mt-2 transition-all duration-400 ${
+              fade ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+            }`}
+            style={{ minHeight: "2.5rem" }}
+          >
+            {phrases[phraseIndex]}
+          </p>
         </div>
-        <p className="mt-8 text-2xl font-serif text-stone-800">Let\u2019s get on the same page.</p>
+
+        {/* Tagline */}
+        <p className="text-3xl md:text-4xl font-serif text-stone-800 leading-snug">
+          Let's get on the same page.
+        </p>
+
+        {/* CTA */}
         <button
           onClick={onStart}
-          className="mt-10 px-8 py-3.5 bg-teal-700 text-white rounded-full font-medium text-base hover:bg-teal-800 transition-colors shadow-lg shadow-teal-700/20"
+          className="mt-12 px-10 py-4 bg-teal-700 text-white rounded-full font-medium text-lg hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/20 hover:shadow-xl hover:shadow-teal-700/30 hover:scale-105"
         >
-          Get started
+          Yeah, let's do it
         </button>
-        <p className="mt-8 text-xs text-stone-400 max-w-sm mx-auto">A private alignment tool for couples. Not legal advice. Not a score. Just a structured way to figure out what you both actually want.</p>
+
+        {/* Footer note */}
+        <p className="mt-12 text-sm text-stone-400 max-w-md mx-auto leading-relaxed">
+          A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
+        </p>
       </div>
     </div>
   );
@@ -518,7 +558,7 @@ function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string) => voi
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
       <div className="max-w-md w-full text-center">
         <p className="text-sm uppercase tracking-wide text-teal-700 font-medium mb-3">{partnerLabel}</p>
-        <h2 className="text-3xl font-serif text-stone-800 mb-2">First, what\u2019s your name?</h2>
+        <h2 className="text-3xl font-serif text-stone-800 mb-2">First, what's your name?</h2>
         <p className="text-stone-500 mb-8">Just a first name is fine. This keeps things personal.</p>
         <input
           type="text"
@@ -576,13 +616,13 @@ function ValuesSummary({ name, answers, onContinue }: { name: string; answers: R
           <span className="text-2xl">&#10003;</span>
         </div>
         <h2 className="text-2xl font-serif text-stone-800 mb-2">Great start, {name}.</h2>
-        <p className="text-stone-500 mb-8">Here\u2019s what we\u2019re picking up so far:</p>
+        <p className="text-stone-500 mb-8">Here's what we're picking up so far:</p>
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 text-left">
           <p className="text-stone-700 leading-relaxed text-base">{insight}</p>
         </div>
-        <p className="mt-8 text-stone-500 text-sm">Now we\u2019ll dig into the specific topics that matter most based on what you\u2019ve shared. Just 6 more questions.</p>
+        <p className="mt-8 text-stone-500 text-sm">Now we'll dig into the specific topics that matter most based on what you've shared. Just 6 more questions.</p>
         <button onClick={onContinue} className="mt-6 px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-          Let\u2019s go deeper
+          Let's go deeper
         </button>
       </div>
     </div>
@@ -655,7 +695,7 @@ function ProfileSummary({
             <span className="text-2xl text-emerald-600">&#10003;</span>
           </div>
           <h2 className="text-2xl font-serif text-stone-800">All done, {name}!</h2>
-          <p className="text-stone-500 mt-2">Here\u2019s your Before We profile.</p>
+          <p className="text-stone-500 mt-2">Here's your Before We profile.</p>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-6">
           <h3 className="font-semibold text-stone-700 mb-3">Your Money DNA</h3>
@@ -700,7 +740,7 @@ function PartnerGate({ name, onPartnerStart, onDemo }: { name: string; onPartner
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
       <div className="max-w-lg text-center">
         <h2 className="text-2xl font-serif text-stone-800 mb-2">Nice work, {name}.</h2>
-        <p className="text-stone-500 mb-8">Now it\u2019s your partner\u2019s turn. When they\u2019re done, we\u2019ll show you both where you stand.</p>
+        <p className="text-stone-500 mb-8">Now it's your partner's turn. When they're done, we'll show you both where you stand.</p>
         <div className="space-y-3 max-w-sm mx-auto">
           <button onClick={onPartnerStart} className="w-full py-3.5 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
             Hand it to my partner
@@ -737,7 +777,7 @@ function Comparison({
       <div className="max-w-2xl w-full">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-serif text-stone-800">{partnerA.name} & {partnerB.name}</h2>
-          <p className="text-stone-500 mt-2">Here\u2019s where you two stand.</p>
+          <p className="text-stone-500 mt-2">Here's where you two stand.</p>
         </div>
 
         {/* Values Overview */}
@@ -767,7 +807,7 @@ function Comparison({
         {result.aligned.length > 0 && (
           <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 mb-6">
             <h3 className="font-semibold text-emerald-800 mb-1">Already on the Same Page</h3>
-            <p className="text-sm text-emerald-600 mb-4">Good news \u2014 you two are aligned here.</p>
+            <p className="text-sm text-emerald-600 mb-4">Good news — you two are aligned here.</p>
             <div className="space-y-3">
               {result.aligned.map((item) => (
                 <div key={item.questionId} className="bg-white rounded-xl p-4 border border-emerald-100">
@@ -788,7 +828,7 @@ function Comparison({
         {result.conversation.length > 0 && (
           <div className="bg-amber-50/50 rounded-2xl p-6 border border-amber-100 mb-6">
             <h3 className="font-semibold text-amber-800 mb-1">Worth a Conversation</h3>
-            <p className="text-sm text-amber-600 mb-4">You\u2019re in the same neighborhood \u2014 a little conversation can close the gap.</p>
+            <p className="text-sm text-amber-600 mb-4">You're in the same neighborhood — a little conversation can close the gap.</p>
             <div className="space-y-3">
               {result.conversation.map((item) => (
                 <div key={item.questionId} className="bg-white rounded-xl p-4 border border-amber-100">
@@ -811,7 +851,7 @@ function Comparison({
         {result.attorney.length > 0 && (
           <div className="bg-rose-50/50 rounded-2xl p-6 border border-rose-100 mb-6">
             <h3 className="font-semibold text-rose-800 mb-1">Bring to Your Attorney</h3>
-            <p className="text-sm text-rose-600 mb-4">You see these differently \u2014 and that\u2019s okay. These are great topics to explore with a professional.</p>
+            <p className="text-sm text-rose-600 mb-4">You see these differently — and that's okay. These are great topics to explore with a professional.</p>
             <div className="space-y-3">
               {result.attorney.map((item) => (
                 <div key={item.questionId} className="bg-white rounded-xl p-4 border border-rose-100">
@@ -882,7 +922,7 @@ function DealMemo({ partnerA, partnerB, onBack }: { partnerA: PartnerData; partn
                 <div key={item.questionId} className="py-2 border-b border-stone-50">
                   <span className="font-medium text-stone-700">{item.topic}:</span>{" "}
                   <span className="text-stone-600">
-                    {item.aLabel === item.bLabel ? `Both chose "${item.aLabel}"` : `${partnerA.name} chose "${item.aLabel}", ${partnerB.name} chose "${item.bLabel}" \u2014 closely aligned`}
+                    {item.aLabel === item.bLabel ? `Both chose "${item.aLabel}"` : `${partnerA.name} chose "${item.aLabel}", ${partnerB.name} chose "${item.bLabel}" — closely aligned`}
                   </span>
                 </div>
               ))}
