@@ -504,47 +504,37 @@ function Landing({ onStart }: { onStart: () => void }) {
       setTimeout(() => {
         setPhraseIndex((i) => (i + 1) % phrases.length);
         setFade(true);
-      }, 400);
-    }, 3000);
+      }, 3000);
+    }, 3200);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-stone-50">
       <div className="max-w-2xl w-full text-center">
-        {/* Logo */}
-        <h1 className="text-6xl md:text-7xl font-serif font-bold text-stone-800 tracking-tight">
-          before we<span className="text-teal-700">.</span>
+        {/* "before we..." with cycling phrase inline */}
+        <h1 className="text-5xl md:text-7xl font-serif font-bold text-stone-800 tracking-tight leading-tight">
+          before we<span className="text-teal-700">…</span>
         </h1>
-
-        {/* Cycling phrase */}
-        <div className="mt-14 mb-14">
-          <p className="text-xl md:text-2xl text-stone-400 font-light">Before we…</p>
-          <p
-            className={`text-2xl md:text-3xl font-serif text-stone-700 mt-2 transition-all duration-400 ${
-              fade ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-            }`}
-            style={{ minHeight: "2.5rem" }}
-          >
-            {phrases[phraseIndex]}
-          </p>
-        </div>
-
-        {/* Tagline */}
-        <p className="text-3xl md:text-4xl font-serif text-stone-800 leading-snug">
-          Let's get on the same page.
+        <p
+          className={`text-3xl md:text-5xl font-serif font-normal text-teal-700 mt-4 transition-all duration-500 ${
+            fade ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          }`}
+          style={{ minHeight: "3.5rem" }}
+        >
+          {phrases[phraseIndex]}
         </p>
 
-        {/* CTA */}
+        {/* CTA as tagline + button in one */}
         <button
           onClick={onStart}
-          className="mt-12 px-10 py-4 bg-teal-700 text-white rounded-full font-medium text-lg hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/20 hover:shadow-xl hover:shadow-teal-700/30 hover:scale-105"
+          className="mt-16 px-10 py-4 bg-teal-700 text-white rounded-full font-medium text-lg hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/20 hover:shadow-xl hover:shadow-teal-700/30 hover:scale-105"
         >
-          Yeah, let's do it
+          Let's get on the same page
         </button>
 
         {/* Footer note */}
-        <p className="mt-12 text-sm text-stone-400 max-w-md mx-auto leading-relaxed">
+        <p className="mt-14 text-sm text-stone-400 max-w-md mx-auto leading-relaxed">
           A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
         </p>
       </div>
