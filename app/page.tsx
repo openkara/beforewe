@@ -23,7 +23,7 @@ interface DeepDiveQ { id: string; topic: string; question: string; options: Opti
 interface PartnerData {
   name: string;
   valuesAnswers: Record<string, string>;
-  deepDiveAnswers: Record<string, { answer: string; importance: number }>;
+  deepDiveAnswers: Record<string, { answers: string[]; importance: number }>;
   questionIds: string[];
 }
 
@@ -351,8 +351,8 @@ function generateInsight(v: Record<string, string>): string {
 
 interface ComparisonItem {
   topic: string; questionId: string;
-  aAnswer: string; bAnswer: string;
-  aLabel: string; bLabel: string;
+  aAnswers: string[]; bAnswers: string[];
+  aLabels: string[]; bLabels: string[];
   aImportance: number; bImportance: number;
   status: "aligned" | "conversation" | "attorney"; distance: number;
 }
@@ -371,14 +371,21 @@ function comparePartners(a: PartnerData, b: PartnerData) {
   const items: ComparisonItem[] = shared.map((qId) => {
     const q = DEEP_DIVE_POOL.find((x) => x.id === qId)!;
     const aa = a.deepDiveAnswers[qId]; const ba = b.deepDiveAnswers[qId];
-    const d = Math.abs((q.scale[aa.answer] ?? 1) - (q.scale[ba.answer] ?? 1));
+    // Check if there's any overlap in answers
+    const hasOverlap = aa.answers.some((ans) => ba.answers.includes(ans));
+    let d = 0;
+    if (!hasOverlap) {
+      // Find min distance between any pair
+      d = Math.min(...aa.answers.map((aAns) => Math.min(...ba.answers.map((bAns) => Math.abs((q.scale[aAns] ?? 1) - (q.scale[bAns] ?? 1))))));
+    }
+    const avgImportance = (aa.importance + ba.importance) / 2;
     return {
       topic: q.topic, questionId: qId,
-      aAnswer: aa.answer, bAnswer: ba.answer,
-      aLabel: q.options.find((o) => o.value === aa.answer)?.label || aa.answer,
-      bLabel: q.options.find((o) => o.value === ba.answer)?.label || ba.answer,
+      aAnswers: aa.answers, bAnswers: ba.answers,
+      aLabels: aa.answers.map((ans) => q.options.find((o) => o.value === ans)?.label || ans),
+      bLabels: ba.answers.map((ans) => q.options.find((o) => o.value === ans)?.label || ans),
       aImportance: aa.importance, bImportance: ba.importance,
-      status: d <= 1 ? "aligned" : d === 2 ? "conversation" : "attorney", distance: d,
+      status: hasOverlap ? "aligned" : d <= 1 ? "conversation" : "attorney", distance: d,
     };
   });
 
@@ -402,14 +409,13 @@ function makeDemoPartner(realData: PartnerData): PartnerData {
     coreValue: realData.valuesAnswers.coreValue === "trust" ? "flexibility" : "trust",
   };
   // For demo, answer same questions with slightly different answers
-  const demoDD: Record<string, { answer: string; importance: number }> = {};
+  const demoDD: Record<string, { answers: string[]; importance: number }> = {};
   realData.questionIds.forEach((qId) => {
     const q = DEEP_DIVE_POOL.find((x) => x.id === qId)!;
-    const realAnswer = realData.deepDiveAnswers[qId]?.answer;
-    const realIdx = q.options.findIndex((o) => o.value === realAnswer);
-    // Pick an adjacent answer for variety
+    const realAnswers = realData.deepDiveAnswers[qId]?.answers || [];
+    const realIdx = realAnswers.length > 0 ? q.options.findIndex((o) => o.value === realAnswers[0]) : 0;
     const demoIdx = realIdx <= 0 ? Math.min(1, q.options.length - 1) : realIdx - 1;
-    demoDD[qId] = { answer: q.options[demoIdx].value, importance: Math.max(1, Math.min(5, (realData.deepDiveAnswers[qId]?.importance || 3) + (Math.random() > 0.5 ? 1 : -1))) };
+    demoDD[qId] = { answers: [q.options[demoIdx].value], importance: Math.max(1, Math.min(5, (realData.deepDiveAnswers[qId]?.importance || 3) + (Math.random() > 0.5 ? 1 : -1))) };
   });
   return { name: "Alex", valuesAnswers: demoVal, deepDiveAnswers: demoDD, questionIds: [...realData.questionIds] };
 }
@@ -448,172 +454,187 @@ function OptionCard({ option, selected, onClick }: { option: Option; selected: b
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-200 ${
-        selected ? "border-teal-600 bg-teal-50 shadow-sm" : "border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm"
+      className={`w-full text-left px-5 py-4 rounded-lg border-2 transition-all ${
+        selected
+          ? "border-teal-600 bg-teal-50"
+          : "border-stone-200 bg-white hover:border-stone-300"
       }`}
     >
-      <div className={`font-semibold text-base ${selected ? "text-teal-800" : "text-stone-800"}`}>{option.label}</div>
-      <div className={`text-sm mt-1 ${selected ? "text-teal-600" : "text-stone-500"}`}>{option.desc}</div>
+      <div className="flex items-start gap-3">
+        <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+          selected ? "border-teal-600 bg-teal-600" : "border-stone-300 bg-white"
+        }`} />
+        <div className="flex-1">
+          <div className="font-medium text-stone-900">{option.label}</div>
+          <div className="text-sm text-stone-500 mt-0.5">{option.desc}</div>
+        </div>
+      </div>
     </button>
   );
 }
 
 function ImportanceRating({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
-  const labels = ["", "Not very", "Slightly", "Moderately", "Very", "Extremely"];
   return (
-    <div className="mt-6 pt-6 border-t border-stone-100 animate-fadeIn">
-      <p className="text-sm font-medium text-stone-600 mb-3">How important is this topic to you?</p>
-      <div className="flex items-center gap-3">
+    <div className="w-full max-w-md mx-auto">
+      <p className="text-sm font-medium text-stone-700 mb-4">How important is this to you?</p>
+      <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}
             onClick={() => onChange(n)}
-            className={`w-10 h-10 rounded-full text-sm font-semibold transition-all duration-200 ${
-              value === n ? "bg-teal-600 text-white scale-110 shadow-md" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+            className={`flex-1 py-2 px-2 rounded border-2 font-medium text-sm transition-all ${
+              value === n
+                ? "border-teal-600 bg-teal-600 text-white"
+                : "border-stone-200 text-stone-600 hover:border-stone-300"
             }`}
           >
             {n}
           </button>
         ))}
       </div>
-      <div className="flex justify-between mt-1 px-1">
-        <span className="text-xs text-stone-400">Not very</span>
-        <span className="text-xs text-stone-400">Extremely</span>
-      </div>
     </div>
   );
 }
 
-/* ================================================================
-   PHASE COMPONENTS
-   ================================================================ */
-
 function Landing({ onStart }: { onStart: () => void }) {
-  const phrases = [
-    "assume we agree.",
-    "walk into a lawyer's office.",
-    "let the state decide for us.",
-    "sign anything.",
-  ];
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [fade, setFade] = useState(true);
+  const phrases = ["assume we agree", "walk into a lawyer's office", "let the state decide for us", "sign anything"];
+  const [phraseIdx, setPhraseIdx] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setPhraseIndex((i) => (i + 1) % phrases.length);
-        setFade(true);
-      }, 3000);
-    }, 3200);
-    return () => clearInterval(interval);
+    const timer = setInterval(() => setPhraseIdx((p) => (p + 1) % phrases.length), 3500);
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-stone-50">
-      <div className="max-w-2xl w-full text-center">
-        {/* "before we..." with cycling phrase inline */}
-        <h1 className="text-5xl md:text-7xl font-serif font-bold text-stone-800 tracking-tight leading-tight">
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col items-center justify-between px-4">
+      <Nav />
+      <div className="flex-1 flex flex-col items-center justify-center max-w-2xl">
+        <h1 className="text-5xl md:text-6xl font-serif text-stone-900 text-center leading-tight mb-3">
           before we<span className="text-teal-700">…</span>
         </h1>
-        <p
-          className={`text-3xl md:text-5xl font-serif font-normal text-teal-700 mt-4 transition-all duration-500 ${
-            fade ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-          }`}
-          style={{ minHeight: "3.5rem" }}
-        >
-          {phrases[phraseIndex]}
-        </p>
-
-        {/* CTA as tagline + button in one */}
+        <div className="h-24 flex items-center justify-center">
+          <p className="text-2xl md:text-3xl text-stone-600 text-center italic min-h-16 fade-in">
+            <span key={phraseIdx} className="inline-block">
+              {phrases[phraseIdx]}
+            </span>
+          </p>
+        </div>
         <button
           onClick={onStart}
-          className="mt-16 px-10 py-4 bg-teal-700 text-white rounded-full font-medium text-lg hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/20 hover:shadow-xl hover:shadow-teal-700/30 hover:scale-105"
+          className="mt-8 px-8 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
         >
           Let's get on the same page
         </button>
-
-        {/* Footer note */}
-        <p className="mt-14 text-sm text-stone-400 max-w-md mx-auto leading-relaxed">
-          A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
-        </p>
       </div>
+      <footer className="text-center pb-8 text-stone-500 text-sm max-w-lg">
+        A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
+      </footer>
     </div>
   );
 }
 
 function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string) => void; partnerLabel: string }) {
   const [name, setName] = useState("");
+  const handleSubmit = () => {
+    if (name.trim()) onSubmit(name.trim());
+  };
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
-      <div className="max-w-md w-full text-center">
-        <p className="text-sm uppercase tracking-wide text-teal-700 font-medium mb-3">{partnerLabel}</p>
-        <h2 className="text-3xl font-serif text-stone-800 mb-2">First, what's your name?</h2>
-        <p className="text-stone-500 mb-8">Just a first name is fine. This keeps things personal.</p>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && name.trim() && onSubmit(name.trim())}
-          placeholder="Your first name"
-          className="w-full max-w-xs mx-auto block text-center text-xl py-3 border-b-2 border-stone-300 bg-transparent focus:border-teal-600 focus:outline-none text-stone-800 placeholder-stone-300"
-          autoFocus
-        />
-        <button
-          onClick={() => name.trim() && onSubmit(name.trim())}
-          disabled={!name.trim()}
-          className="mt-8 px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          Continue
-        </button>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-xl">
+          <h2 className="text-3xl font-serif text-stone-900 mb-2">{partnerLabel}, what's your name?</h2>
+          <p className="text-stone-600 mb-8">We'll use this to personalize your results.</p>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            placeholder="First name is fine"
+            className="w-full px-4 py-3 border-2 border-stone-200 rounded-lg mb-4 focus:outline-none focus:border-teal-600"
+            autoFocus
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={!name.trim()}
+            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 function ValuesPhase({
-  name, answers, currentIndex, onAnswer, onBack,
+  questionIdx,
+  onSelectOption,
+  selectedOptions,
+  onContinue,
 }: {
-  name: string; answers: Record<string, string>; currentIndex: number; onAnswer: (qId: string, value: string) => void; onBack: () => void;
+  questionIdx: number;
+  onSelectOption: (qId: string, value: string) => void;
+  selectedOptions: Record<string, string[]>;
+  onContinue: () => void;
 }) {
-  const q = VALUES_QUESTIONS[currentIndex];
-  if (!q) return null;
+  const q = VALUES_QUESTIONS[questionIdx];
+  const selected = selectedOptions[q.id] || [];
+  const hasSelection = selected.length > 0;
+
   return (
-    <div className="min-h-[70vh] flex flex-col items-center pt-8 px-6">
-      <ProgressBar current={currentIndex} total={VALUES_QUESTIONS.length} sectionLabel={q.sectionLabel} />
-      <div className="max-w-xl w-full">
-        <p className="text-sm text-teal-600 mb-4 font-medium">{q.sectionIntro}</p>
-        <h2 className="text-2xl font-serif text-stone-800 mb-8 leading-snug">{q.question}</h2>
-        <div className="space-y-3">
-          {q.options.map((opt) => (
-            <OptionCard key={opt.value} option={opt} selected={answers[q.id] === opt.value} onClick={() => onAnswer(q.id, opt.value)} />
-          ))}
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <ProgressBar current={questionIdx} total={VALUES_QUESTIONS.length} sectionLabel={q.sectionLabel} />
+        <div className="w-full max-w-xl mx-auto">
+          <p className="text-sm font-medium text-teal-700 uppercase tracking-wide mb-2">{q.sectionLabel}</p>
+          <p className="text-stone-600 text-sm mb-6">{q.sectionIntro}</p>
+          <h2 className="text-2xl font-serif text-stone-900 mb-8">{q.question}</h2>
+          <div className="space-y-3 mb-8">
+            {q.options.map((opt) => (
+              <OptionCard
+                key={opt.value}
+                option={opt}
+                selected={selected.includes(opt.value)}
+                onClick={() => {
+                  const newSelected = selected.includes(opt.value)
+                    ? selected.filter((v) => v !== opt.value)
+                    : [...selected, opt.value];
+                  onSelectOption(q.id, newSelected.join(","));
+                }}
+              />
+            ))}
+          </div>
+          {hasSelection && (
+            <button
+              onClick={onContinue}
+              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            >
+              Continue
+            </button>
+          )}
         </div>
-        {currentIndex > 0 && (
-          <button onClick={onBack} className="mt-6 text-sm text-stone-400 hover:text-stone-600 transition-colors">&larr; Back</button>
-        )}
       </div>
     </div>
   );
 }
 
 function ValuesSummary({ name, answers, onContinue }: { name: string; answers: Record<string, string>; onContinue: () => void }) {
-  const insight = generateInsight(answers);
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
-      <div className="max-w-lg text-center">
-        <div className="w-14 h-14 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
-          <span className="text-2xl">&#10003;</span>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-2xl font-serif text-stone-900 mb-4">{name}, here's what we learned:</h2>
+          <p className="text-stone-600 mb-6">{generateInsight(answers)}</p>
+          <button
+            onClick={onContinue}
+            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+          >
+            Let's dig deeper
+          </button>
         </div>
-        <h2 className="text-2xl font-serif text-stone-800 mb-2">Great start, {name}.</h2>
-        <p className="text-stone-500 mb-8">Here's what we're picking up so far:</p>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 text-left">
-          <p className="text-stone-700 leading-relaxed text-base">{insight}</p>
-        </div>
-        <p className="mt-8 text-stone-500 text-sm">Now we'll dig into the specific topics that matter most based on what you've shared. Just 6 more questions.</p>
-        <button onClick={onContinue} className="mt-6 px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-          Let's go deeper
-        </button>
       </div>
     </div>
   );
@@ -621,103 +642,130 @@ function ValuesSummary({ name, answers, onContinue }: { name: string; answers: R
 
 function DeepDiveIntro({ name, topics, onContinue }: { name: string; topics: string[]; onContinue: () => void }) {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
-      <div className="max-w-lg text-center">
-        <h2 className="text-2xl font-serif text-stone-800 mb-2">Tailored for you, {name}.</h2>
-        <p className="text-stone-500 mb-8">Based on your answers, these are the topics we think matter most for your situation:</p>
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {topics.map((t) => (
-            <span key={t} className="px-4 py-1.5 bg-teal-50 text-teal-700 rounded-full text-sm font-medium border border-teal-100">{t}</span>
-          ))}
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-2xl font-serif text-stone-900 mb-4">{name}, based on your answers, we're focusing on 6 topics:</h2>
+          <ul className="space-y-2 mb-8 text-stone-700">
+            {topics.map((t) => (
+              <li key={t} className="flex gap-3">
+                <span className="text-teal-600">•</span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={onContinue}
+            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+          >
+            Start the deep dive
+          </button>
         </div>
-        <p className="text-stone-500 text-sm mb-6">For each one, pick the option that feels right and tell us how important it is to you.</p>
-        <button onClick={onContinue} className="px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-          Ready
-        </button>
       </div>
     </div>
   );
 }
 
 function DeepDivePhase({
-  questionIds, answers, currentIndex, tempAnswer, tempImportance,
-  onSelectAnswer, onSelectImportance, onBack,
+  questionIdx,
+  questions,
+  onSelectOption,
+  selectedOptions,
+  onSetImportance,
+  importance,
 }: {
-  questionIds: string[]; answers: Record<string, { answer: string; importance: number }>; currentIndex: number;
-  tempAnswer: string | null; tempImportance: number | null;
-  onSelectAnswer: (value: string) => void; onSelectImportance: (n: number) => void; onBack: () => void;
+  questionIdx: number;
+  questions: string[];
+  onSelectOption: (qId: string, value: string) => void;
+  selectedOptions: Record<string, string[]>;
+  onSetImportance: (qId: string, value: number) => void;
+  importance: Record<string, number>;
 }) {
-  const qId = questionIds[currentIndex];
-  const q = DEEP_DIVE_POOL.find((x) => x.id === qId);
-  if (!q) return null;
+  const qId = questions[questionIdx];
+  const q = DEEP_DIVE_POOL.find((x) => x.id === qId)!;
+  const selected = selectedOptions[qId] || [];
+  const hasSelection = selected.length > 0;
+  const importanceSet = importance[qId] !== undefined;
+
   return (
-    <div className="min-h-[70vh] flex flex-col items-center pt-8 px-6">
-      <ProgressBar current={currentIndex} total={questionIds.length} sectionLabel={q.topic} />
-      <div className="max-w-xl w-full">
-        <h2 className="text-2xl font-serif text-stone-800 mb-8 leading-snug">{q.question}</h2>
-        <div className="space-y-3">
-          {q.options.map((opt) => (
-            <OptionCard key={opt.value} option={opt} selected={tempAnswer === opt.value} onClick={() => onSelectAnswer(opt.value)} />
-          ))}
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <ProgressBar current={questionIdx} total={questions.length} sectionLabel={q.topic} />
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-2xl font-serif text-stone-900 mb-8">{q.question}</h2>
+          <div className="space-y-3 mb-8">
+            {q.options.map((opt) => (
+              <OptionCard
+                key={opt.value}
+                option={opt}
+                selected={selected.includes(opt.value)}
+                onClick={() => {
+                  if (hasSelection && !importanceSet) return;
+                  const newSelected = selected.includes(opt.value)
+                    ? selected.filter((v) => v !== opt.value)
+                    : [...selected, opt.value];
+                  onSelectOption(qId, newSelected.join(","));
+                }}
+              />
+            ))}
+          </div>
+          {hasSelection && !importanceSet && (
+            <div className="mb-8">
+              <ImportanceRating
+                value={importance[qId] || null}
+                onChange={(n) => onSetImportance(qId, n)}
+              />
+            </div>
+          )}
+          {hasSelection && importanceSet && (
+            <button
+              onClick={() => {
+                if (questionIdx < questions.length - 1) {
+                  // Reset for next question
+                  onSelectOption(questions[questionIdx + 1], "");
+                  onSetImportance(questions[questionIdx + 1], 0);
+                }
+              }}
+              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            >
+              {questionIdx < questions.length - 1 ? "Next" : "Continue"}
+            </button>
+          )}
         </div>
-        {tempAnswer && (
-          <ImportanceRating value={tempImportance} onChange={onSelectImportance} />
-        )}
-        {currentIndex > 0 && !tempAnswer && (
-          <button onClick={onBack} className="mt-6 text-sm text-stone-400 hover:text-stone-600 transition-colors">&larr; Back</button>
-        )}
       </div>
     </div>
   );
 }
 
 function ProfileSummary({
-  name, valuesAnswers, deepDiveAnswers, questionIds, onContinue,
+  name,
+  valuesAnswers,
+  deepDiveAnswers,
+  questionIds,
+  onContinue,
 }: {
-  name: string; valuesAnswers: Record<string, string>; deepDiveAnswers: Record<string, { answer: string; importance: number }>; questionIds: string[]; onContinue: () => void;
+  name: string;
+  valuesAnswers: Record<string, string>;
+  deepDiveAnswers: Record<string, { answers: string[]; importance: number }>;
+  questionIds: string[];
+  onContinue: () => void;
 }) {
-  const insight = generateInsight(valuesAnswers);
   return (
-    <div className="min-h-[70vh] flex flex-col items-center pt-12 px-6 pb-16">
-      <div className="max-w-lg w-full">
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl text-emerald-600">&#10003;</span>
-          </div>
-          <h2 className="text-2xl font-serif text-stone-800">All done, {name}!</h2>
-          <p className="text-stone-500 mt-2">Here's your Before We profile.</p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-6">
-          <h3 className="font-semibold text-stone-700 mb-3">Your Money DNA</h3>
-          <p className="text-stone-600 text-sm leading-relaxed">{insight}</p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-          <h3 className="font-semibold text-stone-700 mb-4">Your Key Positions</h3>
-          <div className="space-y-3">
-            {questionIds.map((qId) => {
-              const q = DEEP_DIVE_POOL.find((x) => x.id === qId)!;
-              const a = deepDiveAnswers[qId];
-              if (!a) return null;
-              const opt = q.options.find((o) => o.value === a.answer);
-              return (
-                <div key={qId} className="flex items-start justify-between gap-3 py-2 border-b border-stone-50 last:border-0">
-                  <div>
-                    <div className="text-sm font-medium text-stone-700">{q.topic}</div>
-                    <div className="text-sm text-stone-500">{opt?.label} &mdash; {opt?.desc}</div>
-                  </div>
-                  <div className="flex items-center gap-0.5 shrink-0">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <div key={n} className={`w-2 h-2 rounded-full ${n <= a.importance ? "bg-teal-500" : "bg-stone-200"}`} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div className="text-center mt-8">
-          <button onClick={onContinue} className="px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-            Continue
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-2xl font-serif text-stone-900 mb-4">Your profile is complete, {name}.</h2>
+          <p className="text-stone-600 mb-8">
+            We've got your values, your priorities, and your thoughts on the big questions. Now we need to see what your partner thinks — and where you align.
+          </p>
+          <button
+            onClick={onContinue}
+            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+          >
+            Add my partner
           </button>
         </div>
       </div>
@@ -727,157 +775,190 @@ function ProfileSummary({
 
 function PartnerGate({ name, onPartnerStart, onDemo }: { name: string; onPartnerStart: () => void; onDemo: () => void }) {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
-      <div className="max-w-lg text-center">
-        <h2 className="text-2xl font-serif text-stone-800 mb-2">Nice work, {name}.</h2>
-        <p className="text-stone-500 mb-8">Now it's your partner's turn. When they're done, we'll show you both where you stand.</p>
-        <div className="space-y-3 max-w-sm mx-auto">
-          <button onClick={onPartnerStart} className="w-full py-3.5 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-            Hand it to my partner
-          </button>
-          <button onClick={onDemo} className="w-full py-3.5 bg-white text-stone-600 rounded-full font-medium border border-stone-200 hover:border-stone-300 transition-colors">
-            Show me a demo comparison
-          </button>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8">
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-2xl font-serif text-stone-900 mb-4">Next step: Compare with your partner</h2>
+          <p className="text-stone-600 mb-8">
+            {name}, you've answered all the questions. Now your partner needs to do the same. You can send them a link or enter their answers yourself. Or, try a demo to see how the comparison works.
+          </p>
+          <div className="space-y-3">
+            <button
+              onClick={onPartnerStart}
+              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            >
+              Get my partner's answers
+            </button>
+            <button
+              onClick={onDemo}
+              className="w-full px-6 py-3 bg-stone-200 text-stone-900 rounded-lg font-medium hover:bg-stone-300 transition-colors"
+            >
+              See a demo comparison
+            </button>
+          </div>
         </div>
-        <p className="mt-6 text-xs text-stone-400">The demo uses sample data so you can preview the comparison experience.</p>
       </div>
     </div>
   );
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    aligned: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    conversation: "bg-amber-50 text-amber-700 border-amber-200",
-    attorney: "bg-rose-50 text-rose-700 border-rose-200",
+  const colors: Record<string, string> = {
+    aligned: "bg-emerald-100 text-emerald-800",
+    conversation: "bg-blue-100 text-blue-800",
+    attorney: "bg-amber-100 text-amber-800",
   };
-  const labels = { aligned: "On the same page", conversation: "Worth a conversation", attorney: "Bring to your attorney" };
-  return <span className={`px-3 py-1 rounded-full text-xs font-medium border ${styles[status as keyof typeof styles] || ""}`}>{labels[status as keyof typeof labels]}</span>;
+  const labels: Record<string, string> = {
+    aligned: "You align",
+    conversation: "Worth discussing",
+    attorney: "Discuss with attorney",
+  };
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-medium ${colors[status] || ""}`}>
+      {labels[status] || status}
+    </span>
+  );
 }
 
 function Comparison({
-  partnerA, partnerB, onDealMemo,
+  partnerA,
+  partnerB,
+  onContinue,
 }: {
-  partnerA: PartnerData; partnerB: PartnerData; onDealMemo: () => void;
+  partnerA: PartnerData;
+  partnerB: PartnerData;
+  onContinue: () => void;
 }) {
-  const result = comparePartners(partnerA, partnerB);
+  const comp = comparePartners(partnerA, partnerB);
 
   return (
-    <div className="min-h-screen flex flex-col items-center pt-12 px-6 pb-16">
-      <div className="max-w-2xl w-full">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-serif text-stone-800">{partnerA.name} & {partnerB.name}</h2>
-          <p className="text-stone-500 mt-2">Here's where you two stand.</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8 overflow-y-auto">
+        <div className="w-full max-w-2xl mx-auto">
+          <h2 className="text-3xl font-serif text-stone-900 mb-2">{partnerA.name} & {partnerB.name}</h2>
+          <p className="text-stone-600 mb-8">Here's where you stand, together.</p>
 
-        {/* Values Overview */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-6">
-          <h3 className="font-semibold text-stone-700 mb-4">Your Values at a Glance</h3>
-          <div className="space-y-3">
-            {result.values.map((v, i) => (
-              <div key={i} className="flex items-center justify-between py-2 border-b border-stone-50 last:border-0">
-                <span className="text-sm text-stone-500 w-36 shrink-0">{v.question}</span>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className={`font-medium ${v.match ? "text-emerald-600" : "text-stone-700"}`}>{v.aLabel}</span>
-                  {v.match ? (
-                    <span className="text-emerald-500 text-xs">= match</span>
-                  ) : (
-                    <>
-                      <span className="text-stone-300">vs</span>
-                      <span className="font-medium text-stone-700">{v.bLabel}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Already Aligned */}
-        {result.aligned.length > 0 && (
-          <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 mb-6">
-            <h3 className="font-semibold text-emerald-800 mb-1">Already on the Same Page</h3>
-            <p className="text-sm text-emerald-600 mb-4">Good news — you two are aligned here.</p>
-            <div className="space-y-3">
-              {result.aligned.map((item) => (
-                <div key={item.questionId} className="bg-white rounded-xl p-4 border border-emerald-100">
-                  <div className="font-medium text-stone-700 text-sm">{item.topic}</div>
-                  <div className="text-sm text-stone-500 mt-1">
-                    {item.aLabel === item.bLabel
-                      ? <>You both said: <span className="text-emerald-700 font-medium">{item.aLabel}</span></>
-                      : <>{partnerA.name}: {item.aLabel} &bull; {partnerB.name}: {item.bLabel} &mdash; <span className="text-emerald-600">closely aligned</span></>
-                    }
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Worth a Conversation */}
-        {result.conversation.length > 0 && (
-          <div className="bg-amber-50/50 rounded-2xl p-6 border border-amber-100 mb-6">
-            <h3 className="font-semibold text-amber-800 mb-1">Worth a Conversation</h3>
-            <p className="text-sm text-amber-600 mb-4">You're in the same neighborhood — a little conversation can close the gap.</p>
-            <div className="space-y-3">
-              {result.conversation.map((item) => (
-                <div key={item.questionId} className="bg-white rounded-xl p-4 border border-amber-100">
-                  <div className="font-medium text-stone-700 text-sm">{item.topic}</div>
-                  <div className="text-sm text-stone-500 mt-1">
-                    {partnerA.name}: <span className="font-medium">{item.aLabel}</span> &bull; {partnerB.name}: <span className="font-medium">{item.bLabel}</span>
-                  </div>
-                  {(item.aImportance >= 4 || item.bImportance >= 4) && (
-                    <div className="text-xs text-amber-600 mt-2">
-                      {item.aImportance >= 4 && item.bImportance >= 4 ? "This is important to both of you." : item.aImportance >= 4 ? `This is especially important to ${partnerA.name}.` : `This is especially important to ${partnerB.name}.`}
+          {/* Values Comparison */}
+          <div className="mb-12">
+            <h3 className="text-xl font-serif text-stone-900 mb-6">Values Alignment</h3>
+            <div className="space-y-4">
+              {comp.values.map((v) => (
+                <div key={v.question} className="border border-stone-200 rounded-lg p-4">
+                  <p className="font-medium text-stone-900 mb-3">{v.question}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className={`p-3 rounded ${v.match ? "bg-emerald-50" : "bg-stone-50"}`}>
+                      <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
+                      <p className="text-sm font-medium text-stone-900">{v.aLabel}</p>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Bring to Your Attorney */}
-        {result.attorney.length > 0 && (
-          <div className="bg-rose-50/50 rounded-2xl p-6 border border-rose-100 mb-6">
-            <h3 className="font-semibold text-rose-800 mb-1">Bring to Your Attorney</h3>
-            <p className="text-sm text-rose-600 mb-4">You see these differently — and that's okay. These are great topics to explore with a professional.</p>
-            <div className="space-y-3">
-              {result.attorney.map((item) => (
-                <div key={item.questionId} className="bg-white rounded-xl p-4 border border-rose-100">
-                  <div className="font-medium text-stone-700 text-sm">{item.topic}</div>
-                  <div className="text-sm text-stone-500 mt-1">
-                    {partnerA.name}: <span className="font-medium">{item.aLabel}</span> &bull; {partnerB.name}: <span className="font-medium">{item.bLabel}</span>
+                    <div className={`p-3 rounded ${v.match ? "bg-emerald-50" : "bg-stone-50"}`}>
+                      <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
+                      <p className="text-sm font-medium text-stone-900">{v.bLabel}</p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        )}
 
-        {/* Unique Priorities */}
-        {(result.aOnlyTopics.length > 0 || result.bOnlyTopics.length > 0) && (
-          <div className="bg-stone-50 rounded-2xl p-6 border border-stone-200 mb-6">
-            <h3 className="font-semibold text-stone-700 mb-3">Individual Priorities</h3>
-            <p className="text-sm text-stone-500 mb-4">Based on your profiles, the tool flagged different topics for each of you. These reflect what matters to each person individually.</p>
-            {result.aOnlyTopics.length > 0 && (
-              <div className="mb-3">
-                <span className="text-sm font-medium text-stone-600">{partnerA.name}:</span>{" "}
-                <span className="text-sm text-stone-500">{result.aOnlyTopics.join(", ")}</span>
+          {/* Aligned Items */}
+          {comp.aligned.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+                <StatusBadge status="aligned" />
+                You align on these
+              </h3>
+              <div className="space-y-4">
+                {comp.aligned.map((item) => (
+                  <div key={item.questionId} className="border border-emerald-200 bg-emerald-50 rounded-lg p-4">
+                    <p className="font-medium text-stone-900 mb-2">{item.topic}</p>
+                    <p className="text-sm text-stone-600 mb-3">{item.aLabels.join(", ")} — Both</p>
+                    <p className="text-xs text-stone-500">Importance: {partnerA.name} ({item.aImportance}), {partnerB.name} ({item.bImportance})</p>
+                  </div>
+                ))}
               </div>
-            )}
-            {result.bOnlyTopics.length > 0 && (
-              <div>
-                <span className="text-sm font-medium text-stone-600">{partnerB.name}:</span>{" "}
-                <span className="text-sm text-stone-500">{result.bOnlyTopics.join(", ")}</span>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-        <div className="text-center mt-8">
-          <button onClick={onDealMemo} className="px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-            Generate your deal memo
+          {/* Conversation Items */}
+          {comp.conversation.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+                <StatusBadge status="conversation" />
+                Worth discussing
+              </h3>
+              <div className="space-y-4">
+                {comp.conversation.map((item) => (
+                  <div key={item.questionId} className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+                    <p className="font-medium text-stone-900 mb-3">{item.topic}</p>
+                    <div className="grid grid-cols-2 gap-4 mb-2">
+                      <div>
+                        <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
+                        <p className="text-sm font-medium text-stone-900">{item.aLabels.join(", ")}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
+                        <p className="text-sm font-medium text-stone-900">{item.bLabels.join(", ")}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-stone-500">Distance: {item.distance}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Attorney Items */}
+          {comp.attorney.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+                <StatusBadge status="attorney" />
+                Discuss with an attorney
+              </h3>
+              <div className="space-y-4">
+                {comp.attorney.map((item) => (
+                  <div key={item.questionId} className="border border-amber-200 bg-amber-50 rounded-lg p-4">
+                    <p className="font-medium text-stone-900 mb-3">{item.topic}</p>
+                    <div className="grid grid-cols-2 gap-4 mb-2">
+                      <div>
+                        <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
+                        <p className="text-sm font-medium text-stone-900">{item.aLabels.join(", ")}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
+                        <p className="text-sm font-medium text-stone-900">{item.bLabels.join(", ")}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-stone-500">Distance: {item.distance}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Topics answered by only one person */}
+          {(comp.aOnlyTopics.length > 0 || comp.bOnlyTopics.length > 0) && (
+            <div className="mb-12">
+              <h3 className="text-lg font-serif text-stone-900 mb-4">Topics answered by only one person</h3>
+              {comp.aOnlyTopics.length > 0 && (
+                <p className="text-sm text-stone-600 mb-4">
+                  <span className="font-medium">{partnerA.name}</span> answered about: {comp.aOnlyTopics.join(", ")}
+                </p>
+              )}
+              {comp.bOnlyTopics.length > 0 && (
+                <p className="text-sm text-stone-600">
+                  <span className="font-medium">{partnerB.name}</span> answered about: {comp.bOnlyTopics.join(", ")}
+                </p>
+              )}
+            </div>
+          )}
+
+          <button
+            onClick={onContinue}
+            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+          >
+            Create your deal memo
           </button>
         </div>
       </div>
@@ -885,101 +966,174 @@ function Comparison({
   );
 }
 
-function DealMemo({ partnerA, partnerB, onBack }: { partnerA: PartnerData; partnerB: PartnerData; onBack: () => void }) {
-  const result = comparePartners(partnerA, partnerB);
-  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+function DealMemo({
+  partnerA,
+  partnerB,
+  onBack,
+}: {
+  partnerA: PartnerData;
+  partnerB: PartnerData;
+  onBack: () => void;
+}) {
+  const comp = comparePartners(partnerA, partnerB);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<null | "success" | "error">(null);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSend = async () => {
+    if (!email.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/send-memo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          partnerAName: partnerA.name,
+          partnerBName: partnerB.name,
+          comparisonData: {
+            aligned: comp.aligned.map((item) => ({
+              topic: item.topic,
+              aAnswer: item.aLabels.join(", "),
+              bAnswer: item.bLabels.join(", "),
+            })),
+            conversation: comp.conversation.map((item) => ({
+              topic: item.topic,
+              aAnswer: item.aLabels.join(", "),
+              bAnswer: item.bLabels.join(", "),
+            })),
+            attorney: comp.attorney.map((item) => ({
+              topic: item.topic,
+              aAnswer: item.aLabels.join(", "),
+              bAnswer: item.bLabels.join(", "),
+            })),
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+        setErrorMsg(data.error || "Failed to send");
+      }
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg("Network error");
+    }
+    setLoading(false);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center pt-12 px-6 pb-16">
-      <div className="max-w-2xl w-full">
-        <div className="text-center mb-4">
-          <button onClick={onBack} className="text-sm text-stone-400 hover:text-stone-600 transition-colors">&larr; Back to comparison</button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col px-4 py-8 overflow-y-auto">
+        <div className="w-full max-w-2xl mx-auto">
+          <h2 className="text-3xl font-serif text-stone-900 mb-8">Your Before We Alignment Summary</h2>
 
-        {/* Printable Memo */}
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 print:shadow-none print:border-none" id="deal-memo">
-          <div className="text-center border-b border-stone-200 pb-6 mb-6">
-            <div className="text-xl font-serif font-semibold text-stone-800">before we<span className="text-teal-700">.</span></div>
-            <h2 className="text-2xl font-serif text-stone-800 mt-3">Alignment Summary</h2>
-            <p className="text-stone-500 text-sm mt-1">Prepared for {partnerA.name} & {partnerB.name} &bull; {today}</p>
-          </div>
-
-          {/* Section 1: What you agree on */}
-          {result.aligned.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-lg font-serif font-semibold text-stone-800 mb-3">What You Agree On</h3>
-              {result.aligned.map((item) => (
-                <div key={item.questionId} className="py-2 border-b border-stone-50">
-                  <span className="font-medium text-stone-700">{item.topic}:</span>{" "}
-                  <span className="text-stone-600">
-                    {item.aLabel === item.bLabel ? `Both chose "${item.aLabel}"` : `${partnerA.name} chose "${item.aLabel}", ${partnerB.name} chose "${item.bLabel}" — closely aligned`}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Section 2: Discussion points */}
-          {result.conversation.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-lg font-serif font-semibold text-stone-800 mb-3">Discussion Points</h3>
-              <p className="text-sm text-stone-500 mb-3">These topics are close but could benefit from a conversation.</p>
-              {result.conversation.map((item) => (
-                <div key={item.questionId} className="py-3 border-b border-stone-50">
-                  <div><span className="font-medium text-stone-700">{item.topic}</span></div>
-                  <div className="text-sm text-stone-600 mt-1">
-                    {partnerA.name}: &ldquo;{item.aLabel}&rdquo; &bull; {partnerB.name}: &ldquo;{item.bLabel}&rdquo;
-                  </div>
-                  {(item.aImportance >= 4 || item.bImportance >= 4) && (
-                    <div className="text-xs text-amber-600 mt-1 italic">
-                      {item.aImportance >= 4 && item.bImportance >= 4 ? "High importance to both partners." : item.aImportance >= 4 ? `High importance to ${partnerA.name}.` : `High importance to ${partnerB.name}.`}
+          {/* What You Agree On */}
+          {comp.aligned.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-xl font-serif text-stone-900 mb-4">What You Agree On</h3>
+              <ul className="space-y-3">
+                {comp.aligned.map((item) => (
+                  <li key={item.questionId} className="flex gap-3 text-stone-700">
+                    <span className="text-teal-600 font-bold">✓</span>
+                    <div>
+                      <p className="font-medium">{item.topic}</p>
+                      <p className="text-sm text-stone-500">{item.aLabels.join(", ")}</p>
                     </div>
-                  )}
-                </div>
-              ))}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
-          {/* Section 3: For your attorney */}
-          {result.attorney.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-lg font-serif font-semibold text-stone-800 mb-3">Questions for Your Attorney</h3>
-              <p className="text-sm text-stone-500 mb-3">These are areas where you see things differently. A family law attorney can help you navigate these.</p>
-              {result.attorney.map((item) => (
-                <div key={item.questionId} className="py-3 border-b border-stone-50">
-                  <div><span className="font-medium text-stone-700">{item.topic}</span></div>
-                  <div className="text-sm text-stone-600 mt-1">
-                    {partnerA.name}: &ldquo;{item.aLabel}&rdquo; &bull; {partnerB.name}: &ldquo;{item.bLabel}&rdquo;
-                  </div>
-                </div>
-              ))}
+          {/* Discussion Points */}
+          {comp.conversation.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-xl font-serif text-stone-900 mb-4">Discussion Points</h3>
+              <ul className="space-y-3">
+                {comp.conversation.map((item) => (
+                  <li key={item.questionId} className="flex gap-3 text-stone-700">
+                    <span className="text-blue-600 font-bold">•</span>
+                    <div>
+                      <p className="font-medium">{item.topic}</p>
+                      <p className="text-sm text-stone-500">{partnerA.name}: {item.aLabels.join(", ")}</p>
+                      <p className="text-sm text-stone-500">{partnerB.name}: {item.bLabels.join(", ")}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
-          {/* Section 4: Next steps */}
-          <div className="border-t border-stone-200 pt-6">
-            <h3 className="text-lg font-serif font-semibold text-stone-800 mb-3">Recommended Next Steps</h3>
-            <div className="space-y-2 text-sm text-stone-600">
-              <p><span className="font-semibold text-stone-700">1.</span> Review this summary together. Talk through the discussion points at your own pace.</p>
-              <p><span className="font-semibold text-stone-700">2.</span> Take this document to a family law attorney. It gives them a clear starting point for your prenup conversation.</p>
-              <p><span className="font-semibold text-stone-700">3.</span> Remember: this is a living conversation. Come back and retake it as your life evolves.</p>
+          {/* Questions for Attorney */}
+          {comp.attorney.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-xl font-serif text-stone-900 mb-4">Questions for Your Attorney</h3>
+              <ul className="space-y-3">
+                {comp.attorney.map((item) => (
+                  <li key={item.questionId} className="flex gap-3 text-stone-700">
+                    <span className="text-amber-600 font-bold">⚠</span>
+                    <div>
+                      <p className="font-medium">{item.topic}</p>
+                      <p className="text-sm text-stone-500">{partnerA.name}: {item.aLabels.join(", ")}</p>
+                      <p className="text-sm text-stone-500">{partnerB.name}: {item.bLabels.join(", ")}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Next Steps */}
+          <div className="mb-10 p-4 border border-stone-200 rounded-lg bg-white">
+            <h3 className="text-lg font-serif text-stone-900 mb-3">Next Steps</h3>
+            <ol className="space-y-2 text-sm text-stone-700">
+              <li>1. Review this summary together</li>
+              <li>2. Have the harder conversations</li>
+              <li>3. Meet with an attorney to draft your agreement</li>
+            </ol>
+          </div>
+
+          {/* Email Section */}
+          <div className="border-t border-stone-200 pt-8 mb-8">
+            <h3 className="text-lg font-serif text-stone-900 mb-4">Send this to your inbox</h3>
+            {status === "success" && (
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg mb-4">
+                <p className="text-sm text-emerald-800">Email sent successfully!</p>
+              </div>
+            )}
+            {status === "error" && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
+                <p className="text-sm text-red-800">{errorMsg}</p>
+              </div>
+            )}
+            <div className="flex gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 border-2 border-stone-200 rounded-lg focus:outline-none focus:border-teal-600"
+              />
+              <button
+                onClick={handleSend}
+                disabled={!email.trim() || loading}
+                className="px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Sending…" : "Send my deal memo"}
+              </button>
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="mt-8 pt-4 border-t border-stone-100">
-            <p className="text-xs text-stone-400 text-center">
-              This summary was generated by Before We, a couple alignment tool. It is not legal advice and does not constitute a legal agreement. Consult a licensed family law attorney in your jurisdiction for legal guidance.
-            </p>
-          </div>
-        </div>
-
-        {/* Print button */}
-        <div className="text-center mt-6 flex gap-3 justify-center">
-          <button onClick={() => window.print()} className="px-8 py-3 bg-teal-700 text-white rounded-full font-medium hover:bg-teal-800 transition-colors">
-            Print / Save as PDF
-          </button>
-          <button onClick={onBack} className="px-8 py-3 bg-white text-stone-600 rounded-full font-medium border border-stone-200 hover:border-stone-300 transition-colors">
+          <button
+            onClick={onBack}
+            className="w-full px-6 py-3 bg-stone-200 text-stone-900 rounded-lg font-medium hover:bg-stone-300 transition-colors"
+          >
             Back to comparison
           </button>
         </div>
@@ -991,159 +1145,220 @@ function DealMemo({ partnerA, partnerB, onBack }: { partnerA: PartnerData; partn
 /* ================================================================
    MAIN APP
    ================================================================ */
+
 export default function App() {
   const [phase, setPhase] = useState<Phase>("landing");
-  const [activePartner, setActivePartner] = useState<"A" | "B">("A");
-
-  // Partner data (saved)
+  const [partnerAName, setPartnerAName] = useState("");
+  const [partnerBName, setPartnerBName] = useState("");
+  const [valuesAnswers, setValuesAnswers] = useState<Record<string, string[]>>({});
+  const [deepDiveQuestions, setDeepDiveQuestions] = useState<string[]>([]);
+  const [deepDiveAnswers, setDeepDiveAnswers] = useState<Record<string, { answers: string[]; importance: number }>>({});
+  const [deepDiveIdx, setDeepDiveIdx] = useState(0);
+  const [deepDiveImportance, setDeepDiveImportance] = useState<Record<string, number>>({});
   const [partnerAData, setPartnerAData] = useState<PartnerData | null>(null);
   const [partnerBData, setPartnerBData] = useState<PartnerData | null>(null);
 
-  // Working state for current user
-  const [name, setName] = useState("");
-  const [valuesAnswers, setValuesAnswers] = useState<Record<string, string>>({});
-  const [valuesIndex, setValuesIndex] = useState(0);
-  const [deepDiveAnswers, setDeepDiveAnswers] = useState<Record<string, { answer: string; importance: number }>>({});
-  const [deepDiveIndex, setDeepDiveIndex] = useState(0);
-  const [selectedQIds, setSelectedQIds] = useState<string[]>([]);
-  const [tempAnswer, setTempAnswer] = useState<string | null>(null);
-  const [tempImportance, setTempImportance] = useState<number | null>(null);
-
-  const saveCurrentPartner = (): PartnerData => ({
-    name, valuesAnswers: { ...valuesAnswers },
-    deepDiveAnswers: { ...deepDiveAnswers },
-    questionIds: [...selectedQIds],
-  });
-
-  const resetWorkingState = () => {
-    setName(""); setValuesAnswers({}); setValuesIndex(0);
-    setDeepDiveAnswers({}); setDeepDiveIndex(0); setSelectedQIds([]);
-    setTempAnswer(null); setTempImportance(null);
-  };
-
-  // Phase handlers
-  const handleStart = () => setPhase("name-entry");
-
-  const handleNameSubmit = (n: string) => {
-    setName(n);
-    setPhase("values");
-  };
-
-  const handleValuesAnswer = (qId: string, value: string) => {
-    const updated = { ...valuesAnswers, [qId]: value };
-    setValuesAnswers(updated);
-    // Auto-advance after a short delay
-    setTimeout(() => {
-      if (valuesIndex < VALUES_QUESTIONS.length - 1) {
-        setValuesIndex(valuesIndex + 1);
-      } else {
-        setPhase("values-summary");
-      }
-    }, 300);
-  };
-
-  const handleValuesBack = () => {
-    if (valuesIndex > 0) setValuesIndex(valuesIndex - 1);
-  };
-
-  const handleValuesContinue = () => {
-    const qIds = selectDeepDiveQuestions(valuesAnswers);
-    setSelectedQIds(qIds);
-    setPhase("deep-dive-intro");
-  };
-
-  const handleDeepDiveStart = () => setPhase("deep-dive");
-
-  const handleDDSelectAnswer = (value: string) => {
-    setTempAnswer(value);
-    setTempImportance(null);
-  };
-
-  const handleDDSelectImportance = (n: number) => {
-    const qId = selectedQIds[deepDiveIndex];
-    setTempImportance(n);
-    const updated = { ...deepDiveAnswers, [qId]: { answer: tempAnswer!, importance: n } };
-    setDeepDiveAnswers(updated);
-    // Auto-advance
-    setTimeout(() => {
-      setTempAnswer(null);
-      setTempImportance(null);
-      if (deepDiveIndex < selectedQIds.length - 1) {
-        setDeepDiveIndex(deepDiveIndex + 1);
-      } else {
-        setPhase("profile-summary");
-      }
-    }, 300);
-  };
-
-  const handleDDBack = () => {
-    if (deepDiveIndex > 0) setDeepDiveIndex(deepDiveIndex - 1);
-  };
-
-  const handleProfileContinue = () => {
-    if (activePartner === "A") {
-      setPartnerAData(saveCurrentPartner());
-      setPhase("partner-gate");
-    } else {
-      setPartnerBData(saveCurrentPartner());
-      setPhase("comparison");
-    }
-  };
-
-  const handlePartnerStart = () => {
-    resetWorkingState();
-    setActivePartner("B");
+  // Phase: landing
+  const handleStartLanding = () => {
+    setValuesAnswers({});
+    setDeepDiveAnswers({});
+    setDeepDiveImportance({});
     setPhase("name-entry");
   };
 
-  const handleDemo = () => {
-    const aData = saveCurrentPartner();
-    setPartnerAData(aData);
-    setPartnerBData(makeDemoPartner(aData));
+  // Phase: name-entry for partner A
+  const handleNameSubmitA = (name: string) => {
+    setPartnerAName(name);
+    setPhase("values");
+  };
+
+  // Phase: values
+  const handleSelectValueOption = (qId: string, value: string) => {
+    setValuesAnswers((prev) => ({
+      ...prev,
+      [qId]: value ? value.split(",") : [],
+    }));
+  };
+
+  const handleValuesNext = () => {
+    setPhase("values-summary");
+  };
+
+  // Phase: values-summary
+  const handleValuesSummaryNext = () => {
+    const selectedValues = Object.fromEntries(
+      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+    );
+    setDeepDiveQuestions(selectDeepDiveQuestions(selectedValues));
+    setPhase("deep-dive-intro");
+  };
+
+  // Phase: deep-dive-intro
+  const handleDeepDiveIntroNext = () => {
+    setDeepDiveIdx(0);
+    setPhase("deep-dive");
+  };
+
+  // Phase: deep-dive
+  const handleSelectDeepDiveOption = (qId: string, value: string) => {
+    setDeepDiveAnswers((prev) => ({
+      ...prev,
+      [qId]: {
+        answers: value ? value.split(",") : [],
+        importance: deepDiveImportance[qId] || 0,
+      },
+    }));
+  };
+
+  const handleSetImportance = (qId: string, value: number) => {
+    setDeepDiveImportance((prev) => ({ ...prev, [qId]: value }));
+    const qIdx = deepDiveQuestions.indexOf(qId);
+    if (qIdx < deepDiveQuestions.length - 1) {
+      setDeepDiveIdx(qIdx + 1);
+      // Reset for next question
+      const nextQId = deepDiveQuestions[qIdx + 1];
+      setDeepDiveAnswers((prev) => ({
+        ...prev,
+        [nextQId]: { answers: [], importance: 0 },
+      }));
+    } else {
+      // All done, move to profile summary
+      setPhase("profile-summary");
+    }
+  };
+
+  // Phase: profile-summary
+  const handleProfileSummaryNext = () => {
+    const selectedValues = Object.fromEntries(
+      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+    );
+    setPartnerAData({
+      name: partnerAName,
+      valuesAnswers: selectedValues,
+      deepDiveAnswers,
+      questionIds: deepDiveQuestions,
+    });
+    setPhase("partner-gate");
+  };
+
+  // Phase: partner-gate
+  const handlePartnerStart = () => {
+    setPartnerBName("");
+    setValuesAnswers({});
+    setDeepDiveAnswers({});
+    setDeepDiveImportance({});
+    setDeepDiveIdx(0);
+    setPhase("name-entry");
+  };
+
+  const handleDemoPartner = () => {
+    if (!partnerAData) return;
+    setPartnerBData(makeDemoPartner(partnerAData));
     setPhase("comparison");
   };
 
-  const handleDealMemo = () => setPhase("deal-memo");
-  const handleBackToComparison = () => setPhase("comparison");
+  // Phase: name-entry for partner B (after reuse)
+  const handleNameSubmitB = (name: string) => {
+    setPartnerBName(name);
+    setPhase("values");
+  };
 
-  const deepDiveTopics = selectedQIds.map((id) => DEEP_DIVE_POOL.find((q) => q.id === id)?.topic || id);
+  // After partner B completes, we need to compare
+  const handlePartnerBProfileSummary = () => {
+    if (!partnerAData) return;
+    const selectedValues = Object.fromEntries(
+      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+    );
+    setPartnerBData({
+      name: partnerBName,
+      valuesAnswers: selectedValues,
+      deepDiveAnswers,
+      questionIds: deepDiveQuestions,
+    });
+    setPhase("comparison");
+  };
+
+  // Determine which partner we're working with based on phase flow
+  const isPartnerB = phase === "name-entry" && partnerAData !== null;
+  const currentPartnerName = isPartnerB ? partnerBName || "Partner" : partnerAName || "You";
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-800">
-      {phase !== "landing" && <Nav />}
-      <main className="pb-16">
-        {phase === "landing" && <Landing onStart={handleStart} />}
-        {phase === "name-entry" && <NameEntry onSubmit={handleNameSubmit} partnerLabel={activePartner === "A" ? "Partner One" : "Partner Two"} />}
-        {phase === "values" && (
-          <ValuesPhase name={name} answers={valuesAnswers} currentIndex={valuesIndex} onAnswer={handleValuesAnswer} onBack={handleValuesBack} />
-        )}
-        {phase === "values-summary" && <ValuesSummary name={name} answers={valuesAnswers} onContinue={handleValuesContinue} />}
-        {phase === "deep-dive-intro" && <DeepDiveIntro name={name} topics={deepDiveTopics} onContinue={handleDeepDiveStart} />}
-        {phase === "deep-dive" && (
-          <DeepDivePhase
-            questionIds={selectedQIds} answers={deepDiveAnswers} currentIndex={deepDiveIndex}
-            tempAnswer={tempAnswer} tempImportance={tempImportance}
-            onSelectAnswer={handleDDSelectAnswer} onSelectImportance={handleDDSelectImportance} onBack={handleDDBack}
-          />
-        )}
-        {phase === "profile-summary" && (
-          <ProfileSummary name={name} valuesAnswers={valuesAnswers} deepDiveAnswers={deepDiveAnswers} questionIds={selectedQIds} onContinue={handleProfileContinue} />
-        )}
-        {phase === "partner-gate" && <PartnerGate name={partnerAData?.name || name} onPartnerStart={handlePartnerStart} onDemo={handleDemo} />}
-        {phase === "comparison" && partnerAData && partnerBData && <Comparison partnerA={partnerAData} partnerB={partnerBData} onDealMemo={handleDealMemo} />}
-        {phase === "deal-memo" && partnerAData && partnerBData && <DealMemo partnerA={partnerAData} partnerB={partnerBData} onBack={handleBackToComparison} />}
-      </main>
-
-      {/* Print styles */}
-      <style jsx global>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-        @media print {
-          nav, button, .no-print { display: none !important; }
-          body { background: white !important; }
-          #deal-memo { box-shadow: none !important; border: none !important; }
-        }
-      `}</style>
-    </div>
+    <>
+      {phase === "landing" && <Landing onStart={handleStartLanding} />}
+      {phase === "name-entry" && (
+        <NameEntry
+          onSubmit={isPartnerB ? handleNameSubmitB : handleNameSubmitA}
+          partnerLabel={isPartnerB ? "Partner" : "You"}
+        />
+      )}
+      {phase === "values" && (
+        <ValuesPhase
+          questionIdx={VALUES_QUESTIONS.findIndex((q) => !Object.keys(valuesAnswers).includes(q.id))}
+          onSelectOption={handleSelectValueOption}
+          selectedOptions={valuesAnswers}
+          onContinue={handleValuesNext}
+        />
+      )}
+      {phase === "values-summary" && (
+        <ValuesSummary
+          name={currentPartnerName}
+          answers={Object.fromEntries(
+            Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+          )}
+          onContinue={handleValuesSummaryNext}
+        />
+      )}
+      {phase === "deep-dive-intro" && (
+        <DeepDiveIntro
+          name={currentPartnerName}
+          topics={deepDiveQuestions.map(
+            (qId) => DEEP_DIVE_POOL.find((q) => q.id === qId)?.topic || qId
+          )}
+          onContinue={handleDeepDiveIntroNext}
+        />
+      )}
+      {phase === "deep-dive" && (
+        <DeepDivePhase
+          questionIdx={deepDiveIdx}
+          questions={deepDiveQuestions}
+          onSelectOption={handleSelectDeepDiveOption}
+          selectedOptions={deepDiveAnswers}
+          onSetImportance={handleSetImportance}
+          importance={deepDiveImportance}
+        />
+      )}
+      {phase === "profile-summary" && (
+        <ProfileSummary
+          name={currentPartnerName}
+          valuesAnswers={Object.fromEntries(
+            Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+          )}
+          deepDiveAnswers={deepDiveAnswers}
+          questionIds={deepDiveQuestions}
+          onContinue={isPartnerB ? handlePartnerBProfileSummary : handleProfileSummaryNext}
+        />
+      )}
+      {phase === "partner-gate" && (
+        <PartnerGate
+          name={partnerAName}
+          onPartnerStart={handlePartnerStart}
+          onDemo={handleDemoPartner}
+        />
+      )}
+      {phase === "comparison" && partnerAData && partnerBData && (
+        <Comparison
+          partnerA={partnerAData}
+          partnerB={partnerBData}
+          onContinue={() => setPhase("deal-memo")}
+        />
+      )}
+      {phase === "deal-memo" && partnerAData && partnerBData && (
+        <DealMemo
+          partnerA={partnerAData}
+          partnerB={partnerBData}
+          onBack={() => setPhase("comparison")}
+        />
+      )}
+    </>
   );
 }
