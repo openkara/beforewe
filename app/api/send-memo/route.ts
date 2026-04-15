@@ -45,30 +45,32 @@ export async function POST(request: NextRequest) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
-      color: #1c1917;
-      background-color: #f5f5f4;
+      color: #e8e8e8;
+      background-color: #041610;
       margin: 0;
       padding: 0;
     }
     .wrapper {
-      background-color: #ffffff;
+      background-color: #071F14;
       margin: 20px auto;
       max-width: 600px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .header {
-      background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+      background: linear-gradient(135deg, #071F14 0%, #0D3D28 100%);
       color: #ffffff;
       padding: 40px 20px;
       text-align: center;
+      border-bottom: 1px solid #134D34;
     }
     .header h1 {
       margin: 0;
       font-size: 32px;
       font-weight: 600;
+      font-family: 'Syne', sans-serif;
     }
     .content {
       padding: 40px;
@@ -77,11 +79,11 @@ export async function POST(request: NextRequest) {
       font-size: 18px;
       font-weight: 500;
       margin-bottom: 20px;
-      color: #1c1917;
+      color: #ffffff;
     }
     .intro-text {
       font-size: 14px;
-      color: #57534e;
+      color: #a0b8ad;
       margin-bottom: 30px;
       line-height: 1.8;
     }
@@ -91,56 +93,56 @@ export async function POST(request: NextRequest) {
     .section-title {
       font-size: 16px;
       font-weight: 600;
-      color: #1c1917;
+      color: #ffffff;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #f5f5f4;
+      border-bottom: 2px solid #134D34;
     }
     .aligned .section-title {
-      border-bottom-color: #10b981;
-      color: #065f46;
+      border-bottom-color: #12B87A;
+      color: #12B87A;
     }
     .conversation .section-title {
-      border-bottom-color: #3b82f6;
-      color: #1e40af;
+      border-bottom-color: #E5A632;
+      color: #E5A632;
     }
     .attorney .section-title {
-      border-bottom-color: #f59e0b;
-      color: #92400e;
+      border-bottom-color: #E55A5A;
+      color: #E55A5A;
     }
     .item {
       margin-bottom: 15px;
       padding: 12px;
-      background-color: #f9fafb;
-      border-left: 4px solid #0d9488;
+      background-color: #0A2E1E;
+      border-left: 4px solid #12B87A;
       border-radius: 4px;
     }
     .aligned .item {
-      background-color: #ecfdf5;
-      border-left-color: #10b981;
+      background-color: #0A2E1E;
+      border-left-color: #12B87A;
     }
     .conversation .item {
-      background-color: #eff6ff;
-      border-left-color: #3b82f6;
+      background-color: #1A1A0A;
+      border-left-color: #E5A632;
     }
     .attorney .item {
-      background-color: #fffbeb;
-      border-left-color: #f59e0b;
+      background-color: #1A0A0A;
+      border-left-color: #E55A5A;
     }
     .item-topic {
       font-weight: 600;
-      color: #1c1917;
+      color: #ffffff;
       font-size: 14px;
       margin-bottom: 6px;
     }
     .item-answer {
       font-size: 13px;
-      color: #57534e;
+      color: #a0b8ad;
       margin: 4px 0;
     }
     .steps {
-      background-color: #f9fafb;
-      border: 1px solid #d7d3cf;
+      background-color: #0A2E1E;
+      border: 1px solid #134D34;
       border-radius: 6px;
       padding: 20px;
       margin: 25px 0;
@@ -149,32 +151,32 @@ export async function POST(request: NextRequest) {
       font-weight: 600;
       font-size: 15px;
       margin-bottom: 12px;
-      color: #1c1917;
+      color: #ffffff;
     }
     .step {
       font-size: 13px;
-      color: #57534e;
+      color: #a0b8ad;
       margin: 8px 0;
       line-height: 1.6;
     }
     .step-number {
       font-weight: 600;
-      color: #0d9488;
+      color: #12B87A;
     }
     .footer {
-      background-color: #f5f5f4;
+      background-color: #041610;
       padding: 30px 40px;
       text-align: center;
-      border-top: 1px solid #d7d3cf;
+      border-top: 1px solid #134D34;
       font-size: 12px;
-      color: #78716f;
+      color: #6b8577;
     }
     .footer p {
       margin: 8px 0;
       line-height: 1.6;
     }
     .empty-section {
-      color: #a1a09f;
+      color: #6b8577;
       font-style: italic;
       font-size: 13px;
     }
@@ -183,7 +185,7 @@ export async function POST(request: NextRequest) {
 <body>
   <div class="wrapper">
     <div class="header">
-      <h1>before we<span style="color: rgba(255,255,255,0.8);">.</span></h1>
+      <h1>before we<span style="color: #12B87A;">…</span></h1>
     </div>
     <div class="content">
       <p class="greeting">Hi ${partnerAName},</p>

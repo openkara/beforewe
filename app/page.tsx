@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
    TYPES
    ================================================================ */
 type Phase =
+  | "loading"
   | "landing"
   | "name-entry"
   | "values"
@@ -13,7 +14,8 @@ type Phase =
   | "deep-dive-intro"
   | "deep-dive"
   | "profile-summary"
-  | "partner-gate"
+  | "share-link"
+  | "waiting-for-partner"
   | "comparison"
   | "deal-memo";
 
@@ -773,32 +775,92 @@ function ProfileSummary({
   );
 }
 
-function PartnerGate({ name, onPartnerStart, onDemo }: { name: string; onPartnerStart: () => void; onDemo: () => void }) {
+function ShareLink({ sessionId, name, onDemo, onCheckStatus }: { sessionId: string | null; name: string; onDemo: () => void; onCheckStatus: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const link = typeof window !== "undefined" && sessionId
+    ? `${window.location.origin}?s=${sessionId}&p=b`
+    : "";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCheck = () => {
+    setChecking(true);
+    onCheckStatus();
+    setTimeout(() => setChecking(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
-      <div className="flex-1 flex flex-col px-4 py-8">
-        <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-display text-white mb-4">Next step: Compare with your partner</h2>
-          <p className="text-white/80 mb-8">
-            {name}, you've answered all the questions. Now your partner needs to do the same. You can send them a link or enter their answers yourself. Or, try a demo to see how the comparison works.
+      <div className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-xl">
+          <h2 className="text-3xl font-display text-white mb-4">You're done, {name}!</h2>
+          <p className="text-white/70 mb-8">
+            Now send this link to your partner so they can answer the same questions privately. Once they're finished, you'll both be able to see your alignment report.
           </p>
-          <div className="space-y-3">
-            <button
-              onClick={onPartnerStart}
-              className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
-            >
-              Get my partner's answers
-            </button>
+          {link && (
+            <div className="bg-forest-100 border border-forest-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-white/60 mb-2">Share this link with your partner:</p>
+              <p className="text-mint text-sm break-all font-mono">{link}</p>
+            </div>
+          )}
+          <button
+            onClick={handleCopy}
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors mb-3"
+          >
+            {copied ? "Copied!" : "Copy link"}
+          </button>
+          <button
+            onClick={handleCheck}
+            className="w-full px-6 py-3 bg-forest-100 text-white rounded-lg font-semibold hover:bg-forest-200 transition-colors mb-3"
+          >
+            {checking ? "Checking…" : "Check if my partner is done"}
+          </button>
+          <div className="text-center mt-6">
             <button
               onClick={onDemo}
-              className="w-full px-6 py-3 bg-forest-100 text-white rounded-lg font-semibold hover:bg-forest-200 transition-colors"
+              className="text-sm text-white/50 underline hover:text-white/70 transition-colors"
             >
-              See a demo comparison
+              Or see a demo comparison
             </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function WaitingForPartner({ role }: { role: "a" | "b" }) {
+  return (
+    <div className="min-h-screen bg-forest flex flex-col">
+      <Nav />
+      <div className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-xl text-center">
+          <h2 className="text-2xl font-display text-white mb-4">
+            {role === "b"
+              ? "Your partner hasn't finished yet"
+              : "Waiting for your partner"}
+          </h2>
+          <p className="text-white/60">
+            {role === "b"
+              ? "It looks like your partner is still working on their answers. Check back in a bit!"
+              : "Your partner hasn't completed their questions yet. Come back to this link anytime to check."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SessionLoading() {
+  return (
+    <div className="min-h-screen bg-forest flex flex-col items-center justify-center">
+      <div className="text-xl font-display text-white">Loading your session…</div>
     </div>
   );
 }
@@ -1147,7 +1209,12 @@ function DealMemo({
    ================================================================ */
 
 export default function App() {
-  const [phase, setPhase] = useState<Phase>("landing");
+  /* ---- Session + UI state ---- */
+  const [phase, setPhase] = useState<Phase>("loading");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [partnerRole, setPartnerRole] = useState<"a" | "b">("a");
+
+  /* ---- Questionnaire state ---- */
   const [partnerAName, setPartnerAName] = useState("");
   const [partnerBName, setPartnerBName] = useState("");
   const [valuesAnswers, setValuesAnswers] = useState<Record<string, string[]>>({});
@@ -1159,22 +1226,125 @@ export default function App() {
   const [partnerAData, setPartnerAData] = useState<PartnerData | null>(null);
   const [partnerBData, setPartnerBData] = useState<PartnerData | null>(null);
 
-  // Phase: landing
-  const handleStartLanding = () => {
+  /* ---- Load session from URL on mount ---- */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get("s");
+    const p = params.get("p");
+
+    if (!s) {
+      setPhase("landing");
+      return;
+    }
+
+    setSessionId(s);
+    if (p === "b") setPartnerRole("b");
+
+    fetch(`/api/sessions/${s}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) { setPhase("landing"); return; }
+
+        if (p === "b") {
+          // Partner B opening their link
+          if (data.status === "waiting_a") {
+            setPhase("waiting-for-partner");
+          } else if (data.status === "waiting_b") {
+            // A is done — load A's data and start B's questionnaire
+            setPartnerAData({
+              name: data.partner_a_name,
+              valuesAnswers: data.partner_a_values,
+              deepDiveAnswers: data.partner_a_deep_dive,
+              questionIds: data.partner_a_question_ids,
+            });
+            setPartnerAName(data.partner_a_name);
+            setPhase("name-entry");
+          } else if (data.status === "complete") {
+            setPartnerAData({
+              name: data.partner_a_name,
+              valuesAnswers: data.partner_a_values,
+              deepDiveAnswers: data.partner_a_deep_dive,
+              questionIds: data.partner_a_question_ids,
+            });
+            setPartnerBData({
+              name: data.partner_b_name,
+              valuesAnswers: data.partner_b_values,
+              deepDiveAnswers: data.partner_b_deep_dive,
+              questionIds: data.partner_b_question_ids,
+            });
+            setPartnerAName(data.partner_a_name);
+            setPartnerBName(data.partner_b_name);
+            setPhase("comparison");
+          }
+        } else {
+          // Partner A returning to check status
+          if (data.status === "complete") {
+            setPartnerAData({
+              name: data.partner_a_name,
+              valuesAnswers: data.partner_a_values,
+              deepDiveAnswers: data.partner_a_deep_dive,
+              questionIds: data.partner_a_question_ids,
+            });
+            setPartnerBData({
+              name: data.partner_b_name,
+              valuesAnswers: data.partner_b_values,
+              deepDiveAnswers: data.partner_b_deep_dive,
+              questionIds: data.partner_b_question_ids,
+            });
+            setPartnerAName(data.partner_a_name);
+            setPartnerBName(data.partner_b_name);
+            setPhase("comparison");
+          } else if (data.status === "waiting_b") {
+            setPartnerAData({
+              name: data.partner_a_name,
+              valuesAnswers: data.partner_a_values,
+              deepDiveAnswers: data.partner_a_deep_dive,
+              questionIds: data.partner_a_question_ids,
+            });
+            setPartnerAName(data.partner_a_name);
+            setPhase("share-link");
+          } else {
+            // A hasn't finished yet — fresh start
+            setPhase("landing");
+          }
+        }
+      })
+      .catch(() => setPhase("landing"));
+  }, []);
+
+  /* ---- Landing: create session and start ---- */
+  const handleStartLanding = async () => {
     setValuesAnswers({});
     setDeepDiveAnswers({});
     setDeepDiveImportance({});
     setValuesIdx(0);
+    setPartnerRole("a");
+
+    try {
+      const res = await fetch("/api/sessions", { method: "POST" });
+      const data = await res.json();
+      if (data.sessionId) {
+        setSessionId(data.sessionId);
+        window.history.replaceState({}, "", `?s=${data.sessionId}`);
+      }
+    } catch (e) {
+      // Continue without session — offline mode
+    }
     setPhase("name-entry");
   };
 
-  // Phase: name-entry for partner A
+  /* ---- Name entry ---- */
   const handleNameSubmitA = (name: string) => {
     setPartnerAName(name);
     setPhase("values");
   };
 
-  // Phase: values
+  const handleNameSubmitB = (name: string) => {
+    setPartnerBName(name);
+    setPhase("values");
+  };
+
+  /* ---- Values phase ---- */
   const handleSelectValueOption = (qId: string, value: string) => {
     setValuesAnswers((prev) => ({
       ...prev,
@@ -1184,28 +1354,32 @@ export default function App() {
 
   const handleValuesNext = () => {
     if (valuesIdx < VALUES_QUESTIONS.length - 1) {
-      setValuesIdx(valuesIdx + 1);
+      setValuesIdx((prev) => prev + 1);
     } else {
       setPhase("values-summary");
     }
   };
 
-  // Phase: values-summary
+  /* ---- Values summary → select deep dive questions ---- */
   const handleValuesSummaryNext = () => {
-    const selectedValues = Object.fromEntries(
-      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
-    );
-    setDeepDiveQuestions(selectDeepDiveQuestions(selectedValues));
+    if (partnerRole === "b" && partnerAData) {
+      // Partner B answers the SAME deep dive questions as A for direct comparison
+      setDeepDiveQuestions(partnerAData.questionIds);
+    } else {
+      const selectedValues = Object.fromEntries(
+        Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+      );
+      setDeepDiveQuestions(selectDeepDiveQuestions(selectedValues));
+    }
     setPhase("deep-dive-intro");
   };
 
-  // Phase: deep-dive-intro
+  /* ---- Deep dive ---- */
   const handleDeepDiveIntroNext = () => {
     setDeepDiveIdx(0);
     setPhase("deep-dive");
   };
 
-  // Phase: deep-dive
   const handleSelectDeepDiveOption = (qId: string, value: string) => {
     setDeepDiveAnswers((prev) => ({
       ...prev,
@@ -1221,76 +1395,120 @@ export default function App() {
     const qIdx = deepDiveQuestions.indexOf(qId);
     if (qIdx < deepDiveQuestions.length - 1) {
       setDeepDiveIdx(qIdx + 1);
-      // Reset for next question
       const nextQId = deepDiveQuestions[qIdx + 1];
       setDeepDiveAnswers((prev) => ({
         ...prev,
         [nextQId]: { answers: [], importance: 0 },
       }));
     } else {
-      // All done, move to profile summary
       setPhase("profile-summary");
     }
   };
 
-  // Phase: profile-summary
-  const handleProfileSummaryNext = () => {
+  /* ---- Profile summary: save partner data ---- */
+  const handleProfileSummaryNext = async () => {
     const selectedValues = Object.fromEntries(
       Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
     );
-    setPartnerAData({
+    const aData: PartnerData = {
       name: partnerAName,
       valuesAnswers: selectedValues,
       deepDiveAnswers,
       questionIds: deepDiveQuestions,
-    });
-    setPhase("partner-gate");
+    };
+    setPartnerAData(aData);
+
+    // Save to database
+    if (sessionId) {
+      try {
+        await fetch(`/api/sessions/${sessionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            partner_a_name: aData.name,
+            partner_a_values: aData.valuesAnswers,
+            partner_a_deep_dive: aData.deepDiveAnswers,
+            partner_a_question_ids: aData.questionIds,
+            status: "waiting_b",
+          }),
+        });
+      } catch (e) {
+        // Continue even if save fails
+      }
+    }
+    setPhase("share-link");
   };
 
-  // Phase: partner-gate
-  const handlePartnerStart = () => {
-    setPartnerBName("");
-    setValuesAnswers({});
-    setDeepDiveAnswers({});
-    setDeepDiveImportance({});
-    setValuesIdx(0);
-    setDeepDiveIdx(0);
-    setPhase("name-entry");
+  const handlePartnerBProfileSummary = async () => {
+    if (!partnerAData) return;
+    const selectedValues = Object.fromEntries(
+      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
+    );
+    const bData: PartnerData = {
+      name: partnerBName,
+      valuesAnswers: selectedValues,
+      deepDiveAnswers,
+      questionIds: deepDiveQuestions,
+    };
+    setPartnerBData(bData);
+
+    // Save to database
+    if (sessionId) {
+      try {
+        await fetch(`/api/sessions/${sessionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            partner_b_name: bData.name,
+            partner_b_values: bData.valuesAnswers,
+            partner_b_deep_dive: bData.deepDiveAnswers,
+            partner_b_question_ids: bData.questionIds,
+            status: "complete",
+          }),
+        });
+      } catch (e) {
+        // Continue even if save fails
+      }
+    }
+    setPhase("comparison");
   };
 
+  /* ---- Check if partner B is done (for share-link screen) ---- */
+  const handleCheckPartnerStatus = async () => {
+    if (!sessionId) return;
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}`);
+      const data = await res.json();
+      if (data.status === "complete") {
+        setPartnerBData({
+          name: data.partner_b_name,
+          valuesAnswers: data.partner_b_values,
+          deepDiveAnswers: data.partner_b_deep_dive,
+          questionIds: data.partner_b_question_ids,
+        });
+        setPartnerBName(data.partner_b_name);
+        setPhase("comparison");
+      }
+    } catch (e) {
+      // Stay on share-link
+    }
+  };
+
+  /* ---- Demo mode ---- */
   const handleDemoPartner = () => {
     if (!partnerAData) return;
     setPartnerBData(makeDemoPartner(partnerAData));
     setPhase("comparison");
   };
 
-  // Phase: name-entry for partner B (after reuse)
-  const handleNameSubmitB = (name: string) => {
-    setPartnerBName(name);
-    setPhase("values");
-  };
-
-  // After partner B completes, we need to compare
-  const handlePartnerBProfileSummary = () => {
-    if (!partnerAData) return;
-    const selectedValues = Object.fromEntries(
-      Object.entries(valuesAnswers).map(([k, v]) => [k, v[0] || ""])
-    );
-    setPartnerBData({
-      name: partnerBName,
-      valuesAnswers: selectedValues,
-      deepDiveAnswers,
-      questionIds: deepDiveQuestions,
-    });
-    setPhase("comparison");
-  };
-
-  // Determine which partner we're working with based on phase flow
-  const isPartnerB = phase === "name-entry" && partnerAData !== null;
+  /* ---- Derived state ---- */
+  const isPartnerB = partnerRole === "b";
   const currentPartnerName = isPartnerB ? partnerBName || "Partner" : partnerAName || "You";
 
+  /* ---- Render ---- */
   return (
     <>
+      {phase === "loading" && <SessionLoading />}
       {phase === "landing" && <Landing onStart={handleStartLanding} />}
       {phase === "name-entry" && (
         <NameEntry
@@ -1347,12 +1565,16 @@ export default function App() {
           onContinue={isPartnerB ? handlePartnerBProfileSummary : handleProfileSummaryNext}
         />
       )}
-      {phase === "partner-gate" && (
-        <PartnerGate
+      {phase === "share-link" && (
+        <ShareLink
+          sessionId={sessionId}
           name={partnerAName}
-          onPartnerStart={handlePartnerStart}
           onDemo={handleDemoPartner}
+          onCheckStatus={handleCheckPartnerStatus}
         />
+      )}
+      {phase === "waiting-for-partner" && (
+        <WaitingForPartner role={partnerRole} />
       )}
       {phase === "comparison" && partnerAData && partnerBData && (
         <Comparison
