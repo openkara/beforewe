@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: any = null;
+try {
+  const { Resend } = require("resend");
+  resend = new Resend(process.env.RESEND_API_KEY);
+} catch (e) {
+  console.warn("Resend not available");
+}
 
 interface ComparisonItem {
   topic: string;
@@ -262,6 +267,10 @@ export async function POST(request: NextRequest) {
 </body>
 </html>
     `;
+
+    if (!resend) {
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
 
     const response = await resend.emails.send({
       from: "onboarding@resend.dev",
