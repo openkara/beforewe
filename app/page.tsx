@@ -458,7 +458,7 @@ function OptionCard({ option, selected, onClick }: { option: Option; selected: b
       onClick={onClick}
       className={`w-full text-left px-5 py-4 rounded-lg border-2 transition-all ${
         selected
-          ? "border-mint bg-mint-50"
+          ? "border-mint bg-mint/10"
           : "border-forest-200 bg-forest-100 hover:border-mint/50"
       }`}
     >
@@ -535,10 +535,11 @@ function Landing({ onStart }: { onStart: () => void }) {
   );
 }
 
-function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string) => void; partnerLabel: string }) {
+function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string, email: string) => void; partnerLabel: string }) {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const handleSubmit = () => {
-    if (name.trim()) onSubmit(name.trim());
+    if (name.trim() && email.trim()) onSubmit(name.trim(), email.trim());
   };
   return (
     <div className="min-h-screen bg-forest flex flex-col">
@@ -546,19 +547,26 @@ function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string) => voi
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-xl">
           <h2 className="text-3xl font-display text-white mb-2">{partnerLabel}, what's your name?</h2>
-          <p className="text-white/70 mb-8">We'll use this to personalize your results.</p>
+          <p className="text-white/70 mb-8">We'll use this to personalize your results and send your alignment report.</p>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-            placeholder="First name is fine"
-            className="w-full px-4 py-3 border-2 border-mint rounded-lg mb-4 focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
+            placeholder="First name"
+            className="w-full px-4 py-3 border-2 border-forest-200 rounded-lg mb-4 focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
             autoFocus
+          />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            placeholder="Email address"
+            className="w-full px-4 py-3 border-2 border-forest-200 rounded-lg mb-4 focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
           />
           <button
             onClick={handleSubmit}
-            disabled={!name.trim()}
+            disabled={!name.trim() || !email.trim()}
             className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue
@@ -775,9 +783,12 @@ function ProfileSummary({
   );
 }
 
-function ShareLink({ sessionId, name, onDemo, onCheckStatus }: { sessionId: string | null; name: string; onDemo: () => void; onCheckStatus: () => void }) {
+function ShareLink({ sessionId, name, partnerAEmail, onDemo, onCheckStatus }: { sessionId: string | null; name: string; partnerAEmail: string; onDemo: () => void; onCheckStatus: () => void }) {
   const [copied, setCopied] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [partnerEmail, setPartnerEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
   const link = typeof window !== "undefined" && sessionId
     ? `${window.location.origin}?s=${sessionId}&p=b`
     : "";
@@ -794,6 +805,22 @@ function ShareLink({ sessionId, name, onDemo, onCheckStatus }: { sessionId: stri
     setTimeout(() => setChecking(false), 2000);
   };
 
+  const handleSendToPartner = async () => {
+    if (!partnerEmail.trim() || !link) return;
+    setSending(true);
+    try {
+      await fetch("/api/send-invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: partnerEmail.trim(), fromName: name, link }),
+      });
+      setSent(true);
+    } catch (e) {
+      // Fail silently
+    }
+    setSending(false);
+  };
+
   return (
     <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
@@ -801,17 +828,47 @@ function ShareLink({ sessionId, name, onDemo, onCheckStatus }: { sessionId: stri
         <div className="w-full max-w-xl">
           <h2 className="text-3xl font-display text-white mb-4">You're done, {name}!</h2>
           <p className="text-white/70 mb-8">
-            Now send this link to your partner so they can answer the same questions privately. Once they're finished, you'll both be able to see your alignment report.
+            Now send this to your partner so they can answer the same questions privately. Once they're finished, you'll both get your alignment report.
           </p>
+
+          {/* Email partner their link */}
+          {!sent ? (
+            <div className="mb-6">
+              <p className="text-sm text-white/60 mb-2">Send your partner their link:</p>
+              <div className="flex gap-3">
+                <input
+                  type="email"
+                  value={partnerEmail}
+                  onChange={(e) => setPartnerEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendToPartner()}
+                  placeholder="Partner's email"
+                  className="flex-1 px-4 py-3 border-2 border-forest-200 rounded-lg focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
+                />
+                <button
+                  onClick={handleSendToPartner}
+                  disabled={!partnerEmail.trim() || sending}
+                  className="px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {sending ? "Sending…" : "Send"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-6 p-4 bg-mint/10 border border-mint/30 rounded-lg">
+              <p className="text-sm text-mint">Invite sent to {partnerEmail}!</p>
+            </div>
+          )}
+
+          {/* Or copy the link */}
           {link && (
             <div className="bg-forest-100 border border-forest-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-white/60 mb-2">Share this link with your partner:</p>
+              <p className="text-sm text-white/60 mb-2">Or copy the link directly:</p>
               <p className="text-mint text-sm break-all font-mono">{link}</p>
             </div>
           )}
           <button
             onClick={handleCopy}
-            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors mb-3"
+            className="w-full px-6 py-3 bg-forest-100 text-white rounded-lg font-semibold hover:bg-forest-200 transition-colors mb-3"
           >
             {copied ? "Copied!" : "Copy link"}
           </button>
@@ -1216,7 +1273,9 @@ export default function App() {
 
   /* ---- Questionnaire state ---- */
   const [partnerAName, setPartnerAName] = useState("");
+  const [partnerAEmail, setPartnerAEmail] = useState("");
   const [partnerBName, setPartnerBName] = useState("");
+  const [partnerBEmail, setPartnerBEmail] = useState("");
   const [valuesAnswers, setValuesAnswers] = useState<Record<string, string[]>>({});
   const [deepDiveQuestions, setDeepDiveQuestions] = useState<string[]>([]);
   const [deepDiveAnswers, setDeepDiveAnswers] = useState<Record<string, { answers: string[]; importance: number }>>({});
@@ -1334,13 +1393,15 @@ export default function App() {
   };
 
   /* ---- Name entry ---- */
-  const handleNameSubmitA = (name: string) => {
+  const handleNameSubmitA = (name: string, email: string) => {
     setPartnerAName(name);
+    setPartnerAEmail(email);
     setPhase("values");
   };
 
-  const handleNameSubmitB = (name: string) => {
+  const handleNameSubmitB = (name: string, email: string) => {
     setPartnerBName(name);
+    setPartnerBEmail(email);
     setPhase("values");
   };
 
@@ -1426,6 +1487,7 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             partner_a_name: aData.name,
+            partner_a_email: partnerAEmail,
             partner_a_values: aData.valuesAnswers,
             partner_a_deep_dive: aData.deepDiveAnswers,
             partner_a_question_ids: aData.questionIds,
@@ -1460,6 +1522,7 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             partner_b_name: bData.name,
+            partner_b_email: partnerBEmail,
             partner_b_values: bData.valuesAnswers,
             partner_b_deep_dive: bData.deepDiveAnswers,
             partner_b_question_ids: bData.questionIds,
@@ -1569,6 +1632,7 @@ export default function App() {
         <ShareLink
           sessionId={sessionId}
           name={partnerAName}
+          partnerAEmail={partnerAEmail}
           onDemo={handleDemoPartner}
           onCheckStatus={handleCheckPartnerStatus}
         />
