@@ -426,11 +426,11 @@ function makeDemoPartner(realData: PartnerData): PartnerData {
 
 function Nav() {
   return (
-    <nav className="w-full px-6 py-4 flex items-center justify-between border-b border-stone-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="text-xl font-serif font-semibold tracking-tight text-stone-800">
-        before we<span className="text-teal-700">.</span>
+    <nav className="w-full px-6 py-4 flex items-center justify-between border-b border-forest-200 bg-forest sticky top-0 z-50">
+      <div className="text-xl font-display font-semibold tracking-tight text-white">
+        before we<span className="text-mint">…</span>
       </div>
-      <div className="text-xs text-stone-400 tracking-wide uppercase">The conversation before the paperwork</div>
+      <div className="text-xs text-white/60 tracking-wide uppercase">The conversation before the paperwork</div>
     </nav>
   );
 }
@@ -440,11 +440,11 @@ function ProgressBar({ current, total, sectionLabel }: { current: number; total:
   return (
     <div className="w-full max-w-xl mx-auto mb-8 px-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-teal-700 uppercase tracking-wide">{sectionLabel}</span>
-        <span className="text-xs text-stone-400">{current + 1} of {total}</span>
+        <span className="text-xs font-medium text-mint uppercase tracking-wide">{sectionLabel}</span>
+        <span className="text-xs text-white/60">{current + 1} of {total}</span>
       </div>
-      <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
-        <div className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out" style={{ width: `${pct}%` }} />
+      <div className="w-full h-1.5 bg-forest-200 rounded-full overflow-hidden">
+        <div className="h-full bg-mint rounded-full transition-all duration-500 ease-out" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -456,17 +456,17 @@ function OptionCard({ option, selected, onClick }: { option: Option; selected: b
       onClick={onClick}
       className={`w-full text-left px-5 py-4 rounded-lg border-2 transition-all ${
         selected
-          ? "border-teal-600 bg-teal-50"
-          : "border-stone-200 bg-white hover:border-stone-300"
+          ? "border-mint bg-mint-50"
+          : "border-forest-200 bg-forest-100 hover:border-mint/50"
       }`}
     >
       <div className="flex items-start gap-3">
         <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${
-          selected ? "border-teal-600 bg-teal-600" : "border-stone-300 bg-white"
+          selected ? "border-mint bg-mint" : "border-forest-300 bg-transparent"
         }`} />
         <div className="flex-1">
-          <div className="font-medium text-stone-900">{option.label}</div>
-          <div className="text-sm text-stone-500 mt-0.5">{option.desc}</div>
+          <div className="font-medium text-white">{option.label}</div>
+          <div className="text-sm text-white/70 mt-0.5">{option.desc}</div>
         </div>
       </div>
     </button>
@@ -476,7 +476,7 @@ function OptionCard({ option, selected, onClick }: { option: Option; selected: b
 function ImportanceRating({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
   return (
     <div className="w-full max-w-md mx-auto">
-      <p className="text-sm font-medium text-stone-700 mb-4">How important is this to you?</p>
+      <p className="text-sm font-medium text-white mb-4">How important is this to you?</p>
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
@@ -484,8 +484,8 @@ function ImportanceRating({ value, onChange }: { value: number | null; onChange:
             onClick={() => onChange(n)}
             className={`flex-1 py-2 px-2 rounded border-2 font-medium text-sm transition-all ${
               value === n
-                ? "border-teal-600 bg-teal-600 text-white"
-                : "border-stone-200 text-stone-600 hover:border-stone-300"
+                ? "border-mint bg-mint text-forest"
+                : "border-forest-200 text-white hover:border-mint/50"
             }`}
           >
             {n}
@@ -506,14 +506,14 @@ function Landing({ onStart }: { onStart: () => void }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col items-center justify-between px-4">
+    <div className="min-h-screen bg-forest flex flex-col items-center justify-between px-4">
       <Nav />
       <div className="flex-1 flex flex-col items-center justify-center max-w-2xl">
-        <h1 className="text-5xl md:text-6xl font-serif text-stone-900 text-center leading-tight mb-3">
-          before we<span className="text-teal-700">…</span>
+        <h1 className="text-5xl md:text-6xl font-display text-white text-center leading-tight mb-3">
+          before we<span className="text-mint">…</span>
         </h1>
         <div className="h-24 flex items-center justify-center">
-          <p className="text-2xl md:text-3xl text-stone-600 text-center italic min-h-16 fade-in">
+          <p className="text-2xl md:text-3xl text-mint text-center italic min-h-16 fade-in">
             <span key={phraseIdx} className="inline-block">
               {phrases[phraseIdx]}
             </span>
@@ -521,12 +521,12 @@ function Landing({ onStart }: { onStart: () => void }) {
         </div>
         <button
           onClick={onStart}
-          className="mt-8 px-8 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+          className="mt-8 px-8 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
         >
           Let's get on the same page
         </button>
       </div>
-      <footer className="text-center pb-8 text-stone-500 text-sm max-w-lg">
+      <footer className="text-center pb-8 text-white/60 text-sm max-w-lg">
         A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
       </footer>
     </div>
@@ -539,25 +539,25 @@ function NameEntry({ onSubmit, partnerLabel }: { onSubmit: (name: string) => voi
     if (name.trim()) onSubmit(name.trim());
   };
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-xl">
-          <h2 className="text-3xl font-serif text-stone-900 mb-2">{partnerLabel}, what's your name?</h2>
-          <p className="text-stone-600 mb-8">We'll use this to personalize your results.</p>
+          <h2 className="text-3xl font-display text-white mb-2">{partnerLabel}, what's your name?</h2>
+          <p className="text-white/70 mb-8">We'll use this to personalize your results.</p>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="First name is fine"
-            className="w-full px-4 py-3 border-2 border-stone-200 rounded-lg mb-4 focus:outline-none focus:border-teal-600"
+            className="w-full px-4 py-3 border-2 border-mint rounded-lg mb-4 focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
             autoFocus
           />
           <button
             onClick={handleSubmit}
             disabled={!name.trim()}
-            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue
           </button>
@@ -583,14 +583,14 @@ function ValuesPhase({
   const hasSelection = selected.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <ProgressBar current={questionIdx} total={VALUES_QUESTIONS.length} sectionLabel={q.sectionLabel} />
         <div className="w-full max-w-xl mx-auto">
-          <p className="text-sm font-medium text-teal-700 uppercase tracking-wide mb-2">{q.sectionLabel}</p>
-          <p className="text-stone-600 text-sm mb-6">{q.sectionIntro}</p>
-          <h2 className="text-2xl font-serif text-stone-900 mb-8">{q.question}</h2>
+          <p className="text-sm font-medium text-mint uppercase tracking-wide mb-2">{q.sectionLabel}</p>
+          <p className="text-white/70 text-sm mb-6">{q.sectionIntro}</p>
+          <h2 className="text-2xl font-display text-white mb-8">{q.question}</h2>
           <div className="space-y-3 mb-8">
             {q.options.map((opt) => (
               <OptionCard
@@ -609,7 +609,7 @@ function ValuesPhase({
           {hasSelection && (
             <button
               onClick={onContinue}
-              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+              className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
             >
               Continue
             </button>
@@ -622,15 +622,15 @@ function ValuesPhase({
 
 function ValuesSummary({ name, answers, onContinue }: { name: string; answers: Record<string, string>; onContinue: () => void }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-serif text-stone-900 mb-4">{name}, here's what we learned:</h2>
-          <p className="text-stone-600 mb-6">{generateInsight(answers)}</p>
+          <h2 className="text-2xl font-display text-white mb-4">{name}, here's what we learned:</h2>
+          <p className="text-white/80 mb-6">{generateInsight(answers)}</p>
           <button
             onClick={onContinue}
-            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
           >
             Let's dig deeper
           </button>
@@ -642,22 +642,22 @@ function ValuesSummary({ name, answers, onContinue }: { name: string; answers: R
 
 function DeepDiveIntro({ name, topics, onContinue }: { name: string; topics: string[]; onContinue: () => void }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-serif text-stone-900 mb-4">{name}, based on your answers, we're focusing on 6 topics:</h2>
-          <ul className="space-y-2 mb-8 text-stone-700">
+          <h2 className="text-2xl font-display text-white mb-4">{name}, based on your answers, we're focusing on 6 topics:</h2>
+          <ul className="space-y-2 mb-8 text-white/80">
             {topics.map((t) => (
               <li key={t} className="flex gap-3">
-                <span className="text-teal-600">•</span>
+                <span className="text-mint">•</span>
                 <span>{t}</span>
               </li>
             ))}
           </ul>
           <button
             onClick={onContinue}
-            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
           >
             Start the deep dive
           </button>
@@ -689,12 +689,12 @@ function DeepDivePhase({
   const importanceSet = importance[qId] !== undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <ProgressBar current={questionIdx} total={questions.length} sectionLabel={q.topic} />
         <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-serif text-stone-900 mb-8">{q.question}</h2>
+          <h2 className="text-2xl font-display text-white mb-8">{q.question}</h2>
           <div className="space-y-3 mb-8">
             {q.options.map((opt) => (
               <OptionCard
@@ -728,7 +728,7 @@ function DeepDivePhase({
                   onSetImportance(questions[questionIdx + 1], 0);
                 }
               }}
-              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+              className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
             >
               {questionIdx < questions.length - 1 ? "Next" : "Continue"}
             </button>
@@ -753,17 +753,17 @@ function ProfileSummary({
   onContinue: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-serif text-stone-900 mb-4">Your profile is complete, {name}.</h2>
-          <p className="text-stone-600 mb-8">
+          <h2 className="text-2xl font-display text-white mb-4">Your profile is complete, {name}.</h2>
+          <p className="text-white/80 mb-8">
             We've got your values, your priorities, and your thoughts on the big questions. Now we need to see what your partner thinks — and where you align.
           </p>
           <button
             onClick={onContinue}
-            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
           >
             Add my partner
           </button>
@@ -775,24 +775,24 @@ function ProfileSummary({
 
 function PartnerGate({ name, onPartnerStart, onDemo }: { name: string; onPartnerStart: () => void; onDemo: () => void }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8">
         <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-2xl font-serif text-stone-900 mb-4">Next step: Compare with your partner</h2>
-          <p className="text-stone-600 mb-8">
+          <h2 className="text-2xl font-display text-white mb-4">Next step: Compare with your partner</h2>
+          <p className="text-white/80 mb-8">
             {name}, you've answered all the questions. Now your partner needs to do the same. You can send them a link or enter their answers yourself. Or, try a demo to see how the comparison works.
           </p>
           <div className="space-y-3">
             <button
               onClick={onPartnerStart}
-              className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+              className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
             >
               Get my partner's answers
             </button>
             <button
               onClick={onDemo}
-              className="w-full px-6 py-3 bg-stone-200 text-stone-900 rounded-lg font-medium hover:bg-stone-300 transition-colors"
+              className="w-full px-6 py-3 bg-forest-100 text-white rounded-lg font-semibold hover:bg-forest-200 transition-colors"
             >
               See a demo comparison
             </button>
@@ -805,9 +805,9 @@ function PartnerGate({ name, onPartnerStart, onDemo }: { name: string; onPartner
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    aligned: "bg-emerald-100 text-emerald-800",
-    conversation: "bg-blue-100 text-blue-800",
-    attorney: "bg-amber-100 text-amber-800",
+    aligned: "bg-mint/20 text-mint border border-mint",
+    conversation: "bg-yellow-500/20 text-yellow-300 border border-yellow-500/50",
+    attorney: "bg-rose-500/20 text-rose-300 border border-rose-500/50",
   };
   const labels: Record<string, string> = {
     aligned: "You align",
@@ -833,28 +833,28 @@ function Comparison({
   const comp = comparePartners(partnerA, partnerB);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-2xl mx-auto">
-          <h2 className="text-3xl font-serif text-stone-900 mb-2">{partnerA.name} & {partnerB.name}</h2>
-          <p className="text-stone-600 mb-8">Here's where you stand, together.</p>
+          <h2 className="text-3xl font-display text-white mb-2">{partnerA.name} & {partnerB.name}</h2>
+          <p className="text-white/70 mb-8">Here's where you stand, together.</p>
 
           {/* Values Comparison */}
           <div className="mb-12">
-            <h3 className="text-xl font-serif text-stone-900 mb-6">Values Alignment</h3>
+            <h3 className="text-xl font-display text-white mb-6">Values Alignment</h3>
             <div className="space-y-4">
               {comp.values.map((v) => (
-                <div key={v.question} className="border border-stone-200 rounded-lg p-4">
-                  <p className="font-medium text-stone-900 mb-3">{v.question}</p>
+                <div key={v.question} className="border border-forest-200 rounded-lg p-4 bg-forest-100">
+                  <p className="font-medium text-white mb-3">{v.question}</p>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className={`p-3 rounded ${v.match ? "bg-emerald-50" : "bg-stone-50"}`}>
-                      <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
-                      <p className="text-sm font-medium text-stone-900">{v.aLabel}</p>
+                    <div className={`p-3 rounded ${v.match ? "bg-mint-50" : "bg-forest-50"}`}>
+                      <p className="text-xs text-white/60 mb-1">{partnerA.name}</p>
+                      <p className="text-sm font-medium text-white">{v.aLabel}</p>
                     </div>
-                    <div className={`p-3 rounded ${v.match ? "bg-emerald-50" : "bg-stone-50"}`}>
-                      <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
-                      <p className="text-sm font-medium text-stone-900">{v.bLabel}</p>
+                    <div className={`p-3 rounded ${v.match ? "bg-mint-50" : "bg-forest-50"}`}>
+                      <p className="text-xs text-white/60 mb-1">{partnerB.name}</p>
+                      <p className="text-sm font-medium text-white">{v.bLabel}</p>
                     </div>
                   </div>
                 </div>
@@ -865,16 +865,16 @@ function Comparison({
           {/* Aligned Items */}
           {comp.aligned.length > 0 && (
             <div className="mb-12">
-              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+              <h3 className="text-xl font-display text-white mb-6 flex items-center gap-3">
                 <StatusBadge status="aligned" />
                 You align on these
               </h3>
               <div className="space-y-4">
                 {comp.aligned.map((item) => (
-                  <div key={item.questionId} className="border border-emerald-200 bg-emerald-50 rounded-lg p-4">
-                    <p className="font-medium text-stone-900 mb-2">{item.topic}</p>
-                    <p className="text-sm text-stone-600 mb-3">{item.aLabels.join(", ")} — Both</p>
-                    <p className="text-xs text-stone-500">Importance: {partnerA.name} ({item.aImportance}), {partnerB.name} ({item.bImportance})</p>
+                  <div key={item.questionId} className="border border-mint/40 bg-mint/10 rounded-lg p-4">
+                    <p className="font-medium text-white mb-2">{item.topic}</p>
+                    <p className="text-sm text-white/80 mb-3">{item.aLabels.join(", ")} — Both</p>
+                    <p className="text-xs text-white/60">Importance: {partnerA.name} ({item.aImportance}), {partnerB.name} ({item.bImportance})</p>
                   </div>
                 ))}
               </div>
@@ -884,25 +884,25 @@ function Comparison({
           {/* Conversation Items */}
           {comp.conversation.length > 0 && (
             <div className="mb-12">
-              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+              <h3 className="text-xl font-display text-white mb-6 flex items-center gap-3">
                 <StatusBadge status="conversation" />
                 Worth discussing
               </h3>
               <div className="space-y-4">
                 {comp.conversation.map((item) => (
-                  <div key={item.questionId} className="border border-blue-200 bg-blue-50 rounded-lg p-4">
-                    <p className="font-medium text-stone-900 mb-3">{item.topic}</p>
+                  <div key={item.questionId} className="border border-yellow-500/30 bg-yellow-500/10 rounded-lg p-4">
+                    <p className="font-medium text-white mb-3">{item.topic}</p>
                     <div className="grid grid-cols-2 gap-4 mb-2">
                       <div>
-                        <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
-                        <p className="text-sm font-medium text-stone-900">{item.aLabels.join(", ")}</p>
+                        <p className="text-xs text-white/60 mb-1">{partnerA.name}</p>
+                        <p className="text-sm font-medium text-white">{item.aLabels.join(", ")}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
-                        <p className="text-sm font-medium text-stone-900">{item.bLabels.join(", ")}</p>
+                        <p className="text-xs text-white/60 mb-1">{partnerB.name}</p>
+                        <p className="text-sm font-medium text-white">{item.bLabels.join(", ")}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-stone-500">Distance: {item.distance}</p>
+                    <p className="text-xs text-white/60">Distance: {item.distance}</p>
                   </div>
                 ))}
               </div>
@@ -912,25 +912,25 @@ function Comparison({
           {/* Attorney Items */}
           {comp.attorney.length > 0 && (
             <div className="mb-12">
-              <h3 className="text-xl font-serif text-stone-900 mb-6 flex items-center gap-3">
+              <h3 className="text-xl font-display text-white mb-6 flex items-center gap-3">
                 <StatusBadge status="attorney" />
                 Discuss with an attorney
               </h3>
               <div className="space-y-4">
                 {comp.attorney.map((item) => (
-                  <div key={item.questionId} className="border border-amber-200 bg-amber-50 rounded-lg p-4">
-                    <p className="font-medium text-stone-900 mb-3">{item.topic}</p>
+                  <div key={item.questionId} className="border border-rose-500/30 bg-rose-500/10 rounded-lg p-4">
+                    <p className="font-medium text-white mb-3">{item.topic}</p>
                     <div className="grid grid-cols-2 gap-4 mb-2">
                       <div>
-                        <p className="text-xs text-stone-500 mb-1">{partnerA.name}</p>
-                        <p className="text-sm font-medium text-stone-900">{item.aLabels.join(", ")}</p>
+                        <p className="text-xs text-white/60 mb-1">{partnerA.name}</p>
+                        <p className="text-sm font-medium text-white">{item.aLabels.join(", ")}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-stone-500 mb-1">{partnerB.name}</p>
-                        <p className="text-sm font-medium text-stone-900">{item.bLabels.join(", ")}</p>
+                        <p className="text-xs text-white/60 mb-1">{partnerB.name}</p>
+                        <p className="text-sm font-medium text-white">{item.bLabels.join(", ")}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-stone-500">Distance: {item.distance}</p>
+                    <p className="text-xs text-white/60">Distance: {item.distance}</p>
                   </div>
                 ))}
               </div>
@@ -940,14 +940,14 @@ function Comparison({
           {/* Topics answered by only one person */}
           {(comp.aOnlyTopics.length > 0 || comp.bOnlyTopics.length > 0) && (
             <div className="mb-12">
-              <h3 className="text-lg font-serif text-stone-900 mb-4">Topics answered by only one person</h3>
+              <h3 className="text-lg font-display text-white mb-4">Topics answered by only one person</h3>
               {comp.aOnlyTopics.length > 0 && (
-                <p className="text-sm text-stone-600 mb-4">
+                <p className="text-sm text-white/80 mb-4">
                   <span className="font-medium">{partnerA.name}</span> answered about: {comp.aOnlyTopics.join(", ")}
                 </p>
               )}
               {comp.bOnlyTopics.length > 0 && (
-                <p className="text-sm text-stone-600">
+                <p className="text-sm text-white/80">
                   <span className="font-medium">{partnerB.name}</span> answered about: {comp.bOnlyTopics.join(", ")}
                 </p>
               )}
@@ -956,7 +956,7 @@ function Comparison({
 
           <button
             onClick={onContinue}
-            className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
+            className="w-full px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors"
           >
             Create your deal memo
           </button>
@@ -1027,23 +1027,23 @@ function DealMemo({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white flex flex-col">
+    <div className="min-h-screen bg-forest flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-2xl mx-auto">
-          <h2 className="text-3xl font-serif text-stone-900 mb-8">Your Before We Alignment Summary</h2>
+          <h2 className="text-3xl font-display text-white mb-8">Your Before We Alignment Summary</h2>
 
           {/* What You Agree On */}
           {comp.aligned.length > 0 && (
             <div className="mb-10">
-              <h3 className="text-xl font-serif text-stone-900 mb-4">What You Agree On</h3>
+              <h3 className="text-xl font-display text-white mb-4">What You Agree On</h3>
               <ul className="space-y-3">
                 {comp.aligned.map((item) => (
-                  <li key={item.questionId} className="flex gap-3 text-stone-700">
-                    <span className="text-teal-600 font-bold">✓</span>
+                  <li key={item.questionId} className="flex gap-3 text-white/80">
+                    <span className="text-mint font-bold">✓</span>
                     <div>
-                      <p className="font-medium">{item.topic}</p>
-                      <p className="text-sm text-stone-500">{item.aLabels.join(", ")}</p>
+                      <p className="font-medium text-white">{item.topic}</p>
+                      <p className="text-sm text-white/60">{item.aLabels.join(", ")}</p>
                     </div>
                   </li>
                 ))}
@@ -1054,15 +1054,15 @@ function DealMemo({
           {/* Discussion Points */}
           {comp.conversation.length > 0 && (
             <div className="mb-10">
-              <h3 className="text-xl font-serif text-stone-900 mb-4">Discussion Points</h3>
+              <h3 className="text-xl font-display text-white mb-4">Discussion Points</h3>
               <ul className="space-y-3">
                 {comp.conversation.map((item) => (
-                  <li key={item.questionId} className="flex gap-3 text-stone-700">
-                    <span className="text-blue-600 font-bold">•</span>
+                  <li key={item.questionId} className="flex gap-3 text-white/80">
+                    <span className="text-yellow-400 font-bold">•</span>
                     <div>
-                      <p className="font-medium">{item.topic}</p>
-                      <p className="text-sm text-stone-500">{partnerA.name}: {item.aLabels.join(", ")}</p>
-                      <p className="text-sm text-stone-500">{partnerB.name}: {item.bLabels.join(", ")}</p>
+                      <p className="font-medium text-white">{item.topic}</p>
+                      <p className="text-sm text-white/60">{partnerA.name}: {item.aLabels.join(", ")}</p>
+                      <p className="text-sm text-white/60">{partnerB.name}: {item.bLabels.join(", ")}</p>
                     </div>
                   </li>
                 ))}
@@ -1073,15 +1073,15 @@ function DealMemo({
           {/* Questions for Attorney */}
           {comp.attorney.length > 0 && (
             <div className="mb-10">
-              <h3 className="text-xl font-serif text-stone-900 mb-4">Questions for Your Attorney</h3>
+              <h3 className="text-xl font-display text-white mb-4">Questions for Your Attorney</h3>
               <ul className="space-y-3">
                 {comp.attorney.map((item) => (
-                  <li key={item.questionId} className="flex gap-3 text-stone-700">
-                    <span className="text-amber-600 font-bold">⚠</span>
+                  <li key={item.questionId} className="flex gap-3 text-white/80">
+                    <span className="text-rose-400 font-bold">⚠</span>
                     <div>
-                      <p className="font-medium">{item.topic}</p>
-                      <p className="text-sm text-stone-500">{partnerA.name}: {item.aLabels.join(", ")}</p>
-                      <p className="text-sm text-stone-500">{partnerB.name}: {item.bLabels.join(", ")}</p>
+                      <p className="font-medium text-white">{item.topic}</p>
+                      <p className="text-sm text-white/60">{partnerA.name}: {item.aLabels.join(", ")}</p>
+                      <p className="text-sm text-white/60">{partnerB.name}: {item.bLabels.join(", ")}</p>
                     </div>
                   </li>
                 ))}
@@ -1090,9 +1090,9 @@ function DealMemo({
           )}
 
           {/* Next Steps */}
-          <div className="mb-10 p-4 border border-stone-200 rounded-lg bg-white">
-            <h3 className="text-lg font-serif text-stone-900 mb-3">Next Steps</h3>
-            <ol className="space-y-2 text-sm text-stone-700">
+          <div className="mb-10 p-4 border border-forest-200 rounded-lg bg-forest-100">
+            <h3 className="text-lg font-display text-white mb-3">Next Steps</h3>
+            <ol className="space-y-2 text-sm text-white/80">
               <li>1. Review this summary together</li>
               <li>2. Have the harder conversations</li>
               <li>3. Meet with an attorney to draft your agreement</li>
@@ -1100,16 +1100,16 @@ function DealMemo({
           </div>
 
           {/* Email Section */}
-          <div className="border-t border-stone-200 pt-8 mb-8">
-            <h3 className="text-lg font-serif text-stone-900 mb-4">Send this to your inbox</h3>
+          <div className="border-t border-forest-200 pt-8 mb-8">
+            <h3 className="text-lg font-display text-white mb-4">Send this to your inbox</h3>
             {status === "success" && (
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg mb-4">
-                <p className="text-sm text-emerald-800">Email sent successfully!</p>
+              <div className="p-4 bg-mint/20 border border-mint/40 rounded-lg mb-4">
+                <p className="text-sm text-white">Email sent successfully!</p>
               </div>
             )}
             {status === "error" && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
-                <p className="text-sm text-red-800">{errorMsg}</p>
+              <div className="p-4 bg-rose-500/20 border border-rose-500/40 rounded-lg mb-4">
+                <p className="text-sm text-rose-300">{errorMsg}</p>
               </div>
             )}
             <div className="flex gap-3">
@@ -1118,12 +1118,12 @@ function DealMemo({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="flex-1 px-4 py-3 border-2 border-stone-200 rounded-lg focus:outline-none focus:border-teal-600"
+                className="flex-1 px-4 py-3 border-2 border-mint rounded-lg focus:outline-none focus:border-mint bg-forest-100 text-white placeholder-white/50"
               />
               <button
                 onClick={handleSend}
                 disabled={!email.trim() || loading}
-                className="px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-mint text-forest rounded-lg font-semibold hover:bg-mint/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Sending…" : "Send my deal memo"}
               </button>
@@ -1132,7 +1132,7 @@ function DealMemo({
 
           <button
             onClick={onBack}
-            className="w-full px-6 py-3 bg-stone-200 text-stone-900 rounded-lg font-medium hover:bg-stone-300 transition-colors"
+            className="w-full px-6 py-3 bg-forest-100 text-white rounded-lg font-semibold hover:bg-forest-200 transition-colors"
           >
             Back to comparison
           </button>
@@ -1153,6 +1153,7 @@ export default function App() {
   const [valuesAnswers, setValuesAnswers] = useState<Record<string, string[]>>({});
   const [deepDiveQuestions, setDeepDiveQuestions] = useState<string[]>([]);
   const [deepDiveAnswers, setDeepDiveAnswers] = useState<Record<string, { answers: string[]; importance: number }>>({});
+  const [valuesIdx, setValuesIdx] = useState(0);
   const [deepDiveIdx, setDeepDiveIdx] = useState(0);
   const [deepDiveImportance, setDeepDiveImportance] = useState<Record<string, number>>({});
   const [partnerAData, setPartnerAData] = useState<PartnerData | null>(null);
@@ -1163,6 +1164,7 @@ export default function App() {
     setValuesAnswers({});
     setDeepDiveAnswers({});
     setDeepDiveImportance({});
+    setValuesIdx(0);
     setPhase("name-entry");
   };
 
@@ -1181,7 +1183,11 @@ export default function App() {
   };
 
   const handleValuesNext = () => {
-    setPhase("values-summary");
+    if (valuesIdx < VALUES_QUESTIONS.length - 1) {
+      setValuesIdx(valuesIdx + 1);
+    } else {
+      setPhase("values-summary");
+    }
   };
 
   // Phase: values-summary
@@ -1247,6 +1253,7 @@ export default function App() {
     setValuesAnswers({});
     setDeepDiveAnswers({});
     setDeepDiveImportance({});
+    setValuesIdx(0);
     setDeepDiveIdx(0);
     setPhase("name-entry");
   };
@@ -1293,7 +1300,7 @@ export default function App() {
       )}
       {phase === "values" && (
         <ValuesPhase
-          questionIdx={VALUES_QUESTIONS.findIndex((q) => !Object.keys(valuesAnswers).includes(q.id))}
+          questionIdx={valuesIdx}
           onSelectOption={handleSelectValueOption}
           selectedOptions={valuesAnswers}
           onContinue={handleValuesNext}
@@ -1322,7 +1329,9 @@ export default function App() {
           questionIdx={deepDiveIdx}
           questions={deepDiveQuestions}
           onSelectOption={handleSelectDeepDiveOption}
-          selectedOptions={deepDiveAnswers}
+          selectedOptions={Object.fromEntries(
+            Object.entries(deepDiveAnswers).map(([k, v]) => [k, v.answers])
+          )}
           onSetImportance={handleSetImportance}
           importance={deepDiveImportance}
         />

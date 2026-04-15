@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-let resend: any = null;
-try {
-  const { Resend } = require("resend");
-  resend = new Resend(process.env.RESEND_API_KEY);
-} catch (e) {
-  console.warn("Resend not available");
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null;
+  try {
+    const { Resend } = require("resend");
+    return new Resend(process.env.RESEND_API_KEY);
+  } catch (e) {
+    return null;
+  }
 }
 
 interface ComparisonItem {
@@ -268,8 +270,9 @@ export async function POST(request: NextRequest) {
 </html>
     `;
 
+    const resend = getResend();
     if (!resend) {
-      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+      return NextResponse.json({ error: "Email service not configured. Add RESEND_API_KEY to environment variables." }, { status: 500 });
     }
 
     const response = await resend.emails.send({
