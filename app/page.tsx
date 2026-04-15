@@ -430,7 +430,7 @@ function Nav() {
       <div className="text-xl font-display font-semibold tracking-tight text-white">
         before we<span className="text-mint">…</span>
       </div>
-      <div className="text-xs text-white/60 tracking-wide uppercase">The conversation before the paperwork</div>
+      <div className="text-xs text-white/60 tracking-wide uppercase">The conversation before the commitment</div>
     </nav>
   );
 }
