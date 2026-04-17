@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>before we... — The Big Money Survey</title>
+<meta name="description" content="The questions you've been avoiding. Nine sections. Fully anonymous. The most revealing data about money and relationships we publish.">
+<meta property="og:title" content="before we... — The Big Money Survey">
+<meta property="og:description" content="Nine sections. Fully anonymous. The questions about money and relationships you've been avoiding.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://beforewe.com/survey">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-forest: #071F14;
+    --mint: #12B87A;
+    --amber: #E8A838;
+    --red: #D94F4F;
+    --white: #FFFFFF;
+    --text-primary: rgba(255,255,255,1);
+    --text-secondary: rgba(255,255,255,0.5);
+    --text-tertiary: rgba(255,255,255,0.3);
+    --border-accent: rgba(18,184,122,0.35);
+    --surface-accent: rgba(18,184,122,0.08);
+    --card-bg: rgba(255,255,255,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--deep-forest);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--mint);
+    z-index: 1000;
+    transition: width 0.4s ease-out;
+  }
+
+  /* === HEADER === */
+  .survey-header {
+    text-align: center;
+    padding: 60px 24px 20px;
+    position: relative;
+  }
+
+  .brand-mark {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .brand-mark .dot {
+    border-radius: 50%;
+    background: var(--mint);
+  }
+
+  .brand-mark .dot:nth-child(1) { width: 6px; height: 6px; opacity: 0.35; }
+  .brand-mark .dot:nth-child(2) { width: 8px; height: 8px; opacity: 0.65; }
+  .brand-mark .dot:nth-child(3) { width: 10px; height: 10px; opacity: 1; }
+
+  .brand-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-tertiary);
+    margin-bottom: 32px;
+  }
+
+  .survey-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .survey-subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .survey-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* === CONTAINER === */
+  .survey-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* === SECTION === */
+  .survey-section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .survey-section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    padding: 48px 0 8px;
+    border-bottom: 1px solid var(--border-accent);
+    margin-bottom: 32px;
+  }
+
+  .section-number {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--mint);
+    opacity: 0.5;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* === QUESTION === */
+  .question-block {
+    margin-bottom: 36px;
+  }
+
+  .question-id {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mint);
+    opacity: 0.4;
+    margin-bottom: 6px;
+  }
+
+  .question-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+
+  .question-hint {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+
+  /* === OPTIONS === */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    background: var(--card-bg);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+
+  .option-item:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-accent);
+  }
+
+  .option-item.selected {
+    border-color: var(--mint);
+    background: rgba(18,184,122,0.12);
+  }
+
+  .option-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+  }
+
+  .option-item.selected .option-radio {
+    border-color: var(--mint);
+  }
+
+  .option-item.selected .option-radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mint);
+  }
+
+  .option-checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+  }
+
+  .option-item.selected .option-checkbox {
+    border-color: var(--mint);
+    background: var(--mint);
+  }
+
+  .option-item.selected .option-checkbox::after {
+    content: '';
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid var(--deep-forest);
+    border-bottom: 2px solid var(--deep-forest);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .option-label {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .option-item.selected .option-label {
+    color: var(--white);
+  }
+
+  /* === SCALE === */
+  .scale-container {
+    padding: 8px 0;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .scale-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    max-width: 100px;
+  }
+
+  .scale-track {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+
+  .scale-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    background: var(--card-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    transition: all 0.25s ease;
+  }
+
+  .scale-dot:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-accent);
+    color: var(--text-secondary);
+  }
+
+  .scale-dot.selected {
+    border-color: var(--mint);
+    background: rgba(18,184,122,0.15);
+    color: var(--mint);
+  }
+
+  /* === BATTERY TABLE === */
+  .battery-intro {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .battery-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .battery-row {
+    display: grid;
+    gap: 1px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: center;
+  }
+
+  .battery-4col { grid-template-columns: 1fr repeat(4, 60px); }
+  .battery-5col { grid-template-columns: 1fr repeat(5, 52px); }
+
+  .battery-header {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: 8px 0 12px;
+  }
+
+  .battery-header:first-child {
+    text-align: left;
+  }
+
+  .battery-statement {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    padding-right: 12px;
+  }
+
+  .battery-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .battery-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .battery-dot:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-accent);
+  }
+
+  .battery-dot.selected {
+    border-color: var(--mint);
+    background: var(--mint);
+  }
+
+  /* === TEXTAREA === */
+  .open-text {
+    width: 100%;
+    min-height: 100px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.25s ease;
+  }
+
+  .open-text:focus {
+    border-color: var(--border-accent);
+  }
+
+  .open-text::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  /* === NAVIGATION === */
+  .section-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 0 20px;
+    gap: 16px;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    padding: 12px 28px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    outline: none;
+  }
+
+  .btn-primary {
+    background: var(--mint);
+    color: var(--deep-forest);
+  }
+
+  .btn-primary:hover {
+    background: #14c984;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--border-accent);
+    color: var(--text-primary);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-tertiary);
+    border: none;
+    padding: 12px 16px;
+  }
+
+  .btn-ghost:hover {
+    color: var(--text-secondary);
+  }
+
+  .section-indicator {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+  }
+
+  /* === INTRO SCREEN === */
+  .intro-screen {
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .intro-screen .survey-title {
+    margin-bottom: 20px;
+  }
+
+  .intro-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  .intro-details {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+
+  .intro-detail {
+    text-align: center;
+  }
+
+  .intro-detail-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--mint);
+    margin-bottom: 4px;
+  }
+
+  .intro-detail-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+  }
+
+  .privacy-note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    background: var(--card-bg);
+  }
+
+  .privacy-note strong {
+    color: var(--mint);
+    font-weight: 400;
+  }
+
+  /* === COMPLETION SCREEN === */
+  .completion-screen {
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .completion-screen .survey-title {
+    margin-bottom: 12px;
+  }
+
+  .completion-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+
+  .archetype-card {
+    border: 1px solid var(--border-accent);
+    border-radius: 16px;
+    padding: 32px 24px;
+    background: var(--card-bg);
+    margin-bottom: 32px;
+  }
+
+  .archetype-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--mint);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+
+  .archetype-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .archetype-tagline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .archetype-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .share-section {
+    margin-top: 32px;
+  }
+
+  .share-section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 480px) {
+    .survey-title { font-size: 22px; }
+    .section-title { font-size: 18px; }
+    .question-text { font-size: 14px; }
+    .intro-details { gap: 20px; }
+    .intro-detail-number { font-size: 22px; }
+    .battery-4col { grid-template-columns: 1fr repeat(4, 48px); }
+    .battery-5col { grid-template-columns: 1fr repeat(5, 40px); }
+    .battery-statement { font-size: 11px; }
+    .scale-dot { width: 28px; height: 28px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ========== INTRO ========== -->
+<div class="survey-section active" id="section-intro">
+  <div class="survey-header">
+    <div class="brand-mark">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="brand-name">before we...</div>
+  </div>
+
+  <div class="intro-screen">
+    <h1 class="survey-title">The Big Money Survey</h1>
+    <p class="survey-subtitle">The questions you've been avoiding.</p>
+
+    <p class="intro-desc">
+      Nine sections. Fully anonymous. Behavioral batteries, shame inventories, and the three-way honesty comparison that produces the most revealing data we publish.
+    </p>
+
+    <div class="intro-details">
+      <div class="intro-detail">
+        <div class="intro-detail-number">~9</div>
+        <div class="intro-detail-label">Minutes</div>
+      </div>
+      <div class="intro-detail">
+        <div class="intro-detail-number">48</div>
+        <div class="intro-detail-label">Questions</div>
+      </div>
+      <div class="intro-detail">
+        <div class="intro-detail-number">100%</div>
+        <div class="intro-detail-label">Anonymous</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="goToSection(1)">Begin the survey</button>
+
+    <div class="privacy-note">
+      <strong>Fully anonymous by design.</strong> No email required. No account. No tracking. Your responses are stored as aggregate data only — there is no technical mechanism to link answers to any individual.
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 00 — Before We Begin ========== -->
+<div class="survey-section" id="section-1">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 00</div>
+      <h2 class="section-title">Before We Begin</h2>
+      <p class="section-subtitle">Six questions. No income yet.</p>
+    </div>
+
+    <div class="question-block" data-qid="S1">
+      <div class="question-id">S1</div>
+      <div class="question-text">How old are you?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="under-25"><div class="option-radio"></div><div class="option-label">Under 25</div></div>
+        <div class="option-item" data-value="25-34"><div class="option-radio"></div><div class="option-label">25–34</div></div>
+        <div class="option-item" data-value="35-44"><div class="option-radio"></div><div class="option-label">35–44</div></div>
+        <div class="option-item" data-value="45-54"><div class="option-radio"></div><div class="option-label">45–54</div></div>
+        <div class="option-item" data-value="55-64"><div class="option-radio"></div><div class="option-label">55–64</div></div>
+        <div class="option-item" data-value="65+"><div class="option-radio"></div><div class="option-label">65+</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="S2">
+      <div class="question-id">S2</div>
+      <div class="question-text">How do you identify?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="woman"><div class="option-radio"></div><div class="option-label">Woman</div></div>
+        <div class="option-item" data-value="man"><div class="option-radio"></div><div class="option-label">Man</div></div>
+        <div class="option-item" data-value="nonbinary"><div class="option-radio"></div><div class="option-label">Non-binary or genderqueer</div></div>
+        <div class="option-item" data-value="self-describe"><div class="option-radio"></div><div class="option-label">Prefer to self-describe</div></div>
+        <div class="option-item" data-value="prefer-not"><div class="option-radio"></div><div class="option-label">Prefer not to say</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="S3">
+      <div class="question-id">S3</div>
+      <div class="question-text">What is your current relationship status?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="single"><div class="option-radio"></div><div class="option-label">Single</div></div>
+        <div class="option-item" data-value="dating"><div class="option-radio"></div><div class="option-label">Dating, not living together</div></div>
+        <div class="option-item" data-value="living-together"><div class="option-radio"></div><div class="option-label">Living together, not married</div></div>
+        <div class="option-item" data-value="married"><div class="option-radio"></div><div class="option-label">Married or domestic partnership</div></div>
+        <div class="option-item" data-value="separated"><div class="option-radio"></div><div class="option-label">Separated or divorced</div></div>
+        <div class="option-item" data-value="widowed"><div class="option-radio"></div><div class="option-label">Widowed</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 2 — Divorce History -->
+    <div class="question-block" data-qid="S3b">
+      <div class="question-id">S3b</div>
+      <div class="question-text">Have you ever been divorced?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="S4">
+      <div class="question-id">S4</div>
+      <div class="question-text">How long have you been in your current or most recent relationship?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="under-1"><div class="option-radio"></div><div class="option-label">Under 1 year</div></div>
+        <div class="option-item" data-value="1-3"><div class="option-radio"></div><div class="option-label">1–3 years</div></div>
+        <div class="option-item" data-value="3-7"><div class="option-radio"></div><div class="option-label">3–7 years</div></div>
+        <div class="option-item" data-value="7-15"><div class="option-radio"></div><div class="option-label">7–15 years</div></div>
+        <div class="option-item" data-value="15+"><div class="option-radio"></div><div class="option-label">15+ years</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 1 — Romantic vs. Pragmatic -->
+    <div class="question-block" data-qid="S5">
+      <div class="question-id">S5</div>
+      <div class="question-text">In relationships, you'd describe yourself as more:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="romantic"><div class="option-radio"></div><div class="option-label">Romantic — I lead with heart</div></div>
+        <div class="option-item" data-value="pragmatic"><div class="option-radio"></div><div class="option-label">Pragmatic — I lead with logic</div></div>
+        <div class="option-item" data-value="both"><div class="option-radio"></div><div class="option-label">Both equally — depends on the situation</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(0)">Back</button>
+      <span class="section-indicator">1 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(2)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 01 — Where Your Money Story Began ========== -->
+<div class="survey-section" id="section-2">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Where Your Money Story Began</h2>
+      <p class="section-subtitle">Before the relationship. Before you.</p>
+    </div>
+
+    <div class="question-block" data-qid="O1">
+      <div class="question-id">O1</div>
+      <div class="question-text">Growing up, money in your household felt:</div>
+      <div class="question-hint">Select all that apply</div>
+      <div class="options-list" data-type="multi">
+        <div class="option-item" data-value="abundant"><div class="option-checkbox"></div><div class="option-label">Abundant</div></div>
+        <div class="option-item" data-value="scarce"><div class="option-checkbox"></div><div class="option-label">Scarce</div></div>
+        <div class="option-item" data-value="unpredictable"><div class="option-checkbox"></div><div class="option-label">Unpredictable</div></div>
+        <div class="option-item" data-value="shameful"><div class="option-checkbox"></div><div class="option-label">Shameful</div></div>
+        <div class="option-item" data-value="conflict"><div class="option-checkbox"></div><div class="option-label">A source of conflict</div></div>
+        <div class="option-item" data-value="safety"><div class="option-checkbox"></div><div class="option-label">A source of safety</div></div>
+        <div class="option-item" data-value="taboo"><div class="option-checkbox"></div><div class="option-label">Taboo — never discussed</div></div>
+        <div class="option-item" data-value="normal"><div class="option-checkbox"></div><div class="option-label">Just normal</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="O2">
+      <div class="question-id">O2</div>
+      <div class="question-text">Your parents' financial approach with each other was:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="fully-open"><div class="option-radio"></div><div class="option-label">Fully open — everything shared</div></div>
+        <div class="option-item" data-value="partially-open"><div class="option-radio"></div><div class="option-label">Partially open</div></div>
+        <div class="option-item" data-value="one-controlled"><div class="option-radio"></div><div class="option-label">One parent controlled everything</div></div>
+        <div class="option-item" data-value="fought"><div class="option-radio"></div><div class="option-label">They fought about money constantly</div></div>
+        <div class="option-item" data-value="no-idea"><div class="option-radio"></div><div class="option-label">I have no idea — it was never discussed</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="O3">
+      <div class="question-id">O3</div>
+      <div class="question-text">How much did your parents' relationship with money shape your own?</div>
+      <div class="question-hint">1 = Not at all — 10 = Completely</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Not at all</span>
+          <span class="scale-label">Completely</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="O3">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="O4">
+      <div class="question-id">O4</div>
+      <div class="question-text">Do you know your partner's childhood money story — how their family handled finances, what they felt about it?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-depth"><div class="option-radio"></div><div class="option-label">Yes, in depth</div></div>
+        <div class="option-item" data-value="roughly"><div class="option-radio"></div><div class="option-label">Roughly — I know the broad strokes</div></div>
+        <div class="option-item" data-value="a-little"><div class="option-radio"></div><div class="option-label">I know a little</div></div>
+        <div class="option-item" data-value="not-really"><div class="option-radio"></div><div class="option-label">Not really</div></div>
+        <div class="option-item" data-value="never-talked"><div class="option-radio"></div><div class="option-label">We've never talked about it</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(1)">Back</button>
+      <span class="section-indicator">2 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(3)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 02 — Want vs. Have ========== -->
+<div class="survey-section" id="section-3">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Want vs. Have</h2>
+      <p class="section-subtitle">What you chose. What you'd choose now.</p>
+    </div>
+
+    <div class="question-block" data-qid="DR1">
+      <div class="question-id">DR1</div>
+      <div class="question-text">My current financial arrangement in this relationship is:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="separate"><div class="option-radio"></div><div class="option-label">Fully mine — separate finances</div></div>
+        <div class="option-item" data-value="mostly-separate"><div class="option-radio"></div><div class="option-label">Mostly separate with some shared</div></div>
+        <div class="option-item" data-value="merged"><div class="option-radio"></div><div class="option-label">Fully merged — everything combined</div></div>
+        <div class="option-item" data-value="unclear"><div class="option-radio"></div><div class="option-label">Unclear — it evolved without a plan</div></div>
+        <div class="option-item" data-value="complicated"><div class="option-radio"></div><div class="option-label">It's complicated / in flux</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="DR2">
+      <div class="question-id">DR2</div>
+      <div class="question-text">My ideal financial arrangement would be:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="fully-separate"><div class="option-radio"></div><div class="option-label">Fully separate — my money is my money</div></div>
+        <div class="option-item" data-value="mostly-separate"><div class="option-radio"></div><div class="option-label">Mostly separate with some shared</div></div>
+        <div class="option-item" data-value="fully-merged"><div class="option-radio"></div><div class="option-label">Fully merged — complete transparency</div></div>
+        <div class="option-item" data-value="havent-thought"><div class="option-radio"></div><div class="option-label">I genuinely haven't thought about it</div></div>
+        <div class="option-item" data-value="depends-trust"><div class="option-radio"></div><div class="option-label">It depends on trust I don't have yet</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="DR3">
+      <div class="question-id">DR3</div>
+      <div class="question-text">Do you secretly want more financial autonomy than you currently have?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-strongly"><div class="option-radio"></div><div class="option-label">Yes — strongly</div></div>
+        <div class="option-item" data-value="yes-somewhat"><div class="option-radio"></div><div class="option-label">Yes — somewhat</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No, the current arrangement works</div></div>
+        <div class="option-item" data-value="never-thought"><div class="option-radio"></div><div class="option-label">I've never thought about it explicitly</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="DR4">
+      <div class="question-id">DR4</div>
+      <div class="question-text">Have you ever fantasized about having money your partner doesn't know about — even if you'd never act on it?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="often"><div class="option-radio"></div><div class="option-label">Yes, fairly often</div></div>
+        <div class="option-item" data-value="few-times"><div class="option-radio"></div><div class="option-label">A few times</div></div>
+        <div class="option-item" data-value="once-twice"><div class="option-radio"></div><div class="option-label">Once or twice</div></div>
+        <div class="option-item" data-value="never"><div class="option-radio"></div><div class="option-label">Never</div></div>
+        <div class="option-item" data-value="already-have"><div class="option-radio"></div><div class="option-label">I already have this — it's not a fantasy</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(2)">Back</button>
+      <span class="section-indicator">3 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(4)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 03 — How It Feels Right Now ========== -->
+<div class="survey-section" id="section-4">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">How It Feels Right Now</h2>
+      <p class="section-subtitle">Not what you do. What you feel.</p>
+    </div>
+
+    <div class="question-block" data-qid="E1">
+      <div class="question-id">E1</div>
+      <div class="question-text">When your partner asks about your finances, you feel:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="open"><div class="option-radio"></div><div class="option-label">Open and comfortable</div></div>
+        <div class="option-item" data-value="guarded"><div class="option-radio"></div><div class="option-label">Slightly guarded</div></div>
+        <div class="option-item" data-value="anxious"><div class="option-radio"></div><div class="option-label">Anxious</div></div>
+        <div class="option-item" data-value="defensive"><div class="option-radio"></div><div class="option-label">Defensive</div></div>
+        <div class="option-item" data-value="ashamed"><div class="option-radio"></div><div class="option-label">Ashamed</div></div>
+        <div class="option-item" data-value="relieved"><div class="option-radio"></div><div class="option-label">Relieved — I want to talk about it</div></div>
+        <div class="option-item" data-value="indifferent"><div class="option-radio"></div><div class="option-label">Indifferent — we just don't go there</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="E2">
+      <div class="question-id">E2</div>
+      <div class="question-text">Money in this relationship makes you feel:</div>
+      <div class="question-hint">Select up to three</div>
+      <div class="options-list" data-type="multi-max3">
+        <div class="option-item" data-value="safe"><div class="option-checkbox"></div><div class="option-label">Safe</div></div>
+        <div class="option-item" data-value="anxious"><div class="option-checkbox"></div><div class="option-label">Anxious</div></div>
+        <div class="option-item" data-value="controlled"><div class="option-checkbox"></div><div class="option-label">Controlled</div></div>
+        <div class="option-item" data-value="empowered"><div class="option-checkbox"></div><div class="option-label">Empowered</div></div>
+        <div class="option-item" data-value="resentful"><div class="option-checkbox"></div><div class="option-label">Resentful</div></div>
+        <div class="option-item" data-value="grateful"><div class="option-checkbox"></div><div class="option-label">Grateful</div></div>
+        <div class="option-item" data-value="frustrated"><div class="option-checkbox"></div><div class="option-label">Frustrated</div></div>
+        <div class="option-item" data-value="hopeful"><div class="option-checkbox"></div><div class="option-label">Hopeful</div></div>
+        <div class="option-item" data-value="trapped"><div class="option-checkbox"></div><div class="option-label">Trapped</div></div>
+        <div class="option-item" data-value="neutral"><div class="option-checkbox"></div><div class="option-label">Neutral</div></div>
+        <div class="option-item" data-value="complicated"><div class="option-checkbox"></div><div class="option-label">It's complicated</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="E3">
+      <div class="question-id">E3</div>
+      <div class="question-text">When I imagine my financial future, my partner is in the picture.</div>
+      <div class="question-hint">1 = They're not in it at all — 10 = Completely inseparable from my future</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Not in it at all</span>
+          <span class="scale-label">Completely inseparable</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="E3">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="O5">
+      <div class="question-id">O5</div>
+      <div class="question-text">If this relationship ended tomorrow, could you financially support yourself?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-easily"><div class="option-radio"></div><div class="option-label">Yes, easily</div></div>
+        <div class="option-item" data-value="yes-adjustment"><div class="option-radio"></div><div class="option-label">Yes, but it would require significant adjustment</div></div>
+        <div class="option-item" data-value="not-immediately"><div class="option-radio"></div><div class="option-label">Not immediately — I'd need time to restructure</div></div>
+        <div class="option-item" data-value="no-dependent"><div class="option-radio"></div><div class="option-label">No — I am financially dependent on my partner</div></div>
+        <div class="option-item" data-value="na"><div class="option-radio"></div><div class="option-label">Not applicable</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(3)">Back</button>
+      <span class="section-indicator">4 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(5)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 04 — What You've Done ========== -->
+<div class="survey-section" id="section-5">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">What You've Done</h2>
+      <p class="section-subtitle">Anonymous. Honest. This is the data that matters.</p>
+    </div>
+
+    <div class="question-block">
+      <div class="question-text">Battery A — In a relationship, I have:</div>
+      <div class="battery-intro">Rate each honestly. All responses are anonymous.</div>
+      <div class="battery-table">
+        <div class="battery-row battery-4col">
+          <div class="battery-header" style="text-align:left"></div>
+          <div class="battery-header">Never</div>
+          <div class="battery-header">Once</div>
+          <div class="battery-header">A few</div>
+          <div class="battery-header">Regularly</div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A1">
+          <div class="battery-statement">Moved money to an account my partner didn't know about</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A2">
+          <div class="battery-statement">Underreported my income when my partner asked</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A3">
+          <div class="battery-statement">Hidden the real cost of a purchase</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A4">
+          <div class="battery-statement">Used a credit card my partner doesn't know exists</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A5">
+          <div class="battery-statement">Made a financial commitment to family without telling my partner first</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A6">
+          <div class="battery-statement">Secretly checked my partner's bank statements or accounts</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A7">
+          <div class="battery-statement">Hidden a windfall — bonus, gift, inheritance, or settlement</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A8">
+          <div class="battery-statement">Stayed in a relationship longer because I was financially dependent</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Battery A2 — Trimmed to 3 rows per appendix recommendation -->
+    <div class="question-block" style="margin-top: 40px;">
+      <div class="question-text">Battery A2 — Now, your partner. How many of these do you think they've done?</div>
+      <div class="battery-intro">Your best honest guess. Not accusation — estimation.</div>
+      <div class="battery-table">
+        <div class="battery-row battery-4col">
+          <div class="battery-header" style="text-align:left"></div>
+          <div class="battery-header">Never</div>
+          <div class="battery-header">Once</div>
+          <div class="battery-header">A few</div>
+          <div class="battery-header">Regularly</div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A2-1">
+          <div class="battery-statement">Moved money to an account I don't know about</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A2-2">
+          <div class="battery-statement">Hidden the real cost of a purchase from me</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+        <div class="battery-row battery-4col" data-qid="A2-3">
+          <div class="battery-statement">Hidden a windfall I didn't know about</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="never"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="once"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="few"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="regularly"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(4)">Back</button>
+      <span class="section-indicator">5 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(6)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 05 — The Line ========== -->
+<div class="survey-section" id="section-6">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">The Line</h2>
+      <p class="section-subtitle">Everyone has one. Most haven't said it out loud.</p>
+    </div>
+
+    <div class="question-block" data-qid="TH1">
+      <div class="question-id">TH1</div>
+      <div class="question-text">At what dollar amount would a hidden purchase feel like a genuine betrayal?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="any"><div class="option-radio"></div><div class="option-label">Any amount hidden is a betrayal</div></div>
+        <div class="option-item" data-value="50"><div class="option-radio"></div><div class="option-label">Around $50</div></div>
+        <div class="option-item" data-value="200"><div class="option-radio"></div><div class="option-label">Around $200</div></div>
+        <div class="option-item" data-value="500"><div class="option-radio"></div><div class="option-label">Around $500</div></div>
+        <div class="option-item" data-value="1000-2000"><div class="option-radio"></div><div class="option-label">$1,000–2,000</div></div>
+        <div class="option-item" data-value="5000-10000"><div class="option-radio"></div><div class="option-label">$5,000–10,000</div></div>
+        <div class="option-item" data-value="10000+"><div class="option-radio"></div><div class="option-label">Over $10,000</div></div>
+        <div class="option-item" data-value="depends"><div class="option-radio"></div><div class="option-label">It depends entirely on what it was for</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="TH2">
+      <div class="question-id">TH2</div>
+      <div class="question-text">Before a significant purchase, you typically:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="ask-permission"><div class="option-radio"></div><div class="option-label">Ask your partner's permission</div></div>
+        <div class="option-item" data-value="tell-before"><div class="option-radio"></div><div class="option-label">Tell your partner before buying</div></div>
+        <div class="option-item" data-value="buy-mention"><div class="option-radio"></div><div class="option-label">Buy it, then mention it</div></div>
+        <div class="option-item" data-value="buy-nothing"><div class="option-radio"></div><div class="option-label">Buy it and say nothing</div></div>
+        <div class="option-item" data-value="depends"><div class="option-radio"></div><div class="option-label">It entirely depends on the amount</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="TH3">
+      <div class="question-id">TH3</div>
+      <div class="question-text">At what point does financial secrecy in a relationship become financial abuse?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="never"><div class="option-radio"></div><div class="option-label">It never does — privacy isn't abuse</div></div>
+        <div class="option-item" data-value="limits-choices"><div class="option-radio"></div><div class="option-label">When it limits the other partner's real choices</div></div>
+        <div class="option-item" data-value="paired-control"><div class="option-radio"></div><div class="option-label">When it's paired with any form of control</div></div>
+        <div class="option-item" data-value="income-withheld"><div class="option-radio"></div><div class="option-label">When any significant income is withheld</div></div>
+        <div class="option-item" data-value="havent-drawn"><div class="option-radio"></div><div class="option-label">I haven't drawn that line for myself</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 5 — Inheritance Stance -->
+    <div class="question-block" data-qid="TH4">
+      <div class="question-id">TH4</div>
+      <div class="question-text">If one of you inherited a significant sum during the marriage, it should:</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="completely-separate"><div class="option-radio"></div><div class="option-label">Stay completely separate — it's family money</div></div>
+        <div class="option-item" data-value="mostly-separate"><div class="option-radio"></div><div class="option-label">Stay mostly separate, but be accessible in emergencies</div></div>
+        <div class="option-item" data-value="partially-shared"><div class="option-radio"></div><div class="option-label">Be partially shared — some into the joint pot</div></div>
+        <div class="option-item" data-value="fully-shared"><div class="option-radio"></div><div class="option-label">Become fully shared — what's mine is ours</div></div>
+        <div class="option-item" data-value="depends-amount"><div class="option-radio"></div><div class="option-label">It depends entirely on the amount</div></div>
+        <div class="option-item" data-value="havent-thought"><div class="option-radio"></div><div class="option-label">I haven't thought about this</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 6 — Asset Protection Priority -->
+    <div class="question-block" data-qid="TH5">
+      <div class="question-id">TH5</div>
+      <div class="question-text">If you were getting a prenup, what's the first asset you'd want to protect?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="retirement"><div class="option-radio"></div><div class="option-label">Retirement accounts</div></div>
+        <div class="option-item" data-value="business"><div class="option-radio"></div><div class="option-label">A business or equity stake</div></div>
+        <div class="option-item" data-value="property"><div class="option-radio"></div><div class="option-label">Real property (house, land)</div></div>
+        <div class="option-item" data-value="inheritance"><div class="option-radio"></div><div class="option-label">Inheritance (past or future)</div></div>
+        <div class="option-item" data-value="savings"><div class="option-radio"></div><div class="option-label">Savings and investments</div></div>
+        <div class="option-item" data-value="nothing"><div class="option-radio"></div><div class="option-label">Nothing — I wouldn't want a prenup</div></div>
+        <div class="option-item" data-value="no-assets"><div class="option-radio"></div><div class="option-label">I don't have assets worth protecting</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(5)">Back</button>
+      <span class="section-indicator">6 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(7)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 06 — What You Carry ========== -->
+<div class="survey-section" id="section-7">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">What You Carry</h2>
+      <p class="section-subtitle">The things nobody says. The survey exists for this section.</p>
+    </div>
+
+    <div class="question-block">
+      <div class="question-text">Battery B — How much shame do you carry about each of the following?</div>
+      <div class="battery-intro">Optional. You don't have to answer every row. But we hope you do.</div>
+      <div class="battery-table">
+        <div class="battery-row battery-5col">
+          <div class="battery-header" style="text-align:left"></div>
+          <div class="battery-header">None</div>
+          <div class="battery-header">A little</div>
+          <div class="battery-header">Moderate</div>
+          <div class="battery-header">Significant</div>
+          <div class="battery-header" style="font-size:8px">Untold</div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-1">
+          <div class="battery-statement">Carrying credit card debt</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-2">
+          <div class="battery-statement">Earning less than my partner</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-3">
+          <div class="battery-statement">Earning significantly more — and what that means for the dynamic</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-4">
+          <div class="battery-statement">Never having seriously looked at my retirement account</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-5">
+          <div class="battery-statement">Not knowing my own credit score</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-6">
+          <div class="battery-statement">Borrowing money from a parent or family in the last two years</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-7">
+          <div class="battery-statement">Having less saved than I've implied to people</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-8">
+          <div class="battery-statement">Spending significantly on myself without telling my partner</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+        <div class="battery-row battery-5col" data-qid="B-9">
+          <div class="battery-statement">Not having a will, a plan, or any legal financial structure</div>
+          <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="significant"></div></div>
+          <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(6)">Back</button>
+      <span class="section-indicator">7 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(8)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 07 — Who Holds the Money ========== -->
+<div class="survey-section" id="section-8">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Who Holds the Money</h2>
+      <p class="section-subtitle">Authority. Autonomy. The gap between them.</p>
+    </div>
+
+    <div class="question-block" data-qid="P1">
+      <div class="question-id">P1</div>
+      <div class="question-text">In your relationship, who has more influence over major financial decisions?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="always-me"><div class="option-radio"></div><div class="option-label">Always me</div></div>
+        <div class="option-item" data-value="usually-me"><div class="option-radio"></div><div class="option-label">Usually me</div></div>
+        <div class="option-item" data-value="equal"><div class="option-radio"></div><div class="option-label">Roughly equal</div></div>
+        <div class="option-item" data-value="usually-partner"><div class="option-radio"></div><div class="option-label">Usually my partner</div></div>
+        <div class="option-item" data-value="always-partner"><div class="option-radio"></div><div class="option-label">Always my partner</div></div>
+        <div class="option-item" data-value="avoid"><div class="option-radio"></div><div class="option-label">We avoid making them together</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="P2">
+      <div class="question-id">P2</div>
+      <div class="question-text">Who manages the day-to-day finances — bills, budget tracking, cash flow?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="me-entirely"><div class="option-radio"></div><div class="option-label">I do, entirely</div></div>
+        <div class="option-item" data-value="me-mostly"><div class="option-radio"></div><div class="option-label">I do, mostly</div></div>
+        <div class="option-item" data-value="equal"><div class="option-radio"></div><div class="option-label">We share it equally</div></div>
+        <div class="option-item" data-value="partner-mostly"><div class="option-radio"></div><div class="option-label">My partner does, mostly</div></div>
+        <div class="option-item" data-value="partner-entirely"><div class="option-radio"></div><div class="option-label">My partner does, entirely</div></div>
+        <div class="option-item" data-value="neither"><div class="option-radio"></div><div class="option-label">Neither — it's chaos</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="P3">
+      <div class="question-id">P3</div>
+      <div class="question-text">In early dating, who typically paid?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="i-always"><div class="option-radio"></div><div class="option-label">I always paid</div></div>
+        <div class="option-item" data-value="partner-always"><div class="option-radio"></div><div class="option-label">My partner always paid</div></div>
+        <div class="option-item" data-value="split"><div class="option-radio"></div><div class="option-label">We split from the start</div></div>
+        <div class="option-item" data-value="loose"><div class="option-radio"></div><div class="option-label">It was loose — whoever, whenever</div></div>
+        <div class="option-item" data-value="havent"><div class="option-radio"></div><div class="option-label">We haven't gotten there yet</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="P4">
+      <div class="question-id">P4</div>
+      <div class="question-text">How did that feel?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="right"><div class="option-radio"></div><div class="option-label">Right and natural</div></div>
+        <div class="option-item" data-value="fine-then"><div class="option-radio"></div><div class="option-label">Fine at the time — I'd do it differently now</div></div>
+        <div class="option-item" data-value="uncomfortable"><div class="option-radio"></div><div class="option-label">Uncomfortable — I wanted more balance</div></div>
+        <div class="option-item" data-value="didnt-think"><div class="option-radio"></div><div class="option-label">I didn't think about it at the time</div></div>
+        <div class="option-item" data-value="working-out"><div class="option-radio"></div><div class="option-label">Still working out how I feel about it</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="P5">
+      <div class="question-id">P5</div>
+      <div class="question-text">Have you ever used money — consciously or not — as leverage in a relationship?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="never"><div class="option-radio"></div><div class="option-label">Never</div></div>
+        <div class="option-item" data-value="once"><div class="option-radio"></div><div class="option-label">Once</div></div>
+        <div class="option-item" data-value="occasionally"><div class="option-radio"></div><div class="option-label">Occasionally</div></div>
+        <div class="option-item" data-value="more-than"><div class="option-radio"></div><div class="option-label">More than I'd like to admit</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(7)">Back</button>
+      <span class="section-indicator">8 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(9)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 08 — The Conversation You Didn't Have ========== -->
+<div class="survey-section" id="section-9">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">The Conversation You Didn't Have</h2>
+      <p class="section-subtitle">This is what we're named for.</p>
+    </div>
+
+    <div class="question-block" data-qid="B1">
+      <div class="question-id">B1</div>
+      <div class="question-text">Before you moved in together — or your most recent major milestone — did you discuss how finances would be structured?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-detail"><div class="option-radio"></div><div class="option-label">Yes, in detail</div></div>
+        <div class="option-item" data-value="briefly"><div class="option-radio"></div><div class="option-label">Briefly — surface level</div></div>
+        <div class="option-item" data-value="not-really"><div class="option-radio"></div><div class="option-label">Not really</div></div>
+        <div class="option-item" data-value="not-at-all"><div class="option-radio"></div><div class="option-label">Not at all</div></div>
+        <div class="option-item" data-value="no-milestone"><div class="option-radio"></div><div class="option-label">We haven't reached a major milestone yet</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="B2">
+      <div class="question-id">B2</div>
+      <div class="question-text">Before getting engaged or married, did you discuss a prenuptial agreement?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-have-one"><div class="option-radio"></div><div class="option-label">Yes — and we have one</div></div>
+        <div class="option-item" data-value="yes-decided-against"><div class="option-radio"></div><div class="option-label">Yes — and we decided against it</div></div>
+        <div class="option-item" data-value="brought-up-dropped"><div class="option-radio"></div><div class="option-label">We brought it up once, then dropped it</div></div>
+        <div class="option-item" data-value="not-at-all"><div class="option-radio"></div><div class="option-label">Not at all</div></div>
+        <div class="option-item" data-value="na"><div class="option-radio"></div><div class="option-label">Not applicable</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 3 — Prenup Stance -->
+    <div class="question-block" data-qid="B2b">
+      <div class="question-id">B2b</div>
+      <div class="question-text">Regardless of your current situation, where do you stand on prenups?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="strongly-favor"><div class="option-radio"></div><div class="option-label">Strongly in favor — everyone should have one</div></div>
+        <div class="option-item" data-value="favor-certain"><div class="option-radio"></div><div class="option-label">In favor for certain situations (income gap, prior assets, etc.)</div></div>
+        <div class="option-item" data-value="open"><div class="option-radio"></div><div class="option-label">Open to it — depends on the relationship</div></div>
+        <div class="option-item" data-value="probably-not"><div class="option-radio"></div><div class="option-label">Probably not for me, but I don't judge it</div></div>
+        <div class="option-item" data-value="against"><div class="option-radio"></div><div class="option-label">Against — it undermines the commitment</div></div>
+        <div class="option-item" data-value="no-opinion"><div class="option-radio"></div><div class="option-label">I genuinely haven't formed an opinion</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Addition 4 — Partner Perception on Prenups -->
+    <div class="question-block" data-qid="B2c">
+      <div class="question-id">B2c</div>
+      <div class="question-text">What do you think your partner's stance on prenups is?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="strongly-favor"><div class="option-radio"></div><div class="option-label">They'd be strongly in favor</div></div>
+        <div class="option-item" data-value="somewhat-open"><div class="option-radio"></div><div class="option-label">They'd be somewhat open</div></div>
+        <div class="option-item" data-value="uncomfortable"><div class="option-radio"></div><div class="option-label">They'd be uncomfortable with it</div></div>
+        <div class="option-item" data-value="opposed"><div class="option-radio"></div><div class="option-label">They'd be opposed</div></div>
+        <div class="option-item" data-value="dont-know"><div class="option-radio"></div><div class="option-label">I genuinely don't know</div></div>
+        <div class="option-item" data-value="na"><div class="option-radio"></div><div class="option-label">Not applicable</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="B3">
+      <div class="question-id">B3</div>
+      <div class="question-text">Which financial topics felt too risky, awkward, or premature to raise when you first committed?</div>
+      <div class="question-hint">Select all that apply</div>
+      <div class="options-list" data-type="multi">
+        <div class="option-item" data-value="debt"><div class="option-checkbox"></div><div class="option-label">Debt</div></div>
+        <div class="option-item" data-value="income"><div class="option-checkbox"></div><div class="option-label">Income</div></div>
+        <div class="option-item" data-value="net-worth"><div class="option-checkbox"></div><div class="option-label">Net worth</div></div>
+        <div class="option-item" data-value="credit"><div class="option-checkbox"></div><div class="option-label">Credit history</div></div>
+        <div class="option-item" data-value="spending"><div class="option-checkbox"></div><div class="option-label">Spending habits</div></div>
+        <div class="option-item" data-value="goals"><div class="option-checkbox"></div><div class="option-label">Long-term goals</div></div>
+        <div class="option-item" data-value="children"><div class="option-checkbox"></div><div class="option-label">Children and money</div></div>
+        <div class="option-item" data-value="inheritance"><div class="option-checkbox"></div><div class="option-label">Inheritance</div></div>
+        <div class="option-item" data-value="ambition"><div class="option-checkbox"></div><div class="option-label">Career ambition gaps</div></div>
+        <div class="option-item" data-value="prenup"><div class="option-checkbox"></div><div class="option-label">Prenuptial agreements</div></div>
+        <div class="option-item" data-value="nothing"><div class="option-checkbox"></div><div class="option-label">Nothing — we talked about everything</div></div>
+        <div class="option-item" data-value="all"><div class="option-checkbox"></div><div class="option-label">All of it</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="B4">
+      <div class="question-id">B4</div>
+      <div class="question-text">Is there a financial conversation you wish you'd had before a major milestone? What was it — and what stopped you?</div>
+      <div class="question-hint">Open text — optional</div>
+      <textarea class="open-text" placeholder="Type your answer here..."></textarea>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(8)">Back</button>
+      <span class="section-indicator">9 of 10</span>
+      <button class="btn btn-primary" onclick="goToSection(10)">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 09 — Before You Go ========== -->
+<div class="survey-section" id="section-10">
+  <div class="survey-container">
+    <div class="section-header">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">Before You Go</h2>
+      <p class="section-subtitle">Three numbers and two last questions.</p>
+    </div>
+
+    <div class="question-block" data-qid="X1">
+      <div class="question-id">X1</div>
+      <div class="question-text">On a scale of 1–10: how financially honest are you with your partner?</div>
+      <div class="question-hint">1 = I'm withholding significant things — 10 = Fully transparent</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Withholding significant things</span>
+          <span class="scale-label">Fully transparent</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="X1">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="X2">
+      <div class="question-id">X2</div>
+      <div class="question-text">What score do you think your partner would give themselves?</div>
+      <div class="question-hint">Not how honest you think they are with you — what score do you think they'd give themselves.</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">They'd admit to withholding</span>
+          <span class="scale-label">They'd say fully transparent</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="X2">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="X3">
+      <div class="question-id">X3</div>
+      <div class="question-text">How financially honest do you believe your partner actually is with you?</div>
+      <div class="question-hint">1 = Significant things withheld — 10 = Fully transparent</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Significant things withheld</span>
+          <span class="scale-label">Fully transparent</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="X3">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="X4">
+      <div class="question-id">X4</div>
+      <div class="question-text">Is there anything about your financial life you've never told anyone?</div>
+      <div class="question-hint">Optional. Anonymous. This is the question Aella would end on.</div>
+      <textarea class="open-text" placeholder="Type your answer here..."></textarea>
+    </div>
+
+    <!-- NEW: Addition 7 — Social Sharing Interest -->
+    <div class="question-block" data-qid="X5">
+      <div class="question-id">X5</div>
+      <div class="question-text">Would you be interested in seeing how your answers compare to your friends' — all anonymized?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes — send me a group link I can share</div></div>
+        <div class="option-item" data-value="maybe"><div class="option-radio"></div><div class="option-label">Maybe — tell me more first</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No — I'd rather just see the aggregate data</div></div>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goToSection(9)">Back</button>
+      <span class="section-indicator">10 of 10</span>
+      <button class="btn btn-primary" onclick="submitSurvey()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== COMPLETION ========== -->
+<div class="survey-section" id="section-complete">
+  <div class="survey-header">
+    <div class="brand-mark">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="brand-name">before we...</div>
+  </div>
+
+  <div class="completion-screen">
+    <h1 class="survey-title">Your Money Archetype</h1>
+    <p class="completion-desc">Based on your responses across transparency, planning, power, conflict, and origin dimensions.</p>
+
+    <div class="archetype-card" id="archetypeCard">
+      <div class="archetype-label">Your archetype</div>
+      <div class="archetype-name" id="archetypeName">The Open Book</div>
+      <div class="archetype-tagline" id="archetypeTagline">You lead with transparency — sometimes before it's earned.</div>
+      <div class="archetype-desc" id="archetypeDesc">You share income, debt, and financial fears readily. Your challenge isn't honesty — it's trusting that your openness won't be used against you.</div>
+    </div>
+
+    <div class="share-section">
+      <div class="share-section-title">See how you compare</div>
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Share the survey with friends to unlock your Inner Circle — an anonymized view of how your group aligns on the questions that matter most.</p>
+      <div class="share-buttons">
+        <button class="btn btn-primary" onclick="copyShareLink()">Copy share link</button>
+        <button class="btn btn-secondary" onclick="goToSection(0)">Take again</button>
+      </div>
+    </div>
+
+    <div class="privacy-note" style="margin-top: 40px;">
+      <strong>What happens to your data:</strong> Your responses have been added to the anonymous aggregate. There is no account, no email, and no way to link these answers to you. Thank you for being honest.
+    </div>
+  </div>
+</div>
+
+<script>
+// === STATE ===
+const responses = {};
+const totalSections = 11; // 0=intro, 1-10=sections, 11=complete
+let currentSection = 0;
+
+// === ARCHETYPES ===
+const archetypes = [
+  { name: 'The Open Book', tagline: 'You lead with transparency — sometimes before it\'s earned.', desc: 'You share income, debt, and financial fears readily. Your challenge isn\'t honesty — it\'s trusting that your openness won\'t be used against you.' },
+  { name: 'The Vault', tagline: 'You keep your own counsel — financially and otherwise.', desc: 'Separate accounts, separate plans, unshared numbers. It\'s not malice — it\'s self-protection. The question is whether your partner knows that\'s what it is.' },
+  { name: 'The Negotiator', tagline: 'You fight about money. You also figure it out.', desc: 'Financial conflict is frequent in your relationship — but you stay in it. You\'ve had arguments that cracked things open. The data is getting there.' },
+  { name: 'The Inheritor', tagline: 'Your parents\' money story is still running in the background.', desc: 'The patterns are deep — the silence, the scarcity, the control, or the chaos. You know it. You\'re working on it. You haven\'t fully uninstalled it.' },
+  { name: 'The Provider', tagline: 'You carry more. You also decide more.', desc: 'The income gap in your relationship gives you authority you didn\'t necessarily ask for. There\'s generosity in what you do — and sometimes, leverage.' },
+  { name: 'The Avoider', tagline: 'The conversation keeps not happening. That is a choice.', desc: 'You\'re not dishonest. You\'re avoidant. No fights, no disclosures, no plans — and a growing awareness that you\'ve built something on unspoken assumptions.' },
+  { name: 'The Optimizer', tagline: 'You have a spreadsheet. Your partner has seen it.', desc: 'Aligned goals, shared accounts, documented plans. You\'ve had the hard conversations and built infrastructure. Now you\'re curious whether everyone else has.' },
+  { name: 'The Deferrer', tagline: 'You handed over the keys. You\'re not sure you meant to.', desc: 'Financial decisions happen around you rather than with you. Somewhere between trust and avoidance, you ceded authority — and haven\'t decided whether to take it back.' }
+];
+
+// === NAVIGATION ===
+function goToSection(idx) {
+  document.querySelectorAll('.survey-section').forEach(s => s.classList.remove('active'));
+
+  let targetId;
+  if (idx === 0) targetId = 'section-intro';
+  else targetId = 'section-' + idx;
+
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.classList.add('active');
+    currentSection = idx;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function updateProgress() {
+  const pct = currentSection === 0 ? 0 : (currentSection / 10) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+// === SUBMIT ===
+function submitSurvey() {
+  // Assign a random archetype (in production, this would be computed from responses)
+  const arch = archetypes[Math.floor(Math.random() * archetypes.length)];
+  document.getElementById('archetypeName').textContent = arch.name;
+  document.getElementById('archetypeTagline').textContent = arch.tagline;
+  document.getElementById('archetypeDesc').textContent = arch.desc;
+
+  document.querySelectorAll('.survey-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-complete').classList.add('active');
+  document.getElementById('progressBar').style.width = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyShareLink() {
+  const link = 'https://beforewe.com/survey?ref=share';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link);
+  }
+  const btn = event.target;
+  btn.textContent = 'Link copied!';
+  setTimeout(() => { btn.textContent = 'Copy share link'; }, 2000);
+}
+
+// === INTERACTION HANDLERS ===
+document.addEventListener('click', function(e) {
+  const item = e.target.closest('.option-item');
+  if (!item) return;
+
+  const list = item.closest('.options-list');
+  if (!list) return;
+
+  const type = list.dataset.type;
+
+  if (type === 'single') {
+    list.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+    item.classList.toggle('selected');
+  } else if (type === 'multi') {
+    item.classList.toggle('selected');
+  } else if (type === 'multi-max3') {
+    if (item.classList.contains('selected')) {
+      item.classList.remove('selected');
+    } else {
+      const selectedCount = list.querySelectorAll('.option-item.selected').length;
+      if (selectedCount < 3) {
+        item.classList.add('selected');
+      }
+    }
+  }
+});
+
+// Scale dots
+document.addEventListener('click', function(e) {
+  const dot = e.target.closest('.scale-dot');
+  if (!dot) return;
+
+  const track = dot.closest('.scale-track');
+  if (!track) return;
+
+  track.querySelectorAll('.scale-dot').forEach(d => d.classList.remove('selected'));
+  dot.classList.add('selected');
+});
+
+// Battery dots
+document.addEventListener('click', function(e) {
+  const dot = e.target.closest('.battery-dot');
+  if (!dot) return;
+
+  const row = dot.closest('.battery-row');
+  if (!row) return;
+
+  row.querySelectorAll('.battery-dot').forEach(d => d.classList.remove('selected'));
+  dot.classList.add('selected');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && currentSection > 0 && currentSection < 10) {
+    goToSection(currentSection + 1);
+  }
+});
+</script>
+
+</body>
+</html>
