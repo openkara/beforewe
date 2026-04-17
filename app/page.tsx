@@ -527,6 +527,12 @@ function Landing({ onStart }: { onStart: () => void }) {
         >
           Let's get on the same page
         </button>
+        <a
+          href="/money-confessional"
+          className="mt-4 inline-block text-white/40 hover:text-mint text-sm font-light tracking-wide transition-colors"
+        >
+          or enter the money confessional →
+        </a>
       </div>
       <footer className="text-center pb-8 text-white/60 text-sm max-w-lg">
         A private alignment tool for couples. Just a structured way to figure out what you both actually want — and how to protect it.
