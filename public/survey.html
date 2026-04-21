@@ -4,24 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>before we... — the money confessional</title>
-<meta name="description" content="Welcome to the Money Confessional. Fully anonymous. The most revealing thing you’ll do before you say ‘I do.’">
+<meta name="description" content="The questions you've been avoiding. Nine sections. Fully anonymous. The most revealing data about money and relationships we publish.">
 <meta property="og:title" content="before we... — the money confessional">
-<meta property="og:description" content="Fully anonymous. The most revealing thing you’ll do before you say ‘I do.’">
+<meta property="og:description" content="Nine sections. Fully anonymous. The questions about money and relationships you've been avoiding.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://beforewe.com/survey">
+<meta property="og:url" content="https://beforewe.xyz/confession">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --deep-forest: #071F14;
     --mint: #12B87A;
     --amber: #E8A838;
     --red: #D94F4F;
+    --purple: #B088F9;
     --white: #FFFFFF;
     --text-primary: rgba(255,255,255,1);
-    --text-secondary: rgba(255,255,255,0.5);
-    --text-tertiary: rgba(255,255,255,0.3);
+    --text-secondary: rgba(255,255,255,0.55);
+    --text-tertiary: rgba(255,255,255,0.35);
     --border-accent: rgba(18,184,122,0.35);
     --surface-accent: rgba(18,184,122,0.08);
     --card-bg: rgba(255,255,255,0.03);
@@ -174,6 +175,17 @@
     margin-bottom: 36px;
   }
 
+  .question-block.conditional {
+    display: none;
+    border-left: 2px solid rgba(18,184,122,0.2);
+    padding-left: 20px;
+    margin-left: 8px;
+  }
+
+  .question-block.conditional.visible {
+    display: block;
+  }
+
   .question-id {
     font-size: 10px;
     font-weight: 400;
@@ -228,6 +240,11 @@
   .option-item.selected {
     border-color: var(--mint);
     background: rgba(18,184,122,0.12);
+  }
+
+  .option-item.disabled {
+    opacity: 0.35;
+    pointer-events: none;
   }
 
   .option-radio {
@@ -345,6 +362,159 @@
     color: var(--mint);
   }
 
+  /* === SLIDER === */
+  .slider-container {
+    padding: 16px 0;
+  }
+
+  .slider-value-display {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--mint);
+    margin-bottom: 16px;
+  }
+
+  .slider-track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    margin: 8px 0;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    outline: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, rgba(18,184,122,0.3), var(--mint));
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--mint);
+    border: 2px solid var(--white);
+    cursor: pointer;
+    margin-top: -7px;
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  input[type="range"]::-moz-range-progress {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, rgba(18,184,122,0.3), var(--mint));
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--mint);
+    border: 2px solid var(--white);
+    cursor: pointer;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  /* === TIERED RATING MATRIX === */
+  .tiered-matrix {
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  .tiered-header-row {
+    display: grid;
+    gap: 1px;
+    padding: 8px 0 12px;
+    align-items: end;
+  }
+
+  .tiered-header-row.cols-3 { grid-template-columns: 1fr repeat(3, 80px); }
+  .tiered-header-row.cols-4 { grid-template-columns: 1fr repeat(4, 68px); }
+
+  .tiered-header {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.3;
+    padding: 0 2px;
+  }
+
+  .tiered-header:first-child {
+    text-align: left;
+  }
+
+  .tiered-row {
+    display: grid;
+    gap: 1px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: center;
+  }
+
+  .tiered-row.cols-3 { grid-template-columns: 1fr repeat(3, 80px); }
+  .tiered-row.cols-4 { grid-template-columns: 1fr repeat(4, 68px); }
+
+  .tiered-item-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    padding-right: 12px;
+  }
+
+  .tiered-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tiered-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .tiered-dot:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-accent);
+  }
+
+  .tiered-dot.selected {
+    border-color: var(--mint);
+    background: var(--mint);
+  }
+
   /* === BATTERY TABLE === */
   .battery-intro {
     font-size: 12px;
@@ -375,7 +545,7 @@
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
     text-align: center;
     padding: 8px 0 12px;
   }
@@ -389,6 +559,8 @@
     color: var(--text-secondary);
     line-height: 1.4;
     padding-right: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .battery-cell {
@@ -401,7 +573,7 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.12);
     cursor: pointer;
     transition: all 0.25s ease;
   }
@@ -548,12 +720,58 @@
     color: var(--text-tertiary);
   }
 
-  .privacy-note {
+  .privacy-covenant {
+    margin-top: 32px;
+    padding: 24px;
+    border: 1px solid var(--border-accent);
+    border-radius: 16px;
+    background: rgba(18,184,122,0.04);
+    text-align: center;
+  }
+
+  .privacy-covenant p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  .privacy-covenant .covenant-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mint);
+    margin-bottom: 12px;
+    font-style: normal;
+  }
+
+  .privacy-expandable {
+    margin-top: 12px;
     font-size: 11px;
     color: var(--text-tertiary);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .privacy-expanded {
+    display: none;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    line-height: 1.7;
+    text-align: left;
+    font-style: normal;
+  }
+
+  .privacy-note {
+    font-size: 11px;
+    color: var(--text-secondary);
     margin-top: 24px;
     padding: 16px;
-    border: 1px solid rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px;
     background: var(--card-bg);
   }
@@ -566,8 +784,8 @@
   /* === COMPLETION SCREEN === */
   .completion-screen {
     text-align: center;
-    padding: 80px 24px;
-    max-width: 540px;
+    padding: 60px 24px;
+    max-width: 580px;
     margin: 0 auto;
   }
 
@@ -579,15 +797,28 @@
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.8;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
-  .archetype-card {
+  /* Results card */
+  .results-card {
     border: 1px solid var(--border-accent);
-    border-radius: 16px;
-    padding: 32px 24px;
+    border-radius: 20px;
+    padding: 40px 28px;
     background: var(--card-bg);
     margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .results-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--mint), var(--amber), var(--purple));
   }
 
   .archetype-label {
@@ -596,40 +827,138 @@
     letter-spacing: 3px;
     color: var(--mint);
     opacity: 0.6;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .archetype-name {
     font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 300;
+    font-size: 28px;
+    font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 6px;
   }
 
   .archetype-tagline {
-    font-size: 13px;
-    color: var(--text-secondary);
+    font-size: 14px;
+    color: var(--amber);
     font-style: italic;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 
   .archetype-desc {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.7;
+    margin-bottom: 32px;
   }
 
+  /* Dimension bars */
+  .dimensions-section {
+    text-align: left;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .dimensions-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .dimension-row {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+    gap: 12px;
+  }
+
+  .dimension-label {
+    font-size: 11px;
+    width: 90px;
+    color: var(--text-secondary);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .dimension-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dimension-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.2s ease-out;
+  }
+
+  .dimension-value {
+    font-size: 11px;
+    width: 32px;
+    color: var(--mint);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* Secondary archetypes */
+  .secondary-archetypes {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  .secondary-archetypes span {
+    color: var(--text-secondary);
+  }
+
+  /* Respondent count */
+  .respondent-count {
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+    font-style: italic;
+  }
+
+  .respondent-count strong {
+    color: var(--mint);
+    font-weight: 500;
+  }
+
+  /* Share section */
   .share-section {
-    margin-top: 32px;
+    margin-top: 40px;
+    padding: 28px;
+    border: 1px solid var(--border-accent);
+    border-radius: 16px;
+    background: rgba(18,184,122,0.03);
   }
 
   .share-section-title {
     font-family: 'Syne', sans-serif;
     font-size: 16px;
-    font-weight: 300;
-    margin-bottom: 16px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  .share-section-desc {
+    font-size: 12px;
     color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.7;
   }
 
   .share-buttons {
@@ -640,7 +969,7 @@
   }
 
   /* === RESPONSIVE === */
-  @media (max-width: 480px) {
+  @media (max-width: 600px) {
     .survey-title { font-size: 22px; }
     .section-title { font-size: 18px; }
     .question-text { font-size: 14px; }
@@ -650,6 +979,23 @@
     .battery-5col { grid-template-columns: 1fr repeat(5, 40px); }
     .battery-statement { font-size: 11px; }
     .scale-dot { width: 28px; height: 28px; font-size: 11px; }
+    .tiered-header-row.cols-3 { grid-template-columns: 1fr repeat(3, 60px); }
+    .tiered-header-row.cols-4 { grid-template-columns: 1fr repeat(4, 52px); }
+    .tiered-row.cols-3 { grid-template-columns: 1fr repeat(3, 60px); }
+    .tiered-row.cols-4 { grid-template-columns: 1fr repeat(4, 52px); }
+    .tiered-header { font-size: 9px; }
+    .tiered-item-label { font-size: 11px; }
+    .archetype-name { font-size: 24px; }
+    .results-card { padding: 28px 20px; }
+    .dimension-label { width: 70px; font-size: 10px; }
+  }
+
+  @media (max-width: 380px) {
+    .battery-4col { grid-template-columns: 1fr repeat(4, 40px); }
+    .battery-5col { grid-template-columns: 1fr repeat(5, 34px); }
+    .battery-header { font-size: 8px; letter-spacing: 0; }
+    .battery-dot { width: 18px; height: 18px; }
+    .tiered-dot { width: 18px; height: 18px; }
   }
 </style>
 </head>
@@ -670,19 +1016,19 @@
 
   <div class="intro-screen">
     <h1 class="survey-title">the money confessional</h1>
-    <p class="survey-subtitle">Welcome to the Money Confessional.</p>
+    <p class="survey-subtitle">The questions you've been avoiding.</p>
 
     <p class="intro-desc">
-      Fully anonymous. The most revealing thing you’ll do before you say ‘I do.’
+      Nine sections. Behavioral batteries, shame inventories, and the three-way honesty comparison that produces the most revealing data we publish.
     </p>
 
     <div class="intro-details">
       <div class="intro-detail">
-        <div class="intro-detail-number">~9</div>
+        <div class="intro-detail-number">~12</div>
         <div class="intro-detail-label">Minutes</div>
       </div>
       <div class="intro-detail">
-        <div class="intro-detail-number">48</div>
+        <div class="intro-detail-number">48+</div>
         <div class="intro-detail-label">Questions</div>
       </div>
       <div class="intro-detail">
@@ -691,10 +1037,17 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" onclick="goToSection(1)">Enter the Confessional</button>
+    <div class="privacy-covenant">
+      <div class="covenant-title">Our covenant</div>
+      <p>No account. No email. No cookies. No way back to you.<br>Your answers join the anonymous aggregate — a growing portrait of how couples really deal with money. We'll never know which portrait is yours.</p>
+      <div class="privacy-expandable" onclick="togglePrivacyDetail()">How exactly does this work?</div>
+      <div class="privacy-expanded" id="privacyDetail">
+        No account creation required. No IP logging. No browser fingerprinting. Your responses are stored as aggregate statistics only — no individual record exists to be retrieved, linked, or identified. Even we can't look up what you said. That's the point.
+      </div>
+    </div>
 
-    <div class="privacy-note">
-      <strong>Fully anonymous by design.</strong> No email required. No account. No tracking. Your responses are stored as aggregate data only — there is no technical mechanism to link answers to any individual.
+    <div style="margin-top: 32px;">
+      <button class="btn btn-primary" onclick="goToSection(1)">Enter the Confessional</button>
     </div>
   </div>
 </div>
@@ -724,19 +1077,20 @@
     <div class="question-block" data-qid="S2">
       <div class="question-id">S2</div>
       <div class="question-text">How do you identify?</div>
-      <div class="options-list" data-type="single">
-        <div class="option-item" data-value="woman"><div class="option-radio"></div><div class="option-label">Woman</div></div>
-        <div class="option-item" data-value="man"><div class="option-radio"></div><div class="option-label">Man</div></div>
-        <div class="option-item" data-value="nonbinary"><div class="option-radio"></div><div class="option-label">Non-binary or genderqueer</div></div>
-        <div class="option-item" data-value="self-describe"><div class="option-radio"></div><div class="option-label">Prefer to self-describe</div></div>
-        <div class="option-item" data-value="prefer-not"><div class="option-radio"></div><div class="option-label">Prefer not to say</div></div>
+      <div class="question-hint">Select all that apply</div>
+      <div class="options-list" data-type="multi" data-exclusive="prefer-not">
+        <div class="option-item" data-value="woman"><div class="option-checkbox"></div><div class="option-label">Woman</div></div>
+        <div class="option-item" data-value="man"><div class="option-checkbox"></div><div class="option-label">Man</div></div>
+        <div class="option-item" data-value="nonbinary"><div class="option-checkbox"></div><div class="option-label">Non-binary or genderqueer</div></div>
+        <div class="option-item" data-value="self-describe"><div class="option-checkbox"></div><div class="option-label">Prefer to self-describe</div></div>
+        <div class="option-item" data-value="prefer-not"><div class="option-checkbox"></div><div class="option-label">Prefer not to say</div></div>
       </div>
     </div>
 
     <div class="question-block" data-qid="S3">
       <div class="question-id">S3</div>
       <div class="question-text">What is your current relationship status?</div>
-      <div class="options-list" data-type="single">
+      <div class="options-list" data-type="single" data-triggers="S3">
         <div class="option-item" data-value="single"><div class="option-radio"></div><div class="option-label">Single</div></div>
         <div class="option-item" data-value="dating"><div class="option-radio"></div><div class="option-label">Dating, not living together</div></div>
         <div class="option-item" data-value="living-together"><div class="option-radio"></div><div class="option-label">Living together, not married</div></div>
@@ -746,13 +1100,44 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 2 — Divorce History -->
     <div class="question-block" data-qid="S3b">
       <div class="question-id">S3b</div>
       <div class="question-text">Have you ever been divorced?</div>
+      <div class="options-list" data-type="single" data-triggers="S3b">
+        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No</div></div>
+      </div>
+    </div>
+
+    <!-- Conditional: if divorced -->
+    <div class="question-block conditional" data-qid="S3c" data-show-if="S3b=yes">
+      <div class="question-id">S3c</div>
+      <div class="question-text">Is this your first marriage?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes — first time</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No — I've been married before</div></div>
+        <div class="option-item" data-value="na"><div class="option-radio"></div><div class="option-label">Not currently married or engaged</div></div>
+      </div>
+    </div>
+
+    <div class="question-block conditional" data-qid="S3d" data-show-if="S3b=yes">
+      <div class="question-id">S3d</div>
+      <div class="question-text">Do either of you have children from a previous relationship?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-mine"><div class="option-radio"></div><div class="option-label">Yes — mine</div></div>
+        <div class="option-item" data-value="yes-theirs"><div class="option-radio"></div><div class="option-label">Yes — my partner's</div></div>
+        <div class="option-item" data-value="yes-both"><div class="option-radio"></div><div class="option-label">Yes — both of us</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No</div></div>
+      </div>
+    </div>
+
+    <div class="question-block conditional" data-qid="S3e" data-show-if="S3b=yes">
+      <div class="question-id">S3e</div>
+      <div class="question-text">Did you have a prenup in your previous marriage?</div>
       <div class="options-list" data-type="single">
         <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes</div></div>
         <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No</div></div>
+        <div class="option-item" data-value="wish"><div class="option-radio"></div><div class="option-label">No — and I wish I had</div></div>
       </div>
     </div>
 
@@ -768,7 +1153,6 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 1 — Romantic vs. Pragmatic -->
     <div class="question-block" data-qid="S5">
       <div class="question-id">S5</div>
       <div class="question-text">In relationships, you'd describe yourself as more:</div>
@@ -776,6 +1160,20 @@
         <div class="option-item" data-value="romantic"><div class="option-radio"></div><div class="option-label">Romantic — I lead with heart</div></div>
         <div class="option-item" data-value="pragmatic"><div class="option-radio"></div><div class="option-label">Pragmatic — I lead with logic</div></div>
         <div class="option-item" data-value="both"><div class="option-radio"></div><div class="option-label">Both equally — depends on the situation</div></div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="S6">
+      <div class="question-id">S6</div>
+      <div class="question-text">When this relationship began, which best describes your financial starting point?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="equal"><div class="option-radio"></div><div class="option-label">We both started roughly equal</div></div>
+        <div class="option-item" data-value="i-more"><div class="option-radio"></div><div class="option-label">I brought significantly more assets or income</div></div>
+        <div class="option-item" data-value="partner-more"><div class="option-radio"></div><div class="option-label">My partner brought significantly more</div></div>
+        <div class="option-item" data-value="i-debt"><div class="option-radio"></div><div class="option-label">I brought significant debt</div></div>
+        <div class="option-item" data-value="partner-debt"><div class="option-radio"></div><div class="option-label">My partner brought significant debt</div></div>
+        <div class="option-item" data-value="complicated"><div class="option-radio"></div><div class="option-label">It's complicated</div></div>
+        <div class="option-item" data-value="rather-not"><div class="option-radio"></div><div class="option-label">I'd rather not say</div></div>
       </div>
     </div>
 
@@ -799,8 +1197,8 @@
     <div class="question-block" data-qid="O1">
       <div class="question-id">O1</div>
       <div class="question-text">Growing up, money in your household felt:</div>
-      <div class="question-hint">Select all that apply</div>
-      <div class="options-list" data-type="multi">
+      <div class="question-hint">Pick up to 3</div>
+      <div class="options-list" data-type="multi-max3" data-exclusive="normal">
         <div class="option-item" data-value="abundant"><div class="option-checkbox"></div><div class="option-label">Abundant</div></div>
         <div class="option-item" data-value="scarce"><div class="option-checkbox"></div><div class="option-label">Scarce</div></div>
         <div class="option-item" data-value="unpredictable"><div class="option-checkbox"></div><div class="option-label">Unpredictable</div></div>
@@ -812,15 +1210,38 @@
       </div>
     </div>
 
+    <!-- Follow-up: Which left the deepest mark? (populated dynamically) -->
+    <div class="question-block conditional" data-qid="O1b" data-show-if="O1-count>1" id="O1b-block">
+      <div class="question-id">O1b</div>
+      <div class="question-text">Which one left the deepest mark?</div>
+      <div class="options-list" data-type="single" id="O1b-options">
+        <!-- Dynamically populated from O1 selections -->
+      </div>
+    </div>
+
     <div class="question-block" data-qid="O2">
       <div class="question-id">O2</div>
       <div class="question-text">Your parents' financial approach with each other was:</div>
-      <div class="options-list" data-type="single">
+      <div class="options-list" data-type="single" data-triggers="O2">
         <div class="option-item" data-value="fully-open"><div class="option-radio"></div><div class="option-label">Fully open — everything shared</div></div>
         <div class="option-item" data-value="partially-open"><div class="option-radio"></div><div class="option-label">Partially open</div></div>
         <div class="option-item" data-value="one-controlled"><div class="option-radio"></div><div class="option-label">One parent controlled everything</div></div>
         <div class="option-item" data-value="fought"><div class="option-radio"></div><div class="option-label">They fought about money constantly</div></div>
         <div class="option-item" data-value="no-idea"><div class="option-radio"></div><div class="option-label">I have no idea — it was never discussed</div></div>
+      </div>
+    </div>
+
+    <!-- Follow-up for O2 -->
+    <div class="question-block conditional" data-qid="O2b" data-show-if="O2=any">
+      <div class="question-id">O2b</div>
+      <div class="question-text">Was there anything else going on financially in your household?</div>
+      <div class="question-hint">Select any that also applied — optional</div>
+      <div class="options-list" data-type="multi">
+        <div class="option-item" data-value="fully-open"><div class="option-checkbox"></div><div class="option-label">Fully open — everything shared</div></div>
+        <div class="option-item" data-value="partially-open"><div class="option-checkbox"></div><div class="option-label">Partially open</div></div>
+        <div class="option-item" data-value="one-controlled"><div class="option-checkbox"></div><div class="option-label">One parent controlled everything</div></div>
+        <div class="option-item" data-value="fought"><div class="option-checkbox"></div><div class="option-label">They fought about money constantly</div></div>
+        <div class="option-item" data-value="no-idea"><div class="option-checkbox"></div><div class="option-label">I have no idea — it was never discussed</div></div>
       </div>
     </div>
 
@@ -889,6 +1310,30 @@
       </div>
     </div>
 
+    <!-- NEW: Satisfaction slider -->
+    <div class="question-block" data-qid="DR1b">
+      <div class="question-id">DR1b</div>
+      <div class="question-text">How happy are you with this arrangement?</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Miserable</span>
+          <span class="scale-label">Couldn't be better</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="DR1b">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
     <div class="question-block" data-qid="DR2">
       <div class="question-id">DR2</div>
       <div class="question-text">My ideal financial arrangement would be:</div>
@@ -904,11 +1349,26 @@
     <div class="question-block" data-qid="DR3">
       <div class="question-id">DR3</div>
       <div class="question-text">Do you secretly want more financial autonomy than you currently have?</div>
-      <div class="options-list" data-type="single">
+      <div class="options-list" data-type="single" data-triggers="DR3">
         <div class="option-item" data-value="yes-strongly"><div class="option-radio"></div><div class="option-label">Yes — strongly</div></div>
         <div class="option-item" data-value="yes-somewhat"><div class="option-radio"></div><div class="option-label">Yes — somewhat</div></div>
         <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No, the current arrangement works</div></div>
         <div class="option-item" data-value="never-thought"><div class="option-radio"></div><div class="option-label">I've never thought about it explicitly</div></div>
+      </div>
+    </div>
+
+    <!-- Conditional follow-up for DR3 -->
+    <div class="question-block conditional" data-qid="DR3b" data-show-if="DR3=yes-strongly,yes-somewhat">
+      <div class="question-id">DR3b</div>
+      <div class="question-text">What kind of autonomy? What would it look like?</div>
+      <div class="question-hint">Pick up to 2</div>
+      <div class="options-list" data-type="multi-max2">
+        <div class="option-item" data-value="hidden-savings"><div class="option-checkbox"></div><div class="option-label">My own savings account my partner doesn't see</div></div>
+        <div class="option-item" data-value="spend-freely"><div class="option-checkbox"></div><div class="option-label">Freedom to spend without explaining</div></div>
+        <div class="option-item" data-value="own-investments"><div class="option-checkbox"></div><div class="option-label">My own investment strategy</div></div>
+        <div class="option-item" data-value="safety-net"><div class="option-checkbox"></div><div class="option-label">A financial safety net just for me</div></div>
+        <div class="option-item" data-value="retirement"><div class="option-checkbox"></div><div class="option-label">Control over my own retirement planning</div></div>
+        <div class="option-item" data-value="something-else"><div class="option-checkbox"></div><div class="option-label">Something else entirely</div></div>
       </div>
     </div>
 
@@ -944,33 +1404,90 @@
     <div class="question-block" data-qid="E1">
       <div class="question-id">E1</div>
       <div class="question-text">When your partner asks about your finances, you feel:</div>
-      <div class="options-list" data-type="single">
-        <div class="option-item" data-value="open"><div class="option-radio"></div><div class="option-label">Open and comfortable</div></div>
-        <div class="option-item" data-value="guarded"><div class="option-radio"></div><div class="option-label">Slightly guarded</div></div>
-        <div class="option-item" data-value="anxious"><div class="option-radio"></div><div class="option-label">Anxious</div></div>
-        <div class="option-item" data-value="defensive"><div class="option-radio"></div><div class="option-label">Defensive</div></div>
-        <div class="option-item" data-value="ashamed"><div class="option-radio"></div><div class="option-label">Ashamed</div></div>
-        <div class="option-item" data-value="relieved"><div class="option-radio"></div><div class="option-label">Relieved — I want to talk about it</div></div>
-        <div class="option-item" data-value="indifferent"><div class="option-radio"></div><div class="option-label">Indifferent — we just don't go there</div></div>
+      <div class="question-hint">Pick up to 3</div>
+      <div class="options-list" data-type="multi-max3">
+        <div class="option-item" data-value="open"><div class="option-checkbox"></div><div class="option-label">Open and comfortable</div></div>
+        <div class="option-item" data-value="guarded"><div class="option-checkbox"></div><div class="option-label">Slightly guarded</div></div>
+        <div class="option-item" data-value="anxious"><div class="option-checkbox"></div><div class="option-label">Anxious</div></div>
+        <div class="option-item" data-value="defensive"><div class="option-checkbox"></div><div class="option-label">Defensive</div></div>
+        <div class="option-item" data-value="ashamed"><div class="option-checkbox"></div><div class="option-label">Ashamed</div></div>
+        <div class="option-item" data-value="relieved"><div class="option-checkbox"></div><div class="option-label">Relieved — I want to talk about it</div></div>
+        <div class="option-item" data-value="indifferent"><div class="option-checkbox"></div><div class="option-label">Indifferent — we just don't go there</div></div>
       </div>
     </div>
 
+    <!-- E2: UPGRADED to tiered rating matrix -->
     <div class="question-block" data-qid="E2">
       <div class="question-id">E2</div>
       <div class="question-text">Money in this relationship makes you feel:</div>
-      <div class="question-hint">Select up to three</div>
-      <div class="options-list" data-type="multi-max3">
-        <div class="option-item" data-value="safe"><div class="option-checkbox"></div><div class="option-label">Safe</div></div>
-        <div class="option-item" data-value="anxious"><div class="option-checkbox"></div><div class="option-label">Anxious</div></div>
-        <div class="option-item" data-value="controlled"><div class="option-checkbox"></div><div class="option-label">Controlled</div></div>
-        <div class="option-item" data-value="empowered"><div class="option-checkbox"></div><div class="option-label">Empowered</div></div>
-        <div class="option-item" data-value="resentful"><div class="option-checkbox"></div><div class="option-label">Resentful</div></div>
-        <div class="option-item" data-value="grateful"><div class="option-checkbox"></div><div class="option-label">Grateful</div></div>
-        <div class="option-item" data-value="frustrated"><div class="option-checkbox"></div><div class="option-label">Frustrated</div></div>
-        <div class="option-item" data-value="hopeful"><div class="option-checkbox"></div><div class="option-label">Hopeful</div></div>
-        <div class="option-item" data-value="trapped"><div class="option-checkbox"></div><div class="option-label">Trapped</div></div>
-        <div class="option-item" data-value="neutral"><div class="option-checkbox"></div><div class="option-label">Neutral</div></div>
-        <div class="option-item" data-value="complicated"><div class="option-checkbox"></div><div class="option-label">It's complicated</div></div>
+      <div class="question-hint">Rate each one honestly</div>
+      <div class="tiered-matrix">
+        <div class="tiered-header-row cols-3">
+          <div class="tiered-header" style="text-align:left"></div>
+          <div class="tiered-header">Not at all</div>
+          <div class="tiered-header">A little</div>
+          <div class="tiered-header">A lot</div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-safe">
+          <div class="tiered-item-label">Safe</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-anxious">
+          <div class="tiered-item-label">Anxious</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-controlled">
+          <div class="tiered-item-label">Controlled</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-empowered">
+          <div class="tiered-item-label">Empowered</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-resentful">
+          <div class="tiered-item-label">Resentful</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-grateful">
+          <div class="tiered-item-label">Grateful</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-frustrated">
+          <div class="tiered-item-label">Frustrated</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-hopeful">
+          <div class="tiered-item-label">Hopeful</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-trapped">
+          <div class="tiered-item-label">Trapped</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="E2-neutral">
+          <div class="tiered-item-label">Neutral</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
+        </div>
       </div>
     </div>
 
@@ -1097,7 +1614,6 @@
       </div>
     </div>
 
-    <!-- Battery A2 — Trimmed to 3 rows per appendix recommendation -->
     <div class="question-block" style="margin-top: 40px;">
       <div class="question-text">Battery A2 — Now, your partner. How many of these do you think they've done?</div>
       <div class="battery-intro">Your best honest guess. Not accusation — estimation.</div>
@@ -1150,30 +1666,53 @@
       <p class="section-subtitle">Everyone has one. Most haven't said it out loud.</p>
     </div>
 
+    <!-- TH1: UPGRADED to slider -->
     <div class="question-block" data-qid="TH1">
       <div class="question-id">TH1</div>
       <div class="question-text">At what dollar amount would a hidden purchase feel like a genuine betrayal?</div>
-      <div class="options-list" data-type="single">
-        <div class="option-item" data-value="any"><div class="option-radio"></div><div class="option-label">Any amount hidden is a betrayal</div></div>
-        <div class="option-item" data-value="50"><div class="option-radio"></div><div class="option-label">Around $50</div></div>
-        <div class="option-item" data-value="200"><div class="option-radio"></div><div class="option-label">Around $200</div></div>
-        <div class="option-item" data-value="500"><div class="option-radio"></div><div class="option-label">Around $500</div></div>
-        <div class="option-item" data-value="1000-2000"><div class="option-radio"></div><div class="option-label">$1,000–2,000</div></div>
-        <div class="option-item" data-value="5000-10000"><div class="option-radio"></div><div class="option-label">$5,000–10,000</div></div>
-        <div class="option-item" data-value="10000+"><div class="option-radio"></div><div class="option-label">Over $10,000</div></div>
-        <div class="option-item" data-value="depends"><div class="option-radio"></div><div class="option-label">It depends entirely on what it was for</div></div>
+      <div class="slider-container">
+        <div class="slider-value-display" id="TH1-display">$500</div>
+        <input type="range" min="0" max="10000" step="50" value="500" data-qid="TH1" oninput="updateSlider(this, 'TH1-display', 'dollar')">
+        <div class="slider-labels">
+          <span>$0</span>
+          <span>$250</span>
+          <span>$1,000</span>
+          <span>$5,000</span>
+          <span>$10,000+</span>
+        </div>
       </div>
     </div>
 
-    <div class="question-block" data-qid="TH2">
-      <div class="question-id">TH2</div>
-      <div class="question-text">Before a significant purchase, you typically:</div>
-      <div class="options-list" data-type="single">
-        <div class="option-item" data-value="ask-permission"><div class="option-radio"></div><div class="option-label">Ask your partner's permission</div></div>
-        <div class="option-item" data-value="tell-before"><div class="option-radio"></div><div class="option-label">Tell your partner before buying</div></div>
-        <div class="option-item" data-value="buy-mention"><div class="option-radio"></div><div class="option-label">Buy it, then mention it</div></div>
-        <div class="option-item" data-value="buy-nothing"><div class="option-radio"></div><div class="option-label">Buy it and say nothing</div></div>
-        <div class="option-item" data-value="depends"><div class="option-radio"></div><div class="option-label">It entirely depends on the amount</div></div>
+    <!-- TH2: UPGRADED to paired sliders -->
+    <div class="question-block" data-qid="TH2a">
+      <div class="question-id">TH2a</div>
+      <div class="question-text">At what price point do you start consulting your partner before buying?</div>
+      <div class="slider-container">
+        <div class="slider-value-display" id="TH2a-display">$200</div>
+        <input type="range" min="0" max="10000" step="50" value="200" data-qid="TH2a" oninput="updateSlider(this, 'TH2a-display', 'dollar')">
+        <div class="slider-labels">
+          <span>$0</span>
+          <span>$500</span>
+          <span>$2,000</span>
+          <span>$5,000</span>
+          <span>$10,000+</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-block" data-qid="TH2b">
+      <div class="question-id">TH2b</div>
+      <div class="question-text">At what price point does your partner start consulting you?</div>
+      <div class="slider-container">
+        <div class="slider-value-display" id="TH2b-display">$200</div>
+        <input type="range" min="0" max="10000" step="50" value="200" data-qid="TH2b" oninput="updateSlider(this, 'TH2b-display', 'dollar')">
+        <div class="slider-labels">
+          <span>$0</span>
+          <span>$500</span>
+          <span>$2,000</span>
+          <span>$5,000</span>
+          <span>$10,000+</span>
+        </div>
       </div>
     </div>
 
@@ -1189,7 +1728,6 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 5 — Inheritance Stance -->
     <div class="question-block" data-qid="TH4">
       <div class="question-id">TH4</div>
       <div class="question-text">If one of you inherited a significant sum during the marriage, it should:</div>
@@ -1203,17 +1741,63 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 6 — Asset Protection Priority -->
+    <!-- Follow-up: partner agreement on inheritance -->
+    <div class="question-block" data-qid="TH4b">
+      <div class="question-id">TH4b</div>
+      <div class="question-text">Does your partner agree with you on this?</div>
+      <div class="options-list" data-type="single">
+        <div class="option-item" data-value="yes-definitely"><div class="option-radio"></div><div class="option-label">Yes, definitely</div></div>
+        <div class="option-item" data-value="i-think-so"><div class="option-radio"></div><div class="option-label">I think so</div></div>
+        <div class="option-item" data-value="havent-discussed"><div class="option-radio"></div><div class="option-label">We haven't discussed it</div></div>
+        <div class="option-item" data-value="disagree"><div class="option-radio"></div><div class="option-label">No, we disagree</div></div>
+        <div class="option-item" data-value="dont-know"><div class="option-radio"></div><div class="option-label">I don't know</div></div>
+      </div>
+    </div>
+
+    <!-- TH5: UPGRADED to tiered rating matrix -->
     <div class="question-block" data-qid="TH5">
       <div class="question-id">TH5</div>
-      <div class="question-text">If you were getting a prenup, what's the first asset you'd want to protect?</div>
-      <div class="options-list" data-type="single">
-        <div class="option-item" data-value="retirement"><div class="option-radio"></div><div class="option-label">Retirement accounts</div></div>
-        <div class="option-item" data-value="business"><div class="option-radio"></div><div class="option-label">A business or equity stake</div></div>
-        <div class="option-item" data-value="property"><div class="option-radio"></div><div class="option-label">Real property (house, land)</div></div>
-        <div class="option-item" data-value="inheritance"><div class="option-radio"></div><div class="option-label">Inheritance (past or future)</div></div>
-        <div class="option-item" data-value="savings"><div class="option-radio"></div><div class="option-label">Savings and investments</div></div>
-        <div class="option-item" data-value="nothing"><div class="option-radio"></div><div class="option-label">Nothing — I wouldn't want a prenup</div></div>
+      <div class="question-text">If you were getting a prenup, how important would it be to protect each of the following?</div>
+      <div class="tiered-matrix">
+        <div class="tiered-header-row cols-3">
+          <div class="tiered-header" style="text-align:left"></div>
+          <div class="tiered-header">Definitely protect</div>
+          <div class="tiered-header">Want to protect</div>
+          <div class="tiered-header">Don't really care</div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="TH5-retirement">
+          <div class="tiered-item-label">Retirement accounts</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="definitely"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="want"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="dont-care"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="TH5-business">
+          <div class="tiered-item-label">A business or equity stake</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="definitely"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="want"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="dont-care"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="TH5-property">
+          <div class="tiered-item-label">Real property (house, land)</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="definitely"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="want"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="dont-care"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="TH5-inheritance">
+          <div class="tiered-item-label">Inheritance (past or future)</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="definitely"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="want"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="dont-care"></div></div>
+        </div>
+        <div class="tiered-row cols-3" data-qid="TH5-savings">
+          <div class="tiered-item-label">Savings and investments</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="definitely"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="want"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="dont-care"></div></div>
+        </div>
+      </div>
+      <div class="options-list" data-type="single" data-qid="TH5-none" style="margin-top:12px">
+        <div class="option-item" data-value="no-prenup"><div class="option-radio"></div><div class="option-label">I wouldn't want a prenup at all</div></div>
         <div class="option-item" data-value="no-assets"><div class="option-radio"></div><div class="option-label">I don't have assets worth protecting</div></div>
       </div>
     </div>
@@ -1245,7 +1829,7 @@
           <div class="battery-header">A little</div>
           <div class="battery-header">Moderate</div>
           <div class="battery-header">Significant</div>
-          <div class="battery-header" style="font-size:8px">Untold</div>
+          <div class="battery-header">Untold</div>
         </div>
         <div class="battery-row battery-5col" data-qid="B-1">
           <div class="battery-statement">Carrying credit card debt</div>
@@ -1322,6 +1906,25 @@
       </div>
     </div>
 
+    <!-- Follow-up: Which shame do you most want partner to understand? -->
+    <div class="question-block" data-qid="B-follow" style="margin-top: 32px;">
+      <div class="question-id">B-follow</div>
+      <div class="question-text">Which one would you most want your partner to understand?</div>
+      <div class="question-hint">Pick the one that matters most — optional</div>
+      <div class="options-list" data-type="single" id="B-follow-options">
+        <div class="option-item" data-value="credit-debt"><div class="option-radio"></div><div class="option-label">Carrying credit card debt</div></div>
+        <div class="option-item" data-value="earning-less"><div class="option-radio"></div><div class="option-label">Earning less than my partner</div></div>
+        <div class="option-item" data-value="earning-more"><div class="option-radio"></div><div class="option-label">Earning significantly more</div></div>
+        <div class="option-item" data-value="retirement"><div class="option-radio"></div><div class="option-label">Never looking at my retirement account</div></div>
+        <div class="option-item" data-value="credit-score"><div class="option-radio"></div><div class="option-label">Not knowing my credit score</div></div>
+        <div class="option-item" data-value="family-borrowing"><div class="option-radio"></div><div class="option-label">Borrowing from family</div></div>
+        <div class="option-item" data-value="less-saved"><div class="option-radio"></div><div class="option-label">Having less saved than implied</div></div>
+        <div class="option-item" data-value="secret-spending"><div class="option-radio"></div><div class="option-label">Spending without telling</div></div>
+        <div class="option-item" data-value="no-plan"><div class="option-radio"></div><div class="option-label">No will or financial plan</div></div>
+        <div class="option-item" data-value="none"><div class="option-radio"></div><div class="option-label">None — I don't carry shame about these</div></div>
+      </div>
+    </div>
+
     <div class="section-nav">
       <button class="btn btn-ghost" onclick="goToSection(6)">Back</button>
       <span class="section-indicator">7 of 10</span>
@@ -1352,6 +1955,30 @@
       </div>
     </div>
 
+    <!-- Comfort slider for P1 -->
+    <div class="question-block" data-qid="P1b">
+      <div class="question-id">P1b</div>
+      <div class="question-text">How comfortable are you with who holds that influence?</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Very uncomfortable</span>
+          <span class="scale-label">Completely comfortable</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="P1b">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
+      </div>
+    </div>
+
     <div class="question-block" data-qid="P2">
       <div class="question-id">P2</div>
       <div class="question-text">Who manages the day-to-day finances — bills, budget tracking, cash flow?</div>
@@ -1362,6 +1989,30 @@
         <div class="option-item" data-value="partner-mostly"><div class="option-radio"></div><div class="option-label">My partner does, mostly</div></div>
         <div class="option-item" data-value="partner-entirely"><div class="option-radio"></div><div class="option-label">My partner does, entirely</div></div>
         <div class="option-item" data-value="neither"><div class="option-radio"></div><div class="option-label">Neither — it's chaos</div></div>
+      </div>
+    </div>
+
+    <!-- Comfort slider for P2 -->
+    <div class="question-block" data-qid="P2b">
+      <div class="question-id">P2b</div>
+      <div class="question-text">How comfortable are you with who manages the day-to-day?</div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <span class="scale-label">Very uncomfortable</span>
+          <span class="scale-label">Completely comfortable</span>
+        </div>
+        <div class="scale-track" data-type="scale" data-qid="P2b">
+          <div class="scale-dot" data-value="1">1</div>
+          <div class="scale-dot" data-value="2">2</div>
+          <div class="scale-dot" data-value="3">3</div>
+          <div class="scale-dot" data-value="4">4</div>
+          <div class="scale-dot" data-value="5">5</div>
+          <div class="scale-dot" data-value="6">6</div>
+          <div class="scale-dot" data-value="7">7</div>
+          <div class="scale-dot" data-value="8">8</div>
+          <div class="scale-dot" data-value="9">9</div>
+          <div class="scale-dot" data-value="10">10</div>
+        </div>
       </div>
     </div>
 
@@ -1392,11 +2043,26 @@
     <div class="question-block" data-qid="P5">
       <div class="question-id">P5</div>
       <div class="question-text">Have you ever used money — consciously or not — as leverage in a relationship?</div>
-      <div class="options-list" data-type="single">
+      <div class="options-list" data-type="single" data-triggers="P5">
         <div class="option-item" data-value="never"><div class="option-radio"></div><div class="option-label">Never</div></div>
         <div class="option-item" data-value="once"><div class="option-radio"></div><div class="option-label">Once</div></div>
         <div class="option-item" data-value="occasionally"><div class="option-radio"></div><div class="option-label">Occasionally</div></div>
         <div class="option-item" data-value="more-than"><div class="option-radio"></div><div class="option-label">More than I'd like to admit</div></div>
+      </div>
+    </div>
+
+    <!-- Conditional follow-up for P5 -->
+    <div class="question-block conditional" data-qid="P5b" data-show-if="P5=once,occasionally,more-than">
+      <div class="question-id">P5b</div>
+      <div class="question-text">What did that look like?</div>
+      <div class="question-hint">Pick up to 2</div>
+      <div class="options-list" data-type="multi-max2">
+        <div class="option-item" data-value="end-argument"><div class="option-checkbox"></div><div class="option-label">Paying for something to end an argument</div></div>
+        <div class="option-item" data-value="withholding"><div class="option-checkbox"></div><div class="option-label">Withholding money to make a point</div></div>
+        <div class="option-item" data-value="income-fight"><div class="option-checkbox"></div><div class="option-label">Bringing up income differences during a fight</div></div>
+        <div class="option-item" data-value="power-purchase"><div class="option-checkbox"></div><div class="option-label">Making a large purchase as a power move</div></div>
+        <div class="option-item" data-value="threaten-cutoff"><div class="option-checkbox"></div><div class="option-label">Threatening to cut someone off financially</div></div>
+        <div class="option-item" data-value="subtle"><div class="option-checkbox"></div><div class="option-label">Something subtler — I felt it more than did it</div></div>
       </div>
     </div>
 
@@ -1441,7 +2107,6 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 3 — Prenup Stance -->
     <div class="question-block" data-qid="B2b">
       <div class="question-id">B2b</div>
       <div class="question-text">Regardless of your current situation, where do you stand on prenups?</div>
@@ -1455,7 +2120,6 @@
       </div>
     </div>
 
-    <!-- NEW: Addition 4 — Partner Perception on Prenups -->
     <div class="question-block" data-qid="B2c">
       <div class="question-id">B2c</div>
       <div class="question-text">What do you think your partner's stance on prenups is?</div>
@@ -1469,23 +2133,88 @@
       </div>
     </div>
 
+    <!-- B3: UPGRADED to tiered rating matrix -->
     <div class="question-block" data-qid="B3">
       <div class="question-id">B3</div>
-      <div class="question-text">Which financial topics felt too risky, awkward, or premature to raise when you first committed?</div>
-      <div class="question-hint">Select all that apply</div>
-      <div class="options-list" data-type="multi">
-        <div class="option-item" data-value="debt"><div class="option-checkbox"></div><div class="option-label">Debt</div></div>
-        <div class="option-item" data-value="income"><div class="option-checkbox"></div><div class="option-label">Income</div></div>
-        <div class="option-item" data-value="net-worth"><div class="option-checkbox"></div><div class="option-label">Net worth</div></div>
-        <div class="option-item" data-value="credit"><div class="option-checkbox"></div><div class="option-label">Credit history</div></div>
-        <div class="option-item" data-value="spending"><div class="option-checkbox"></div><div class="option-label">Spending habits</div></div>
-        <div class="option-item" data-value="goals"><div class="option-checkbox"></div><div class="option-label">Long-term goals</div></div>
-        <div class="option-item" data-value="children"><div class="option-checkbox"></div><div class="option-label">Children and money</div></div>
-        <div class="option-item" data-value="inheritance"><div class="option-checkbox"></div><div class="option-label">Inheritance</div></div>
-        <div class="option-item" data-value="ambition"><div class="option-checkbox"></div><div class="option-label">Career ambition gaps</div></div>
-        <div class="option-item" data-value="prenup"><div class="option-checkbox"></div><div class="option-label">Prenuptial agreements</div></div>
-        <div class="option-item" data-value="nothing"><div class="option-checkbox"></div><div class="option-label">Nothing — we talked about everything</div></div>
-        <div class="option-item" data-value="all"><div class="option-checkbox"></div><div class="option-label">All of it</div></div>
+      <div class="question-text">How did you handle each of these financial topics when you first committed?</div>
+      <div class="tiered-matrix">
+        <div class="tiered-header-row cols-4">
+          <div class="tiered-header" style="text-align:left"></div>
+          <div class="tiered-header">Discussed openly</div>
+          <div class="tiered-header">Touched on it</div>
+          <div class="tiered-header">Actively avoided</div>
+          <div class="tiered-header">Didn't occur to me</div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-debt">
+          <div class="tiered-item-label">Debt</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-income">
+          <div class="tiered-item-label">Income</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-networth">
+          <div class="tiered-item-label">Net worth</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-credit">
+          <div class="tiered-item-label">Credit history</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-spending">
+          <div class="tiered-item-label">Spending habits</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-goals">
+          <div class="tiered-item-label">Long-term goals</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-children">
+          <div class="tiered-item-label">Children and money</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-inheritance">
+          <div class="tiered-item-label">Inheritance</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-ambition">
+          <div class="tiered-item-label">Career ambition gaps</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
+        <div class="tiered-row cols-4" data-qid="B3-prenup">
+          <div class="tiered-item-label">Prenuptial agreements</div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="discussed"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="touched"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="avoided"></div></div>
+          <div class="tiered-cell"><div class="tiered-dot" data-value="didnt-occur"></div></div>
+        </div>
       </div>
     </div>
 
@@ -1493,7 +2222,7 @@
       <div class="question-id">B4</div>
       <div class="question-text">Is there a financial conversation you wish you'd had before a major milestone? What was it — and what stopped you?</div>
       <div class="question-hint">Open text — optional</div>
-      <textarea class="open-text" placeholder="Type your answer here..."></textarea>
+      <textarea class="open-text" data-qid="B4" placeholder="Type your answer here..."></textarea>
     </div>
 
     <div class="section-nav">
@@ -1589,17 +2318,17 @@
       <div class="question-id">X4</div>
       <div class="question-text">Is there anything about your financial life you've never told anyone?</div>
       <div class="question-hint">Optional. Anonymous. This is the question Aella would end on.</div>
-      <textarea class="open-text" placeholder="Type your answer here..."></textarea>
+      <textarea class="open-text" data-qid="X4" placeholder="Type your answer here..."></textarea>
     </div>
 
-    <!-- NEW: Addition 7 — Social Sharing Interest -->
     <div class="question-block" data-qid="X5">
       <div class="question-id">X5</div>
-      <div class="question-text">Would you be interested in seeing how your answers compare to your friends' — all anonymized?</div>
+      <div class="question-text">Want to see how your confessional stacks up against people you actually know?</div>
+      <div class="question-hint">We'll compare your archetype and dimensions — never raw answers. Their confessional stays theirs.</div>
       <div class="options-list" data-type="single">
-        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes — send me a group link I can share</div></div>
-        <div class="option-item" data-value="maybe"><div class="option-radio"></div><div class="option-label">Maybe — tell me more first</div></div>
-        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No — I'd rather just see the aggregate data</div></div>
+        <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes — send me a link to share</div></div>
+        <div class="option-item" data-value="maybe"><div class="option-radio"></div><div class="option-label">Maybe later</div></div>
+        <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No — this stays between me and the void</div></div>
       </div>
     </div>
 
@@ -1624,18 +2353,55 @@
 
   <div class="completion-screen">
     <h1 class="survey-title">Your Money Archetype</h1>
-    <p class="completion-desc">Based on your responses across transparency, planning, power, conflict, and origin dimensions.</p>
+    <p class="completion-desc">Based on your responses across transparency, control, avoidance, origin, and conflict dimensions.</p>
 
-    <div class="archetype-card" id="archetypeCard">
+    <div class="results-card" id="resultsCard">
       <div class="archetype-label">Your archetype</div>
       <div class="archetype-name" id="archetypeName">The Open Book</div>
       <div class="archetype-tagline" id="archetypeTagline">You lead with transparency — sometimes before it's earned.</div>
       <div class="archetype-desc" id="archetypeDesc">You share income, debt, and financial fears readily. Your challenge isn't honesty — it's trusting that your openness won't be used against you.</div>
+
+      <div class="dimensions-section">
+        <div class="dimensions-title">Your Five Dimensions</div>
+        <div class="dimension-row">
+          <div class="dimension-label">Transparency</div>
+          <div class="dimension-track"><div class="dimension-fill" id="dim-transparency" style="width:0%;background:linear-gradient(90deg,rgba(18,184,122,0.3),var(--mint))"></div></div>
+          <div class="dimension-value" id="dim-transparency-val">0%</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Control</div>
+          <div class="dimension-track"><div class="dimension-fill" id="dim-control" style="width:0%;background:linear-gradient(90deg,rgba(232,168,56,0.3),var(--amber))"></div></div>
+          <div class="dimension-value" id="dim-control-val">0%</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Avoidance</div>
+          <div class="dimension-track"><div class="dimension-fill" id="dim-avoidance" style="width:0%;background:linear-gradient(90deg,rgba(217,79,79,0.3),var(--red))"></div></div>
+          <div class="dimension-value" id="dim-avoidance-val">0%</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Origin</div>
+          <div class="dimension-track"><div class="dimension-fill" id="dim-origin" style="width:0%;background:linear-gradient(90deg,rgba(176,136,249,0.3),var(--purple))"></div></div>
+          <div class="dimension-value" id="dim-origin-val">0%</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Conflict</div>
+          <div class="dimension-track"><div class="dimension-fill" id="dim-conflict" style="width:0%;background:linear-gradient(90deg,rgba(255,255,255,0.1),var(--white))"></div></div>
+          <div class="dimension-value" id="dim-conflict-val">0%</div>
+        </div>
+      </div>
+
+      <div class="secondary-archetypes" id="secondaryArchetypes">
+        You're also: <span>72% Negotiator</span> · <span>45% Inheritor</span>
+      </div>
+    </div>
+
+    <div class="respondent-count">
+      More transparent than <strong id="percentileText">70%</strong> of the first <strong id="respondentCountText">47</strong> people brave enough to enter the confessional.
     </div>
 
     <div class="share-section">
-      <div class="share-section-title">See how you compare</div>
-      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Share the survey with friends to unlock your Inner Circle — an anonymized view of how your group aligns on the questions that matter most.</p>
+      <div class="share-section-title">Curious how your confessional compares?</div>
+      <div class="share-section-desc">Invite someone to take it. We'll show you where your archetypes overlap and where they diverge — but never the raw answers. Their confessional stays theirs.</div>
       <div class="share-buttons">
         <button class="btn btn-primary" onclick="copyShareLink()">Copy share link</button>
         <button class="btn btn-secondary" onclick="goToSection(0)">Take again</button>
@@ -1651,20 +2417,300 @@
 <script>
 // === STATE ===
 const responses = {};
-const totalSections = 11; // 0=intro, 1-10=sections, 11=complete
+const totalSections = 11;
 let currentSection = 0;
 
 // === ARCHETYPES ===
 const archetypes = [
-  { name: 'The Open Book', tagline: 'You lead with transparency — sometimes before it\'s earned.', desc: 'You share income, debt, and financial fears readily. Your challenge isn\'t honesty — it\'s trusting that your openness won\'t be used against you.' },
-  { name: 'The Vault', tagline: 'You keep your own counsel — financially and otherwise.', desc: 'Separate accounts, separate plans, unshared numbers. It\'s not malice — it\'s self-protection. The question is whether your partner knows that\'s what it is.' },
-  { name: 'The Negotiator', tagline: 'You fight about money. You also figure it out.', desc: 'Financial conflict is frequent in your relationship — but you stay in it. You\'ve had arguments that cracked things open. The data is getting there.' },
-  { name: 'The Inheritor', tagline: 'Your parents\' money story is still running in the background.', desc: 'The patterns are deep — the silence, the scarcity, the control, or the chaos. You know it. You\'re working on it. You haven\'t fully uninstalled it.' },
-  { name: 'The Provider', tagline: 'You carry more. You also decide more.', desc: 'The income gap in your relationship gives you authority you didn\'t necessarily ask for. There\'s generosity in what you do — and sometimes, leverage.' },
-  { name: 'The Avoider', tagline: 'The conversation keeps not happening. That is a choice.', desc: 'You\'re not dishonest. You\'re avoidant. No fights, no disclosures, no plans — and a growing awareness that you\'ve built something on unspoken assumptions.' },
-  { name: 'The Optimizer', tagline: 'You have a spreadsheet. Your partner has seen it.', desc: 'Aligned goals, shared accounts, documented plans. You\'ve had the hard conversations and built infrastructure. Now you\'re curious whether everyone else has.' },
-  { name: 'The Deferrer', tagline: 'You handed over the keys. You\'re not sure you meant to.', desc: 'Financial decisions happen around you rather than with you. Somewhere between trust and avoidance, you ceded authority — and haven\'t decided whether to take it back.' }
+  { name: 'The Open Book', tagline: 'You lead with transparency — sometimes before it\'s earned.', desc: 'You share income, debt, and financial fears readily. Your challenge isn\'t honesty — it\'s trusting that your openness won\'t be used against you.', profile: [90,25,10,45,50] },
+  { name: 'The Vault', tagline: 'You keep your own counsel — financially and otherwise.', desc: 'Separate accounts, separate plans, unshared numbers. It\'s not malice — it\'s self-protection. The question is whether your partner knows that\'s what it is.', profile: [10,80,55,75,25] },
+  { name: 'The Negotiator', tagline: 'You fight about money. You also figure it out.', desc: 'Financial conflict is frequent in your relationship — but you stay in it. You\'ve had arguments that cracked things open. The data is getting there.', profile: [55,50,10,50,90] },
+  { name: 'The Inheritor', tagline: 'Your parents\' money story is still running in the background.', desc: 'The patterns are deep — the silence, the scarcity, the control, or the chaos. You know it. You\'re working on it. You haven\'t fully uninstalled it.', profile: [50,30,45,90,25] },
+  { name: 'The Provider', tagline: 'You carry more. You also decide more.', desc: 'The income gap in your relationship gives you authority you didn\'t necessarily ask for. There\'s generosity in what you do — and sometimes, leverage.', profile: [55,90,20,45,55] },
+  { name: 'The Avoider', tagline: 'The conversation keeps not happening. That is a choice.', desc: 'You\'re not dishonest. You\'re avoidant. No fights, no disclosures, no plans — and a growing awareness that you\'ve built something on unspoken assumptions.', profile: [25,25,90,50,10] },
+  { name: 'The Optimizer', tagline: 'You have a spreadsheet. Your partner has seen it.', desc: 'Aligned goals, shared accounts, documented plans. You\'ve had the hard conversations and built infrastructure. Now you\'re curious whether everyone else has.', profile: [90,55,10,25,50] },
+  { name: 'The Deferrer', tagline: 'You handed over the keys. You\'re not sure you meant to.', desc: 'Financial decisions happen around you rather than with you. Somewhere between trust and avoidance, you ceded authority — and haven\'t decided whether to take it back.', profile: [25,10,75,45,10] }
 ];
+
+// === SCORING ENGINE ===
+function collectResponses() {
+  const r = {};
+  // Single-select and multi-select
+  document.querySelectorAll('.question-block[data-qid]').forEach(block => {
+    const qid = block.dataset.qid;
+    const list = block.querySelector('.options-list');
+    if (list) {
+      const selected = list.querySelectorAll('.option-item.selected');
+      if (selected.length === 1) r[qid] = selected[0].dataset.value;
+      else if (selected.length > 1) r[qid] = Array.from(selected).map(s => s.dataset.value);
+    }
+    const textarea = block.querySelector('.open-text');
+    if (textarea && textarea.value.trim()) r[qid] = textarea.value.trim();
+  });
+  // Scale dots
+  document.querySelectorAll('.scale-track[data-qid]').forEach(track => {
+    const dot = track.querySelector('.scale-dot.selected');
+    if (dot) r[track.dataset.qid] = parseInt(dot.dataset.value);
+  });
+  // Sliders
+  document.querySelectorAll('input[type="range"][data-qid]').forEach(slider => {
+    r[slider.dataset.qid] = parseInt(slider.value);
+  });
+  // Battery rows
+  document.querySelectorAll('.battery-row[data-qid]').forEach(row => {
+    const dot = row.querySelector('.battery-dot.selected');
+    if (dot) r[row.dataset.qid] = dot.dataset.value;
+  });
+  // Tiered matrix rows
+  document.querySelectorAll('.tiered-row[data-qid]').forEach(row => {
+    const dot = row.querySelector('.tiered-dot.selected');
+    if (dot) r[row.dataset.qid] = dot.dataset.value;
+  });
+  return r;
+}
+
+function scoreDimensions(r) {
+  // Each dimension: 0-100 scale
+  const dims = { transparency: 50, control: 50, avoidance: 50, origin: 50, conflict: 50 };
+
+  // --- TRANSPARENCY ---
+  const transSignals = [];
+  // DR3: autonomy desire (yes = lower transparency)
+  if (r.DR3 === 'yes-strongly') transSignals.push(15);
+  else if (r.DR3 === 'yes-somewhat') transSignals.push(35);
+  else if (r.DR3 === 'no') transSignals.push(85);
+  else if (r.DR3 === 'never-thought') transSignals.push(50);
+
+  // DR4: hidden money fantasy
+  if (r.DR4 === 'often') transSignals.push(10);
+  else if (r.DR4 === 'few-times') transSignals.push(30);
+  else if (r.DR4 === 'once-twice') transSignals.push(50);
+  else if (r.DR4 === 'never') transSignals.push(90);
+  else if (r.DR4 === 'already-have') transSignals.push(5);
+
+  // E1: feelings when asked (multi-max3)
+  if (Array.isArray(r.E1)) {
+    if (r.E1.includes('open')) transSignals.push(90);
+    if (r.E1.includes('relieved')) transSignals.push(80);
+    if (r.E1.includes('guarded')) transSignals.push(35);
+    if (r.E1.includes('anxious')) transSignals.push(25);
+    if (r.E1.includes('defensive')) transSignals.push(15);
+    if (r.E1.includes('ashamed')) transSignals.push(10);
+    if (r.E1.includes('indifferent')) transSignals.push(30);
+  } else if (r.E1) {
+    const emap = {open:90, relieved:80, guarded:35, anxious:25, defensive:15, ashamed:10, indifferent:30};
+    if (emap[r.E1] !== undefined) transSignals.push(emap[r.E1]);
+  }
+
+  // X1: self-rated honesty
+  if (r.X1) transSignals.push(r.X1 * 10);
+
+  // Battery A: hidden behaviors (low frequency = high transparency)
+  const batteryVals = {never:90, once:60, few:30, regularly:10};
+  ['A1','A2','A3','A4','A5','A7'].forEach(q => {
+    if (r[q] && batteryVals[r[q]] !== undefined) transSignals.push(batteryVals[r[q]]);
+  });
+
+  // DR1 vs DR2 gap (current vs ideal arrangement alignment)
+  if (r.DR1 && r.DR2) {
+    if (r.DR1 === 'merged' || r.DR2 === 'fully-merged') transSignals.push(75);
+  }
+
+  if (transSignals.length > 0) dims.transparency = Math.round(transSignals.reduce((a,b)=>a+b,0) / transSignals.length);
+
+  // --- CONTROL ---
+  const ctrlSignals = [];
+  // P1: who influences decisions
+  if (r.P1 === 'always-me') ctrlSignals.push(90);
+  else if (r.P1 === 'usually-me') ctrlSignals.push(70);
+  else if (r.P1 === 'equal') ctrlSignals.push(50);
+  else if (r.P1 === 'usually-partner') ctrlSignals.push(30);
+  else if (r.P1 === 'always-partner') ctrlSignals.push(20);
+  else if (r.P1 === 'avoid') ctrlSignals.push(15);
+
+  // P2: who manages day-to-day
+  if (r.P2 === 'me-entirely') ctrlSignals.push(85);
+  else if (r.P2 === 'me-mostly') ctrlSignals.push(65);
+  else if (r.P2 === 'equal') ctrlSignals.push(50);
+  else if (r.P2 === 'partner-mostly') ctrlSignals.push(35);
+  else if (r.P2 === 'partner-entirely') ctrlSignals.push(20);
+  else if (r.P2 === 'neither') ctrlSignals.push(15);
+
+  // P5: money as leverage
+  if (r.P5 === 'more-than') ctrlSignals.push(85);
+  else if (r.P5 === 'occasionally') ctrlSignals.push(65);
+  else if (r.P5 === 'once') ctrlSignals.push(45);
+  else if (r.P5 === 'never') ctrlSignals.push(25);
+
+  // DR2: ideal arrangement preference
+  if (r.DR2 === 'fully-separate') ctrlSignals.push(70);
+  else if (r.DR2 === 'mostly-separate') ctrlSignals.push(55);
+
+  if (ctrlSignals.length > 0) dims.control = Math.round(ctrlSignals.reduce((a,b)=>a+b,0) / ctrlSignals.length);
+
+  // --- AVOIDANCE ---
+  const avoidSignals = [];
+  // B1: discussion before milestone
+  if (r.B1 === 'not-at-all') avoidSignals.push(90);
+  else if (r.B1 === 'not-really') avoidSignals.push(70);
+  else if (r.B1 === 'briefly') avoidSignals.push(45);
+  else if (r.B1 === 'yes-detail') avoidSignals.push(10);
+
+  // B2: prenup discussion
+  if (r.B2 === 'not-at-all') avoidSignals.push(80);
+  else if (r.B2 === 'brought-up-dropped') avoidSignals.push(60);
+  else if (r.B2 === 'yes-decided-against') avoidSignals.push(20);
+  else if (r.B2 === 'yes-have-one') avoidSignals.push(10);
+
+  // B3 tiered matrix: count "avoided" and "didnt-occur" responses
+  let avoidCount = 0, topicCount = 0;
+  ['B3-debt','B3-income','B3-networth','B3-credit','B3-spending','B3-goals','B3-children','B3-inheritance','B3-ambition','B3-prenup'].forEach(q => {
+    if (r[q]) {
+      topicCount++;
+      if (r[q] === 'avoided' || r[q] === 'didnt-occur') avoidCount++;
+    }
+  });
+  if (topicCount > 0) avoidSignals.push(Math.round((avoidCount / topicCount) * 100));
+
+  // Shame battery: high shame correlates with avoidance
+  const shameVals = {none:0, little:20, moderate:50, significant:75, untold:95};
+  let shameTotal = 0, shameCount = 0;
+  for (let i = 1; i <= 9; i++) {
+    const key = 'B-' + i;
+    if (r[key] && shameVals[r[key]] !== undefined) {
+      shameTotal += shameVals[r[key]];
+      shameCount++;
+    }
+  }
+  if (shameCount > 0) avoidSignals.push(Math.round(shameTotal / shameCount * 0.6)); // Shame as avoidance driver (damped)
+
+  if (avoidSignals.length > 0) dims.avoidance = Math.round(avoidSignals.reduce((a,b)=>a+b,0) / avoidSignals.length);
+
+  // --- ORIGIN WEIGHT ---
+  const originSignals = [];
+  // O3: how much parents shaped you
+  if (r.O3) originSignals.push(r.O3 * 10);
+
+  // O1: childhood feelings (complexity = weight)
+  if (Array.isArray(r.O1)) {
+    originSignals.push(Math.min(r.O1.length * 30, 90));
+    if (r.O1.includes('shameful') || r.O1.includes('taboo') || r.O1.includes('conflict')) originSignals.push(80);
+  }
+
+  // O4: knowledge of partner's money story (less knowledge = may be driven by own origin)
+  if (r.O4 === 'never-talked') originSignals.push(75);
+  else if (r.O4 === 'not-really') originSignals.push(60);
+  else if (r.O4 === 'a-little') originSignals.push(45);
+  else if (r.O4 === 'roughly') originSignals.push(35);
+  else if (r.O4 === 'yes-depth') originSignals.push(30);
+
+  if (originSignals.length > 0) dims.origin = Math.round(originSignals.reduce((a,b)=>a+b,0) / originSignals.length);
+
+  // --- CONFLICT ENGAGEMENT ---
+  const conflictSignals = [];
+  // TH3: abuse threshold (having a clear line = engagement)
+  if (r.TH3 === 'limits-choices') conflictSignals.push(75);
+  else if (r.TH3 === 'paired-control') conflictSignals.push(80);
+  else if (r.TH3 === 'income-withheld') conflictSignals.push(70);
+  else if (r.TH3 === 'never') conflictSignals.push(30);
+  else if (r.TH3 === 'havent-drawn') conflictSignals.push(15);
+
+  // B2b: prenup stance (having a strong stance = engagement)
+  if (r.B2b === 'strongly-favor') conflictSignals.push(85);
+  else if (r.B2b === 'against') conflictSignals.push(75);
+  else if (r.B2b === 'favor-certain') conflictSignals.push(65);
+  else if (r.B2b === 'open') conflictSignals.push(50);
+  else if (r.B2b === 'probably-not') conflictSignals.push(35);
+  else if (r.B2b === 'no-opinion') conflictSignals.push(15);
+
+  // E1: defensive/anxious when asked (engagement indicators)
+  if (Array.isArray(r.E1)) {
+    if (r.E1.includes('defensive')) conflictSignals.push(75);
+    if (r.E1.includes('anxious')) conflictSignals.push(50);
+  }
+
+  // P5: money as leverage (using leverage = engaging in conflict)
+  if (r.P5 === 'more-than') conflictSignals.push(85);
+  else if (r.P5 === 'occasionally') conflictSignals.push(70);
+  else if (r.P5 === 'once') conflictSignals.push(50);
+  else if (r.P5 === 'never') conflictSignals.push(20);
+
+  if (conflictSignals.length > 0) dims.conflict = Math.round(conflictSignals.reduce((a,b)=>a+b,0) / conflictSignals.length);
+
+  // Clamp all
+  Object.keys(dims).forEach(k => { dims[k] = Math.max(5, Math.min(95, dims[k])); });
+
+  return dims;
+}
+
+function findBestArchetype(dims) {
+  const userProfile = [dims.transparency, dims.control, dims.avoidance, dims.origin, dims.conflict];
+  let bestIdx = 0, bestDist = Infinity;
+  const distances = [];
+
+  archetypes.forEach((arch, i) => {
+    let dist = 0;
+    for (let j = 0; j < 5; j++) {
+      dist += Math.pow(userProfile[j] - arch.profile[j], 2);
+    }
+    dist = Math.sqrt(dist);
+    distances.push({ idx: i, dist: dist });
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestIdx = i;
+    }
+  });
+
+  // Sort by distance for secondary archetypes
+  distances.sort((a, b) => a.dist - b.dist);
+
+  // Calculate match percentages (inverse of distance, normalized)
+  const maxDist = Math.sqrt(5 * Math.pow(100, 2)); // theoretical max
+  const matches = distances.map(d => ({
+    idx: d.idx,
+    pct: Math.round(Math.max(0, (1 - d.dist / maxDist) * 100))
+  }));
+
+  return { primary: bestIdx, matches: matches };
+}
+
+// === SUBMIT ===
+function submitSurvey() {
+  const r = collectResponses();
+  const dims = scoreDimensions(r);
+  const result = findBestArchetype(dims);
+  const arch = archetypes[result.primary];
+
+  // Set primary archetype
+  document.getElementById('archetypeName').textContent = arch.name;
+  document.getElementById('archetypeTagline').textContent = arch.tagline;
+  document.getElementById('archetypeDesc').textContent = arch.desc;
+
+  // Animate dimension bars
+  setTimeout(() => {
+    ['transparency','control','avoidance','origin','conflict'].forEach(dim => {
+      const fill = document.getElementById('dim-' + dim);
+      const val = document.getElementById('dim-' + dim + '-val');
+      if (fill && val) {
+        fill.style.width = dims[dim] + '%';
+        val.textContent = dims[dim] + '%';
+      }
+    });
+  }, 300);
+
+  // Set secondary archetypes
+  const secondaries = result.matches.slice(1, 4);
+  const secText = 'You\'re also: ' + secondaries.map(s =>
+    '<span>' + s.pct + '% ' + archetypes[s.idx].name.replace('The ', '') + '</span>'
+  ).join(' · ');
+  document.getElementById('secondaryArchetypes').innerHTML = secText;
+
+  // Show completion
+  document.querySelectorAll('.survey-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-complete').classList.add('active');
+  document.getElementById('progressBar').style.width = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 // === NAVIGATION ===
 function goToSection(idx) {
@@ -1688,28 +2734,117 @@ function updateProgress() {
   document.getElementById('progressBar').style.width = pct + '%';
 }
 
-// === SUBMIT ===
-function submitSurvey() {
-  // Assign a random archetype (in production, this would be computed from responses)
-  const arch = archetypes[Math.floor(Math.random() * archetypes.length)];
-  document.getElementById('archetypeName').textContent = arch.name;
-  document.getElementById('archetypeTagline').textContent = arch.tagline;
-  document.getElementById('archetypeDesc').textContent = arch.desc;
-
-  document.querySelectorAll('.survey-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('section-complete').classList.add('active');
-  document.getElementById('progressBar').style.width = '100%';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
+// === SHARE ===
 function copyShareLink() {
-  const link = 'https://beforewe.com/survey?ref=share';
+  const link = 'https://beforewe.xyz/confession?ref=share';
   if (navigator.clipboard) {
     navigator.clipboard.writeText(link);
   }
   const btn = event.target;
   btn.textContent = 'Link copied!';
   setTimeout(() => { btn.textContent = 'Copy share link'; }, 2000);
+}
+
+// === PRIVACY TOGGLE ===
+function togglePrivacyDetail() {
+  const detail = document.getElementById('privacyDetail');
+  detail.style.display = detail.style.display === 'block' ? 'none' : 'block';
+}
+
+// === SLIDER UPDATES ===
+function updateSlider(el, displayId, format) {
+  const val = parseInt(el.value);
+  const display = document.getElementById(displayId);
+  if (format === 'dollar') {
+    display.textContent = val >= 10000 ? '$10,000+' : '$' + val.toLocaleString();
+  } else {
+    display.textContent = val;
+  }
+  // Store in responses
+  responses[el.dataset.qid] = val;
+}
+
+// === CONDITIONAL QUESTION LOGIC ===
+function checkConditionals() {
+  document.querySelectorAll('.question-block.conditional').forEach(block => {
+    const showIf = block.dataset.showIf;
+    if (!showIf) return;
+
+    let shouldShow = false;
+
+    // Handle count-based conditions like "O1-count>1"
+    if (showIf.includes('-count>')) {
+      const parts = showIf.split('-count>');
+      const qid = parts[0];
+      const threshold = parseInt(parts[1]);
+      const parentBlock = document.querySelector('.question-block[data-qid="' + qid + '"]');
+      if (parentBlock) {
+        const selected = parentBlock.querySelectorAll('.option-item.selected');
+        shouldShow = selected.length > threshold;
+
+        // For O1b, dynamically populate options from O1 selections
+        if (block.dataset.qid === 'O1b' && shouldShow) {
+          const optionsList = block.querySelector('.options-list');
+          if (optionsList) {
+            optionsList.innerHTML = '';
+            selected.forEach(item => {
+              const clone = document.createElement('div');
+              clone.className = 'option-item';
+              clone.dataset.value = item.dataset.value;
+              clone.innerHTML = '<div class="option-radio"></div><div class="option-label">' + item.querySelector('.option-label').textContent + '</div>';
+              optionsList.appendChild(clone);
+            });
+          }
+        }
+      }
+    }
+    // Handle value-based conditions like "S3b=yes" or "P5=once,occasionally,more-than"
+    else if (showIf.includes('=')) {
+      const parts = showIf.split('=');
+      const qid = parts[0];
+      const allowedVals = parts[1].split(',');
+
+      // Check if "any" is in allowed values (show for any selection)
+      if (allowedVals.includes('any')) {
+        const parentBlock = document.querySelector('.question-block[data-qid="' + qid + '"]');
+        if (parentBlock) {
+          const selected = parentBlock.querySelector('.option-item.selected');
+          shouldShow = !!selected;
+        }
+      } else {
+        const parentBlock = document.querySelector('.question-block[data-qid="' + qid + '"]');
+        if (parentBlock) {
+          const selected = parentBlock.querySelector('.option-item.selected');
+          if (selected && allowedVals.includes(selected.dataset.value)) {
+            shouldShow = true;
+          }
+        }
+      }
+    }
+
+    if (shouldShow) {
+      block.classList.add('visible');
+    } else {
+      block.classList.remove('visible');
+    }
+  });
+}
+
+// === EXCLUSIVE OPTION HANDLING ===
+function handleExclusiveOption(list, clickedItem) {
+  const exclusiveVal = list.dataset.exclusive;
+  if (!exclusiveVal) return;
+
+  if (clickedItem.dataset.value === exclusiveVal) {
+    // Clicking exclusive: deselect everything else
+    list.querySelectorAll('.option-item').forEach(item => {
+      if (item !== clickedItem) item.classList.remove('selected');
+    });
+  } else {
+    // Clicking non-exclusive: deselect the exclusive option
+    const exclusiveItem = list.querySelector('.option-item[data-value="' + exclusiveVal + '"]');
+    if (exclusiveItem) exclusiveItem.classList.remove('selected');
+  }
 }
 
 // === INTERACTION HANDLERS ===
@@ -1727,6 +2862,7 @@ document.addEventListener('click', function(e) {
     item.classList.toggle('selected');
   } else if (type === 'multi') {
     item.classList.toggle('selected');
+    handleExclusiveOption(list, item);
   } else if (type === 'multi-max3') {
     if (item.classList.contains('selected')) {
       item.classList.remove('selected');
@@ -1734,19 +2870,30 @@ document.addEventListener('click', function(e) {
       const selectedCount = list.querySelectorAll('.option-item.selected').length;
       if (selectedCount < 3) {
         item.classList.add('selected');
+        handleExclusiveOption(list, item);
+      }
+    }
+  } else if (type === 'multi-max2') {
+    if (item.classList.contains('selected')) {
+      item.classList.remove('selected');
+    } else {
+      const selectedCount = list.querySelectorAll('.option-item.selected').length;
+      if (selectedCount < 2) {
+        item.classList.add('selected');
       }
     }
   }
+
+  // Check conditionals after any selection
+  setTimeout(checkConditionals, 50);
 });
 
 // Scale dots
 document.addEventListener('click', function(e) {
   const dot = e.target.closest('.scale-dot');
   if (!dot) return;
-
   const track = dot.closest('.scale-track');
   if (!track) return;
-
   track.querySelectorAll('.scale-dot').forEach(d => d.classList.remove('selected'));
   dot.classList.add('selected');
 });
@@ -1755,11 +2902,19 @@ document.addEventListener('click', function(e) {
 document.addEventListener('click', function(e) {
   const dot = e.target.closest('.battery-dot');
   if (!dot) return;
-
   const row = dot.closest('.battery-row');
   if (!row) return;
-
   row.querySelectorAll('.battery-dot').forEach(d => d.classList.remove('selected'));
+  dot.classList.add('selected');
+});
+
+// Tiered matrix dots
+document.addEventListener('click', function(e) {
+  const dot = e.target.closest('.tiered-dot');
+  if (!dot) return;
+  const row = dot.closest('.tiered-row');
+  if (!row) return;
+  row.querySelectorAll('.tiered-dot').forEach(d => d.classList.remove('selected'));
   dot.classList.add('selected');
 });
 
