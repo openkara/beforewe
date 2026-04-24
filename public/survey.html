@@ -1038,11 +1038,11 @@
     </div>
 
     <div class="privacy-covenant">
-      <div class="covenant-title">Our covenant</div>
-      <p>No account. No email. No cookies. No way back to you.<br>Your answers join the anonymous aggregate — a growing portrait of how couples really deal with money. We'll never know which portrait is yours.</p>
-      <div class="privacy-expandable" onclick="togglePrivacyDetail()">How exactly does this work?</div>
+      <div class="covenant-title">our covenant</div>
+      <p>No account. No cookies. No way back to you.<br>Your answers join the anonymous aggregate — a growing portrait of how couples really deal with money. We'll never know which portrait is yours.</p>
+      <div class="privacy-expandable" onclick="togglePrivacyDetail()">how exactly does this work?</div>
       <div class="privacy-expanded" id="privacyDetail">
-        No account creation required. No IP logging. No browser fingerprinting. Your responses are stored as aggregate statistics only — no individual record exists to be retrieved, linked, or identified. Even we can't look up what you said. That's the point.
+        No account creation. No IP logging. No browser fingerprinting. If you share your email at the end, it lives in a completely separate place — no session ID, no timestamp match, no technical bridge back to what you said. We built it that way on purpose. Your truth stays yours.
       </div>
     </div>
 
@@ -3136,6 +3136,36 @@ document.addEventListener('keydown', function(e) {
 });
 
 // =====================================================
+// ALPHA EMAIL CAPTURE (deliberately disconnected from responses)
+// =====================================================
+async function submitAlphaEmail() {
+  const emailInput = document.getElementById('alphaEmail');
+  const btn = document.getElementById('alphaEmailBtn');
+  const status = document.getElementById('alphaEmailStatus');
+  const email = emailInput?.value?.trim();
+
+  if (!email || !email.includes('@')) {
+    if (status) { status.textContent = 'Please enter a valid email'; status.style.opacity = '1'; }
+    return;
+  }
+
+  try {
+    await fetch('/api/alpha-feedback/participant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+      // NOTE: No session_id sent — email is deliberately disconnected from survey responses
+    });
+    if (status) { status.textContent = 'Saved — your email is stored separately from your answers.'; status.style.opacity = '1'; }
+    if (btn) { btn.textContent = 'Saved!'; btn.disabled = true; btn.style.opacity = '0.6'; }
+    if (emailInput) { emailInput.disabled = true; emailInput.style.opacity = '0.6'; }
+  } catch (err) {
+    console.warn('[Alpha] Email save error:', err);
+    if (status) { status.textContent = 'Could not save — but you can still take the survey!'; status.style.opacity = '1'; }
+  }
+}
+
+// =====================================================
 // ALPHA FEEDBACK LAYER
 // =====================================================
 
@@ -3306,9 +3336,28 @@ function downloadFeedbackJSON() {
       <textarea class="alpha-results-input alpha-feedback-input" data-field="general_notes" placeholder="Length, tone, question quality, things that made you uncomfortable, things that surprised you..." rows="3"></textarea>
     </div>
 
+    <div class="alpha-email-capture" style="margin-top: 28px; padding: 24px; background: rgba(232, 168, 56, 0.08); border: 1px solid rgba(232, 168, 56, 0.25); border-radius: 12px;">
+      <div style="font-size: 15px; font-weight: 600; color: #E8A838; margin-bottom: 8px;">one last thing...</div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 4px; line-height: 1.6;">
+        everything you just shared is completely anonymous — your answers live in a place we can never trace back to you. that's a promise.
+      </div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; line-height: 1.6;">
+        but if you want to follow along as we build <strong style="color: rgba(255,255,255,0.85);">before we...</strong> — drop your email below. it's stored separately from your results. no connection, by design.
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input type="email" id="alphaEmail" placeholder="your@email.com" style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif;">
+        <button onclick="submitAlphaEmail()" style="padding: 10px 18px; border-radius: 8px; border: none; background: #E8A838; color: #1a1a2e; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif;" id="alphaEmailBtn">stay in the loop</button>
+      </div>
+      <div id="alphaEmailStatus" style="font-size: 12px; color: #E8A838; margin-top: 8px; opacity: 0; transition: opacity 0.3s;"></div>
+      <div style="font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 16px; font-style: italic;">
+        thank you for helping us get this right.<br>
+        — Paige & Kara
+      </div>
+    </div>
+
     <div class="alpha-results-actions">
-      <button class="btn alpha-submit-btn" onclick="submitAlphaFeedback()">Submit Feedback</button>
-      <button class="btn btn-ghost alpha-download-btn" onclick="downloadFeedbackJSON()">Download as JSON</button>
+      <button class="btn alpha-submit-btn" onclick="submitAlphaFeedback()">submit feedback</button>
+      <button class="btn btn-ghost alpha-download-btn" onclick="downloadFeedbackJSON()">download as JSON</button>
     </div>
     <div class="alpha-submit-status" id="alphaSubmitStatus"></div>
   `;
