@@ -2918,12 +2918,453 @@ document.addEventListener('click', function(e) {
   dot.classList.add('selected');
 });
 
+// Init: add alpha feedback CSS
+(function injectAlphaCSS() {
+  const style = document.createElement('style');
+  style.textContent = `
+    /* === ALPHA FEEDBACK LAYER === */
+    .alpha-feedback-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(232, 168, 56, 0.25);
+      border-radius: 10px;
+      background: rgba(232, 168, 56, 0.06);
+    }
+
+    .alpha-feedback-label {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .alpha-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #071F14;
+      background: #E8A838;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .alpha-prompt {
+      font-size: 11px;
+      color: rgba(232, 168, 56, 0.7);
+      font-style: italic;
+    }
+
+    .alpha-feedback-input {
+      width: 100%;
+      background: rgba(232, 168, 56, 0.08);
+      border: 1px solid rgba(232, 168, 56, 0.15);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      padding: 10px 12px;
+      resize: vertical;
+      min-height: 44px;
+      transition: border-color 0.2s;
+    }
+
+    .alpha-feedback-input:focus {
+      outline: none;
+      border-color: rgba(232, 168, 56, 0.5);
+      background: rgba(232, 168, 56, 0.12);
+    }
+
+    .alpha-feedback-input::placeholder {
+      color: rgba(232, 168, 56, 0.35);
+    }
+
+    /* Results page feedback */
+    .alpha-results-feedback {
+      margin: 48px 0 32px;
+      padding: 28px 24px;
+      border: 1.5px solid rgba(232, 168, 56, 0.3);
+      border-radius: 16px;
+      background: rgba(232, 168, 56, 0.05);
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .alpha-results-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .alpha-results-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 300;
+      font-size: 18px;
+      color: #E8A838;
+    }
+
+    .alpha-results-question {
+      margin-bottom: 20px;
+    }
+
+    .alpha-results-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .alpha-hint {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 300;
+    }
+
+    .alpha-results-input {
+      width: 100%;
+      background: rgba(232, 168, 56, 0.08);
+      border: 1px solid rgba(232, 168, 56, 0.15);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      padding: 10px 12px;
+      resize: vertical;
+      min-height: 44px;
+      transition: border-color 0.2s;
+    }
+
+    .alpha-results-input:focus {
+      outline: none;
+      border-color: rgba(232, 168, 56, 0.5);
+      background: rgba(232, 168, 56, 0.12);
+    }
+
+    .alpha-results-input::placeholder {
+      color: rgba(232, 168, 56, 0.35);
+    }
+
+    .alpha-stars {
+      display: flex;
+      gap: 8px;
+    }
+
+    .alpha-star {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid rgba(232, 168, 56, 0.25);
+      border-radius: 8px;
+      background: rgba(232, 168, 56, 0.05);
+      color: rgba(232, 168, 56, 0.5);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .alpha-star:hover {
+      border-color: rgba(232, 168, 56, 0.5);
+      background: rgba(232, 168, 56, 0.12);
+    }
+
+    .alpha-star.selected {
+      border-color: #E8A838;
+      background: rgba(232, 168, 56, 0.2);
+      color: #E8A838;
+    }
+
+    .alpha-results-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .alpha-submit-btn {
+      background: #E8A838 !important;
+      color: #071F14 !important;
+      border: none !important;
+      font-weight: 500 !important;
+    }
+
+    .alpha-submit-btn:hover {
+      background: #d4952e !important;
+    }
+
+    .alpha-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .alpha-download-btn {
+      border-color: rgba(232, 168, 56, 0.3) !important;
+      color: #E8A838 !important;
+    }
+
+    .alpha-submit-status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #E8A838;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    @media (max-width: 600px) {
+      .alpha-results-feedback { padding: 20px 16px; }
+      .alpha-results-actions { flex-direction: column; }
+      .alpha-star { width: 36px; height: 36px; font-size: 14px; }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 // Keyboard nav
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && currentSection > 0 && currentSection < 10) {
     goToSection(currentSection + 1);
   }
 });
+
+// =====================================================
+// ALPHA FEEDBACK LAYER
+// =====================================================
+
+// --- Alpha Feedback via Next.js API routes (Supabase backend) ---
+const ALPHA_SESSION_ID = 'alpha_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+const feedbackStore = {}; // local cache: { questionId: feedbackText }
+
+// Save feedback via API route
+async function saveFeedback(questionId, text, sectionId) {
+  feedbackStore[questionId] = text;
+  if (!text.trim()) return;
+  try {
+    await fetch('/api/alpha-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: ALPHA_SESSION_ID,
+        question_id: questionId,
+        feedback: text.trim(),
+        section_id: sectionId
+      })
+    });
+  } catch (err) {
+    console.warn('[Alpha Feedback] Save error:', err);
+  }
+}
+
+async function saveResultsFeedback(data) {
+  try {
+    await fetch('/api/alpha-feedback/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: ALPHA_SESSION_ID,
+        ...data
+      })
+    });
+  } catch (err) {
+    console.warn('[Alpha Feedback] Results save error:', err);
+  }
+}
+
+// --- Download all feedback as JSON (fallback if no Supabase) ---
+function downloadFeedbackJSON() {
+  const resultsFeedback = {};
+  document.querySelectorAll('.alpha-results-input').forEach(el => {
+    if (el.value && el.value.trim()) resultsFeedback[el.dataset.field] = el.value.trim();
+  });
+  const stars = document.querySelector('.alpha-star.selected');
+  if (stars) resultsFeedback.satisfaction = parseInt(stars.dataset.value);
+
+  const bundle = {
+    session_id: ALPHA_SESSION_ID,
+    timestamp: new Date().toISOString(),
+    question_feedback: feedbackStore,
+    results_feedback: resultsFeedback
+  };
+
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'alpha-feedback-' + ALPHA_SESSION_ID + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// --- Inject feedback boxes below each question ---
+(function injectFeedbackBoxes() {
+  // Questions to skip (batteries are handled at group level)
+  const batteryQids = new Set();
+  document.querySelectorAll('.battery-row[data-qid]').forEach(row => batteryQids.add(row.dataset.qid));
+  document.querySelectorAll('.tiered-row[data-qid]').forEach(row => batteryQids.add(row.dataset.qid));
+
+  // Track which battery groups we've already added feedback to
+  const handledBatteries = new Set();
+
+  document.querySelectorAll('.question-block').forEach(block => {
+    const qid = block.dataset.qid;
+
+    // Skip individual battery/tiered rows — handled at group level
+    if (qid && batteryQids.has(qid)) return;
+
+    // For battery groups (no data-qid on the parent .question-block), add one feedback box per group
+    const hasBattery = block.querySelector('.battery-table') || block.querySelector('.tiered-matrix');
+    const feedbackId = qid || (hasBattery ? 'battery-' + block.querySelector('.question-text')?.textContent.substring(0, 30).replace(/\s+/g, '-').toLowerCase() : null);
+
+    if (!feedbackId) return;
+    if (handledBatteries.has(feedbackId)) return;
+    handledBatteries.add(feedbackId);
+
+    // Determine section
+    const section = block.closest('.survey-section');
+    const sectionId = section ? section.id : 'unknown';
+
+    // Create feedback box
+    const fb = document.createElement('div');
+    fb.className = 'alpha-feedback-box';
+    fb.innerHTML = `
+      <div class="alpha-feedback-label">
+        <span class="alpha-tag">ALPHA FEEDBACK</span>
+        <span class="alpha-prompt">Did this question let you answer honestly? Anything confusing or missing?</span>
+      </div>
+      <textarea class="alpha-feedback-input" data-feedback-qid="${feedbackId}" data-section="${sectionId}" placeholder="Optional — your feedback helps us improve this question..." rows="2"></textarea>
+    `;
+    block.appendChild(fb);
+  });
+
+  // Debounced save on input
+  document.addEventListener('input', function(e) {
+    if (!e.target.classList.contains('alpha-feedback-input')) return;
+    clearTimeout(e.target._saveTimeout);
+    e.target._saveTimeout = setTimeout(() => {
+      saveFeedback(e.target.dataset.feedbackQid, e.target.value, e.target.dataset.section);
+    }, 1500);
+  });
+
+  // Save on blur immediately
+  document.addEventListener('blur', function(e) {
+    if (!e.target.classList.contains('alpha-feedback-input')) return;
+    if (e.target.value.trim()) {
+      saveFeedback(e.target.dataset.feedbackQid, e.target.value, e.target.dataset.section);
+    }
+  }, true);
+})();
+
+// --- Inject results page feedback ---
+(function injectResultsFeedback() {
+  const shareSection = document.querySelector('.share-section');
+  if (!shareSection) return;
+
+  const resultsFb = document.createElement('div');
+  resultsFb.className = 'alpha-results-feedback';
+  resultsFb.innerHTML = `
+    <div class="alpha-results-header">
+      <span class="alpha-tag">ALPHA FEEDBACK</span>
+      <span class="alpha-results-title">Help us make this better</span>
+    </div>
+
+    <div class="alpha-results-question">
+      <div class="alpha-results-label">How satisfying was your archetype reveal? <span class="alpha-hint">(1 = meh, 5 = nailed it)</span></div>
+      <div class="alpha-stars">
+        <div class="alpha-star" data-value="1">1</div>
+        <div class="alpha-star" data-value="2">2</div>
+        <div class="alpha-star" data-value="3">3</div>
+        <div class="alpha-star" data-value="4">4</div>
+        <div class="alpha-star" data-value="5">5</div>
+      </div>
+    </div>
+
+    <div class="alpha-results-question">
+      <div class="alpha-results-label">Did your archetype feel accurate?</div>
+      <textarea class="alpha-results-input alpha-feedback-input" data-field="accuracy" placeholder="Did it capture something real about how you relate to money? What did it get right or wrong?" rows="3"></textarea>
+    </div>
+
+    <div class="alpha-results-question">
+      <div class="alpha-results-label">Would you share this with a friend or partner?</div>
+      <textarea class="alpha-results-input alpha-feedback-input" data-field="would_share" placeholder="Why or why not? What would make you more likely to share?" rows="2"></textarea>
+    </div>
+
+    <div class="alpha-results-question">
+      <div class="alpha-results-label">What would you want to see on this results page that isn't here?</div>
+      <textarea class="alpha-results-input alpha-feedback-input" data-field="what_different" placeholder="Comparison tools, more detail, visuals, action items..." rows="2"></textarea>
+    </div>
+
+    <div class="alpha-results-question">
+      <div class="alpha-results-label">Any other thoughts on the survey experience?</div>
+      <textarea class="alpha-results-input alpha-feedback-input" data-field="general_notes" placeholder="Length, tone, question quality, things that made you uncomfortable, things that surprised you..." rows="3"></textarea>
+    </div>
+
+    <div class="alpha-results-actions">
+      <button class="btn alpha-submit-btn" onclick="submitAlphaFeedback()">Submit Feedback</button>
+      <button class="btn btn-ghost alpha-download-btn" onclick="downloadFeedbackJSON()">Download as JSON</button>
+    </div>
+    <div class="alpha-submit-status" id="alphaSubmitStatus"></div>
+  `;
+
+  shareSection.parentNode.insertBefore(resultsFb, shareSection);
+
+  // Star rating clicks
+  resultsFb.querySelectorAll('.alpha-star').forEach(star => {
+    star.addEventListener('click', function() {
+      resultsFb.querySelectorAll('.alpha-star').forEach(s => s.classList.remove('selected'));
+      this.classList.add('selected');
+      // Also highlight all stars up to this one
+      let found = false;
+      resultsFb.querySelectorAll('.alpha-star').forEach(s => {
+        if (!found) s.classList.add('selected');
+        if (s === star) found = true;
+      });
+    });
+  });
+})();
+
+async function submitAlphaFeedback() {
+  const data = {};
+  document.querySelectorAll('.alpha-results-input').forEach(el => {
+    if (el.value && el.value.trim()) data[el.dataset.field] = el.value.trim();
+  });
+  const selectedStars = document.querySelectorAll('.alpha-star.selected');
+  if (selectedStars.length > 0) {
+    data.satisfaction = Math.max(...Array.from(selectedStars).map(s => parseInt(s.dataset.value)));
+  }
+
+  // Get archetype
+  const archName = document.getElementById('archetypeName')?.textContent;
+  if (archName) data.archetype = archName;
+
+  // Save all per-question feedback too
+  document.querySelectorAll('.alpha-feedback-input[data-feedback-qid]').forEach(el => {
+    if (el.value.trim()) {
+      saveFeedback(el.dataset.feedbackQid, el.value, el.dataset.section);
+    }
+  });
+
+  await saveResultsFeedback(data);
+
+  const status = document.getElementById('alphaSubmitStatus');
+  if (status) {
+    status.textContent = supabaseClient ? 'Feedback submitted — thank you!' : 'Saved locally. Click "Download as JSON" to get your feedback file.';
+    status.style.opacity = '1';
+  }
+
+  const btn = document.querySelector('.alpha-submit-btn');
+  if (btn) {
+    btn.textContent = 'Submitted!';
+    btn.disabled = true;
+  }
+}
 </script>
 
 </body>
