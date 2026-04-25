@@ -20,15 +20,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase.from("alpha_feedback").upsert(
-    {
-      session_id,
-      question_id,
-      feedback,
-      section_id: section_id || null,
-    },
-    { onConflict: "session_id,question_id" }
-  );
+  const { data, error } = await supabase.from("alpha_feedback").insert({
+    session_id,
+    question_id,
+    feedback,
+    section_id: section_id || null,
+  });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
