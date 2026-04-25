@@ -20,6 +20,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Delete any existing entry for this session, then insert fresh
+  // This prevents duplicate rows from multiple submit clicks
+  await supabase.from("alpha_results_feedback").delete().eq("session_id", session_id);
+
   const { data, error } = await supabase.from("alpha_results_feedback").insert({
     session_id,
     archetype: archetype || null,
