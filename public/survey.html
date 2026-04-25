@@ -3357,7 +3357,6 @@ function downloadFeedbackJSON() {
 
     <div class="alpha-results-actions">
       <button class="btn alpha-submit-btn" onclick="submitAlphaFeedback()">submit feedback</button>
-      <button class="btn btn-ghost alpha-download-btn" onclick="downloadFeedbackJSON()">download as JSON</button>
     </div>
     <div class="alpha-submit-status" id="alphaSubmitStatus"></div>
   `;
@@ -3380,6 +3379,14 @@ function downloadFeedbackJSON() {
 })();
 
 async function submitAlphaFeedback() {
+  const btn = document.querySelector('.alpha-submit-btn');
+  if (btn) {
+    if (btn.disabled) return; // Prevent duplicate submissions
+    btn.textContent = 'submitting...';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+  }
+
   const data = {};
   document.querySelectorAll('.alpha-results-input').forEach(el => {
     if (el.value && el.value.trim()) data[el.dataset.field] = el.value.trim();
@@ -3404,14 +3411,13 @@ async function submitAlphaFeedback() {
 
   const status = document.getElementById('alphaSubmitStatus');
   if (status) {
-    status.textContent = supabaseClient ? 'Feedback submitted — thank you!' : 'Saved locally. Click "Download as JSON" to get your feedback file.';
+    status.textContent = 'feedback submitted — thank you!';
+    status.style.color = '#12B87A';
     status.style.opacity = '1';
   }
 
-  const btn = document.querySelector('.alpha-submit-btn');
   if (btn) {
-    btn.textContent = 'Submitted!';
-    btn.disabled = true;
+    btn.textContent = 'submitted!';
   }
 }
 </script>
