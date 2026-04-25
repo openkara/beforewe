@@ -159,7 +159,7 @@
   .section-title {
     font-family: 'Syne', sans-serif;
     font-weight: 300;
-    font-size: 22px;
+    font-size: 24px;
     color: var(--text-primary);
     margin-bottom: 6px;
   }
@@ -199,14 +199,14 @@
   .question-text {
     font-family: 'Syne', sans-serif;
     font-weight: 300;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text-primary);
     margin-bottom: 4px;
     line-height: 1.5;
   }
 
   .question-hint {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-tertiary);
     font-style: italic;
     margin-bottom: 14px;
@@ -298,7 +298,7 @@
   }
 
   .option-label {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-primary);
     line-height: 1.4;
   }
@@ -319,7 +319,7 @@
   }
 
   .scale-label {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text-tertiary);
     max-width: 100px;
   }
@@ -484,7 +484,7 @@
   .tiered-row.cols-4 { grid-template-columns: 1fr repeat(4, 68px); }
 
   .tiered-item-label {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.4;
     padding-right: 12px;
@@ -846,7 +846,7 @@
   }
 
   .archetype-desc {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: 32px;
@@ -879,7 +879,7 @@
   }
 
   .dimension-label {
-    font-size: 11px;
+    font-size: 12px;
     width: 90px;
     color: var(--text-secondary);
     text-align: right;
@@ -926,7 +926,7 @@
   /* Respondent count */
   .respondent-count {
     margin-top: 28px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-tertiary);
     text-align: center;
     font-style: italic;
@@ -941,21 +941,28 @@
   .share-section {
     margin-top: 40px;
     padding: 28px;
-    border: 1px solid var(--border-accent);
+    border: 2px solid var(--mint);
     border-radius: 16px;
-    background: rgba(18,184,122,0.03);
+    background: rgba(18,184,122,0.08);
+    box-shadow: 0 0 20px rgba(18,184,122,0.15), inset 0 0 20px rgba(18,184,122,0.05);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(18,184,122,0.15), inset 0 0 20px rgba(18,184,122,0.05); }
+    50% { box-shadow: 0 0 30px rgba(18,184,122,0.25), inset 0 0 20px rgba(18,184,122,0.08); }
   }
 
   .share-section-title {
     font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
     color: var(--text-primary);
   }
 
   .share-section-desc {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
     margin-bottom: 20px;
     line-height: 1.7;
@@ -1224,6 +1231,7 @@
       <div class="question-text">Your parents' financial approach with each other was:</div>
       <div class="options-list" data-type="single" data-triggers="O2">
         <div class="option-item" data-value="fully-open"><div class="option-radio"></div><div class="option-label">Fully open — everything shared</div></div>
+        <div class="option-item" data-value="mostly-shared"><div class="option-radio"></div><div class="option-label">Mostly shared, pretty even</div></div>
         <div class="option-item" data-value="partially-open"><div class="option-radio"></div><div class="option-label">Partially open</div></div>
         <div class="option-item" data-value="one-controlled"><div class="option-radio"></div><div class="option-label">One parent controlled everything</div></div>
         <div class="option-item" data-value="fought"><div class="option-radio"></div><div class="option-label">They fought about money constantly</div></div>
@@ -1340,6 +1348,7 @@
       <div class="options-list" data-type="single">
         <div class="option-item" data-value="fully-separate"><div class="option-radio"></div><div class="option-label">Fully separate — my money is my money</div></div>
         <div class="option-item" data-value="mostly-separate"><div class="option-radio"></div><div class="option-label">Mostly separate with some shared</div></div>
+        <div class="option-item" data-value="mostly-shared"><div class="option-radio"></div><div class="option-label">Mostly shared, some separate</div></div>
         <div class="option-item" data-value="fully-merged"><div class="option-radio"></div><div class="option-label">Fully merged — complete transparency</div></div>
         <div class="option-item" data-value="havent-thought"><div class="option-radio"></div><div class="option-label">I genuinely haven't thought about it</div></div>
         <div class="option-item" data-value="depends-trust"><div class="option-radio"></div><div class="option-label">It depends on trust I don't have yet</div></div>
@@ -1482,8 +1491,8 @@
           <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
           <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
         </div>
-        <div class="tiered-row cols-3" data-qid="E2-neutral">
-          <div class="tiered-item-label">Neutral</div>
+        <div class="tiered-row cols-3" data-qid="E2-mixed">
+          <div class="tiered-item-label">Mixed feelings</div>
           <div class="tiered-cell"><div class="tiered-dot" data-value="0"></div></div>
           <div class="tiered-cell"><div class="tiered-dot" data-value="1"></div></div>
           <div class="tiered-cell"><div class="tiered-dot" data-value="2"></div></div>
@@ -1675,9 +1684,9 @@
         <input type="range" min="0" max="10000" step="50" value="500" data-qid="TH1" oninput="updateSlider(this, 'TH1-display', 'dollar')">
         <div class="slider-labels">
           <span>$0</span>
-          <span>$250</span>
-          <span>$1,000</span>
+          <span>$2,500</span>
           <span>$5,000</span>
+          <span>$7,500</span>
           <span>$10,000+</span>
         </div>
       </div>
@@ -1692,9 +1701,9 @@
         <input type="range" min="0" max="10000" step="50" value="200" data-qid="TH2a" oninput="updateSlider(this, 'TH2a-display', 'dollar')">
         <div class="slider-labels">
           <span>$0</span>
-          <span>$500</span>
-          <span>$2,000</span>
+          <span>$2,500</span>
           <span>$5,000</span>
+          <span>$7,500</span>
           <span>$10,000+</span>
         </div>
       </div>
@@ -1708,9 +1717,9 @@
         <input type="range" min="0" max="10000" step="50" value="200" data-qid="TH2b" oninput="updateSlider(this, 'TH2b-display', 'dollar')">
         <div class="slider-labels">
           <span>$0</span>
-          <span>$500</span>
-          <span>$2,000</span>
+          <span>$2,500</span>
           <span>$5,000</span>
+          <span>$7,500</span>
           <span>$10,000+</span>
         </div>
       </div>
@@ -2100,6 +2109,7 @@
       <div class="question-text">Before getting engaged or married, did you discuss a prenuptial agreement?</div>
       <div class="options-list" data-type="single">
         <div class="option-item" data-value="yes-have-one"><div class="option-radio"></div><div class="option-label">Yes — and we have one</div></div>
+        <div class="option-item" data-value="yes-working-on-it"><div class="option-radio"></div><div class="option-label">Yes — and we're working on it</div></div>
         <div class="option-item" data-value="yes-decided-against"><div class="option-radio"></div><div class="option-label">Yes — and we decided against it</div></div>
         <div class="option-item" data-value="brought-up-dropped"><div class="option-radio"></div><div class="option-label">We brought it up once, then dropped it</div></div>
         <div class="option-item" data-value="not-at-all"><div class="option-radio"></div><div class="option-label">Not at all</div></div>
@@ -2396,7 +2406,7 @@
     </div>
 
     <div class="respondent-count">
-      More transparent than <strong id="percentileText">70%</strong> of the first <strong id="respondentCountText">47</strong> people brave enough to enter the confessional.
+      You're one of the first <strong id="respondentCountText">handful of</strong> people brave enough to enter the money confessional. we're still growing — share it with someone to help us build a bigger picture.
     </div>
 
     <div class="share-section">
@@ -2545,6 +2555,7 @@ function scoreDimensions(r) {
   // DR2: ideal arrangement preference
   if (r.DR2 === 'fully-separate') ctrlSignals.push(70);
   else if (r.DR2 === 'mostly-separate') ctrlSignals.push(55);
+  else if (r.DR2 === 'mostly-shared') ctrlSignals.push(35);
 
   if (ctrlSignals.length > 0) dims.control = Math.round(ctrlSignals.reduce((a,b)=>a+b,0) / ctrlSignals.length);
 
@@ -2560,6 +2571,7 @@ function scoreDimensions(r) {
   if (r.B2 === 'not-at-all') avoidSignals.push(80);
   else if (r.B2 === 'brought-up-dropped') avoidSignals.push(60);
   else if (r.B2 === 'yes-decided-against') avoidSignals.push(20);
+  else if (r.B2 === 'yes-working-on-it') avoidSignals.push(5);
   else if (r.B2 === 'yes-have-one') avoidSignals.push(10);
 
   // B3 tiered matrix: count "avoided" and "didnt-occur" responses
@@ -2596,6 +2608,14 @@ function scoreDimensions(r) {
     originSignals.push(Math.min(r.O1.length * 30, 90));
     if (r.O1.includes('shameful') || r.O1.includes('taboo') || r.O1.includes('conflict')) originSignals.push(80);
   }
+
+  // O2: parental financial approach (open approach = lower origin weight, hidden approach = higher)
+  if (r.O2 === 'fully-open') originSignals.push(25);
+  else if (r.O2 === 'mostly-shared') originSignals.push(35);
+  else if (r.O2 === 'partially-open') originSignals.push(50);
+  else if (r.O2 === 'one-controlled') originSignals.push(75);
+  else if (r.O2 === 'fought') originSignals.push(80);
+  else if (r.O2 === 'no-idea') originSignals.push(60);
 
   // O4: knowledge of partner's money story (less knowledge = may be driven by own origin)
   if (r.O4 === 'never-talked') originSignals.push(75);
@@ -3338,11 +3358,14 @@ function downloadFeedbackJSON() {
 
     <div class="alpha-email-capture" style="margin-top: 28px; padding: 24px; background: rgba(232, 168, 56, 0.08); border: 1px solid rgba(232, 168, 56, 0.25); border-radius: 12px;">
       <div style="font-size: 15px; font-weight: 600; color: #E8A838; margin-bottom: 8px;">one last thing...</div>
-      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 4px; line-height: 1.6;">
-        everything you just shared is completely anonymous — your answers live in a place we can never trace back to you. that's a promise.
+      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; line-height: 1.6;">
+        we believe trust is everything — especially when it comes to money.
+      </div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; line-height: 1.6;">
+        everything you just shared is completely anonymous. we literally cannot see your answers. they live in a place we can never trace back to you.
       </div>
       <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; line-height: 1.6;">
-        but if you want to follow along as we build <strong style="color: rgba(255,255,255,0.85);">before we...</strong> — drop your email below. it's stored separately from your results. no connection, by design.
+        if you want to follow along as we build <strong style="color: rgba(255,255,255,0.85);">before we...</strong> — drop your email below. it's stored separately from your results. no connection, by design.
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <input type="email" id="alphaEmail" placeholder="your@email.com" style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif;">
@@ -3350,7 +3373,7 @@ function downloadFeedbackJSON() {
       </div>
       <div id="alphaEmailStatus" style="font-size: 12px; color: #E8A838; margin-top: 8px; opacity: 0; transition: opacity 0.3s;"></div>
       <div style="font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 16px; font-style: italic;">
-        thank you for helping us get this right.<br>
+        thank you for trusting us with this.<br>
         — Paige & Kara
       </div>
     </div>
@@ -3361,7 +3384,7 @@ function downloadFeedbackJSON() {
     <div class="alpha-submit-status" id="alphaSubmitStatus"></div>
   `;
 
-  shareSection.parentNode.insertBefore(resultsFb, shareSection);
+  shareSection.parentNode.insertBefore(resultsFb, shareSection.nextSibling);
 
   // Star rating clicks
   resultsFb.querySelectorAll('.alpha-star').forEach(star => {
