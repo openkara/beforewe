@@ -1124,6 +1124,7 @@
         <div class="option-item" data-value="yes"><div class="option-radio"></div><div class="option-label">Yes — first time</div></div>
         <div class="option-item" data-value="no"><div class="option-radio"></div><div class="option-label">No — I've been married before</div></div>
         <div class="option-item" data-value="na"><div class="option-radio"></div><div class="option-label">Not currently married or engaged</div></div>
+        <div class="option-item" data-value="not-applicable"><div class="option-radio"></div><div class="option-label">This doesn't quite apply to me</div></div>
       </div>
     </div>
 
@@ -1181,6 +1182,7 @@
         <div class="option-item" data-value="partner-debt"><div class="option-radio"></div><div class="option-label">My partner brought significant debt</div></div>
         <div class="option-item" data-value="complicated"><div class="option-radio"></div><div class="option-label">It's complicated</div></div>
         <div class="option-item" data-value="rather-not"><div class="option-radio"></div><div class="option-label">I'd rather not say</div></div>
+        <div class="option-item" data-value="not-applicable"><div class="option-radio"></div><div class="option-label">This doesn't quite apply to me</div></div>
       </div>
     </div>
 
@@ -1242,14 +1244,16 @@
     <!-- Follow-up for O2 -->
     <div class="question-block conditional" data-qid="O2b" data-show-if="O2=any">
       <div class="question-id">O2b</div>
-      <div class="question-text">Was there anything else going on financially in your household?</div>
-      <div class="question-hint">Select any that also applied — optional</div>
-      <div class="options-list" data-type="multi">
-        <div class="option-item" data-value="fully-open"><div class="option-checkbox"></div><div class="option-label">Fully open — everything shared</div></div>
-        <div class="option-item" data-value="partially-open"><div class="option-checkbox"></div><div class="option-label">Partially open</div></div>
-        <div class="option-item" data-value="one-controlled"><div class="option-checkbox"></div><div class="option-label">One parent controlled everything</div></div>
-        <div class="option-item" data-value="fought"><div class="option-checkbox"></div><div class="option-label">They fought about money constantly</div></div>
-        <div class="option-item" data-value="no-idea"><div class="option-checkbox"></div><div class="option-label">I have no idea — it was never discussed</div></div>
+      <div class="question-text">How did money get talked about (or not) in your house?</div>
+      <div class="question-hint">Select any that applied — optional</div>
+      <div class="options-list" data-type="multi" data-exclusive="none-apply">
+        <div class="option-item" data-value="discussed-openly"><div class="option-checkbox"></div><div class="option-label">Money was discussed openly and often</div></div>
+        <div class="option-item" data-value="only-fights"><div class="option-checkbox"></div><div class="option-label">Money only came up during fights</div></div>
+        <div class="option-item" data-value="secret"><div class="option-checkbox"></div><div class="option-label">Money was a secret — I pieced things together</div></div>
+        <div class="option-item" data-value="one-decided"><div class="option-checkbox"></div><div class="option-label">One parent made decisions, the other went along</div></div>
+        <div class="option-item" data-value="cant-afford"><div class="option-checkbox"></div><div class="option-label">We were told "we can't afford it" a lot</div></div>
+        <div class="option-item" data-value="tied-to-emotion"><div class="option-checkbox"></div><div class="option-label">Money was tied to love or punishment</div></div>
+        <div class="option-item" data-value="none-apply" data-exclusive="true"><div class="option-checkbox"></div><div class="option-label">None of these apply</div></div>
       </div>
     </div>
 
@@ -1315,6 +1319,7 @@
         <div class="option-item" data-value="merged"><div class="option-radio"></div><div class="option-label">Fully merged — everything combined</div></div>
         <div class="option-item" data-value="unclear"><div class="option-radio"></div><div class="option-label">Unclear — it evolved without a plan</div></div>
         <div class="option-item" data-value="complicated"><div class="option-radio"></div><div class="option-label">It's complicated / in flux</div></div>
+        <div class="option-item" data-value="not-applicable"><div class="option-radio"></div><div class="option-label">This doesn't quite apply to me</div></div>
       </div>
     </div>
 
@@ -1502,12 +1507,12 @@
 
     <div class="question-block" data-qid="E3">
       <div class="question-id">E3</div>
-      <div class="question-text">When I imagine my financial future, my partner is in the picture.</div>
-      <div class="question-hint">1 = They're not in it at all — 10 = Completely inseparable from my future</div>
+      <div class="question-text">In my vision of the future, how much of my financial life is intertwined with my partner's?</div>
+      <div class="question-hint">1 = I see completely separate finances — 10 = Fully merged and interdependent</div>
       <div class="scale-container">
         <div class="scale-labels">
-          <span class="scale-label">Not in it at all</span>
-          <span class="scale-label">Completely inseparable</span>
+          <span class="scale-label">Completely separate</span>
+          <span class="scale-label">Fully merged</span>
         </div>
         <div class="scale-track" data-type="scale" data-qid="E3">
           <div class="scale-dot" data-value="1">1</div>
@@ -1897,7 +1902,7 @@
           <div class="battery-cell"><div class="battery-dot" data-value="untold"></div></div>
         </div>
         <div class="battery-row battery-5col" data-qid="B-8">
-          <div class="battery-statement">Spending significantly on myself without telling my partner</div>
+          <div class="battery-statement">Keeping some purchases to myself rather than discussing them</div>
           <div class="battery-cell"><div class="battery-dot" data-value="none"></div></div>
           <div class="battery-cell"><div class="battery-dot" data-value="little"></div></div>
           <div class="battery-cell"><div class="battery-dot" data-value="moderate"></div></div>
@@ -1928,7 +1933,7 @@
         <div class="option-item" data-value="credit-score"><div class="option-radio"></div><div class="option-label">Not knowing my credit score</div></div>
         <div class="option-item" data-value="family-borrowing"><div class="option-radio"></div><div class="option-label">Borrowing from family</div></div>
         <div class="option-item" data-value="less-saved"><div class="option-radio"></div><div class="option-label">Having less saved than implied</div></div>
-        <div class="option-item" data-value="secret-spending"><div class="option-radio"></div><div class="option-label">Spending without telling</div></div>
+        <div class="option-item" data-value="secret-spending"><div class="option-radio"></div><div class="option-label">Keeping some purchases to myself</div></div>
         <div class="option-item" data-value="no-plan"><div class="option-radio"></div><div class="option-label">No will or financial plan</div></div>
         <div class="option-item" data-value="none"><div class="option-radio"></div><div class="option-label">None — I don't carry shame about these</div></div>
       </div>
@@ -2432,7 +2437,7 @@ let currentSection = 0;
 
 // === ARCHETYPES ===
 const archetypes = [
-  { name: 'The Open Book', tagline: 'You lead with transparency — sometimes before it\'s earned.', desc: 'You share income, debt, and financial fears readily. Your challenge isn\'t honesty — it\'s trusting that your openness won\'t be used against you.', profile: [90,25,10,45,50] },
+  { name: 'The Open Book', tagline: 'You believe transparency is the foundation of trust.', desc: 'You share income, debt, and financial fears readily. You\'d rather share too much than too little. Your challenge isn\'t honesty — it\'s trusting that your openness won\'t be used against you.', profile: [90,25,10,45,50] },
   { name: 'The Vault', tagline: 'You keep your own counsel — financially and otherwise.', desc: 'Separate accounts, separate plans, unshared numbers. It\'s not malice — it\'s self-protection. The question is whether your partner knows that\'s what it is.', profile: [10,80,55,75,25] },
   { name: 'The Negotiator', tagline: 'You fight about money. You also figure it out.', desc: 'Financial conflict is frequent in your relationship — but you stay in it. You\'ve had arguments that cracked things open. The data is getting there.', profile: [55,50,10,50,90] },
   { name: 'The Inheritor', tagline: 'Your parents\' money story is still running in the background.', desc: 'The patterns are deep — the silence, the scarcity, the control, or the chaos. You know it. You\'re working on it. You haven\'t fully uninstalled it.', profile: [50,30,45,90,25] },
@@ -2813,6 +2818,12 @@ function checkConditionals() {
               clone.dataset.value = item.dataset.value;
               clone.innerHTML = '<div class="option-radio"></div><div class="option-label">' + item.querySelector('.option-label').textContent + '</div>';
               optionsList.appendChild(clone);
+              // Add explicit click handler for dynamically created items
+              clone.addEventListener('click', function() {
+                optionsList.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                checkConditionals();
+              });
             });
           }
         }
